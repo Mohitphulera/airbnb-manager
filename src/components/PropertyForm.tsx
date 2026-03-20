@@ -11,6 +11,7 @@ export default function PropertyForm() {
   const [amenities, setAmenities] = useState<string[]>([])
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState('')
   const [urlInput, setUrlInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -20,26 +21,43 @@ export default function PropertyForm() {
     setAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
   }
 
+  // Upload files one at a time to avoid Vercel body size limits
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
     setUploading(true)
-    
-    const formData = new FormData()
-    Array.from(files).forEach(f => formData.append('files', f))
-    
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
-      const data = await res.json()
-      if (data.urls) {
-        setImageUrls(prev => [...prev, ...data.urls])
-        showToast(`${data.urls.length} photo(s) uploaded`, 'success')
+
+    const fileArray = Array.from(files)
+    let uploaded = 0
+    const newUrls: string[] = []
+
+    for (const file of fileArray) {
+      setUploadProgress(`Uploading ${uploaded + 1} of ${fileArray.length}...`)
+      const formData = new FormData()
+      formData.append('files', file)
+
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (data.urls && data.urls.length > 0) {
+          newUrls.push(...data.urls)
+          uploaded++
+        } else {
+          showToast(`Failed to upload: ${file.name}`, 'error')
+        }
+      } catch (err) {
+        console.error('Upload failed for', file.name, err)
+        showToast(`Failed: ${file.name}`, 'error')
       }
-    } catch (err) {
-      console.error('Upload failed', err)
-      showToast('Photo upload failed', 'error')
     }
+
+    if (newUrls.length > 0) {
+      setImageUrls(prev => [...prev, ...newUrls])
+      showToast(`${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded ✓`, 'success')
+    }
+
     setUploading(false)
+    setUploadProgress('')
     if (fileRef.current) fileRef.current.value = ''
   }
 
@@ -92,15 +110,15 @@ export default function PropertyForm() {
         <input name="whatsappNumber" className="form-input" placeholder="e.g. 919876543210" required />
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="form-group" style={{ flex: '1 1 140px' }}>
           <label className="form-label">Type</label>
           <select name="type" className="form-select" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="OWNED">Owned (Mine)</option>
             <option value="COMMISSION">Commission (Partner)</option>
           </select>
         </div>
-        <div className="form-group" style={{ flex: 1 }}>
+        <div className="form-group" style={{ flex: '1 1 140px' }}>
           <label className="form-label">Price / Night (₹)</label>
           <input type="number" step="1" name="pricePerNight" className="form-input" required placeholder="3000" />
         </div>
@@ -138,25 +156,26 @@ export default function PropertyForm() {
         
         {/* Upload from device */}
         <div 
-          onClick={() => fileRef.current?.click()}
+          onClick={() => !uploading && fileRef.current?.click()}
           style={{ 
             border: '2px dashed var(--border)', 
             borderRadius: '12px', 
             padding: '1.5rem', 
             textAlign: 'center', 
-            cursor: 'pointer',
+            cursor: uploading ? 'wait' : 'pointer',
             background: 'var(--cozy-blue-light)',
             transition: 'all 0.15s ease',
-            marginBottom: '0.75rem'
+            marginBottom: '0.75rem',
+            opacity: uploading ? 0.7 : 1,
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary)' }}
+          onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = 'var(--primary)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '⏳' : '📷'}</div>
           <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-            {uploading ? 'Uploading...' : 'Click to upload photos'}
+            {uploading ? uploadProgress || 'Uploading...' : 'Click to upload photos'}
           </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>JPG, PNG, WebP • Max 5MB each</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>JPG, PNG, HEIC • Multiple files supported</p>
         </div>
         <input 
           ref={fileRef} 
@@ -182,7 +201,7 @@ export default function PropertyForm() {
 
         {/* Image Preview Grid */}
         {imageUrls.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '0.5rem', marginTop: '0.75rem' }}>
             {imageUrls.map((url, idx) => (
               <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <img src={url} alt={`Photo ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -205,7 +224,7 @@ export default function PropertyForm() {
         <input type="hidden" name="imageUrls" value={imageUrls.join(',')} />
       </div>
 
-      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%', marginTop: '0.5rem' }} disabled={submitting}>
+      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%', marginTop: '0.5rem' }} disabled={submitting || uploading}>
         {submitting ? 'Adding Property...' : 'Add Property'}
       </button>
     </form>

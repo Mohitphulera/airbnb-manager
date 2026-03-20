@@ -31,18 +31,27 @@ export default function SalePropertyForm() {
     if (!files || files.length === 0) return
     setUploading(true)
 
-    const formData = new FormData()
-    Array.from(files).forEach(f => formData.append('files', f))
+    const fileArray = Array.from(files)
+    const newUrls: string[] = []
 
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
-      const data = await res.json()
-      if (data.urls) {
-        setImageUrls(prev => [...prev, ...data.urls])
-        showToast(`${data.urls.length} photo(s) uploaded`, 'success')
+    for (const file of fileArray) {
+      const formData = new FormData()
+      formData.append('files', file)
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (data.urls && data.urls.length > 0) {
+          newUrls.push(...data.urls)
+        }
+      } catch (err) {
+        console.error('Upload failed for', file.name, err)
       }
-    } catch (err) {
-      console.error('Upload failed', err)
+    }
+
+    if (newUrls.length > 0) {
+      setImageUrls(prev => [...prev, ...newUrls])
+      showToast(`${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded ✓`, 'success')
+    } else {
       showToast('Photo upload failed', 'error')
     }
     setUploading(false)

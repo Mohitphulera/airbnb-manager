@@ -242,6 +242,38 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 
 .property-content { padding: 0.875rem 0.25rem; }
 
+/* ======================= PROPERTY DETAIL ======================= */
+.detail-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 2rem;
+  align-items: start;
+}
+.booking-card-wrap {
+  position: sticky;
+  top: 5rem;
+}
+.booking-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+.amenity-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.625rem;
+}
+.policies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.mobile-price-bar {
+  display: none;
+}
+
 /* ======================= ADMIN LAYOUT ======================= */
 .admin-layout {
   display: flex;
@@ -667,6 +699,8 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   .dash-two-col { grid-template-columns: 1fr; }
   .dash-ops-grid { grid-template-columns: 1fr 1fr; }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .detail-content-grid { grid-template-columns: 1fr; }
+  .booking-card-wrap { position: static; }
 }
 
 /* ======================= RESPONSIVE: MOBILE ======================= */
@@ -746,7 +780,33 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   /* Property Detail Mobile */
   .detail-gallery {
     grid-template-columns: 1fr !important;
-    max-height: 280px !important;
+    max-height: 260px !important;
+  }
+  .detail-content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+  .booking-card-wrap {
+    position: static !important;
+  }
+  .booking-card {
+    padding: 1rem;
+  }
+  .amenity-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .policies-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  .mobile-price-bar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--cozy-blue-light);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
   }
 
   /* Tables Mobile */
@@ -764,3 +824,4 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   h1 { font-size: 1.375rem; }
   h2 { font-size: 1.25rem; }
 }
+
