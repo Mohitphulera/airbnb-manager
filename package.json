@@ -10,11 +10,9 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.5.0",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@types/pg": "^8.18.0",
-    "better-sqlite3": "^12.8.0",
     "cloudinary": "^2.9.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
