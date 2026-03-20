@@ -1,12 +1,15 @@
 import { getProperties } from '@/actions/propertyActions'
 import { getBookings } from '@/actions/bookingActions'
+import { getAllPropertyRatings } from '@/actions/reviewActions'
 import Link from 'next/link'
 import SearchFilter from '@/components/SearchFilter'
+import DarkModeToggle from '@/components/DarkModeToggle'
 
 export default async function Home() {
-  const [properties, bookings] = await Promise.all([
+  const [properties, bookings, ratings] = await Promise.all([
     getProperties(),
-    getBookings()
+    getBookings(),
+    getAllPropertyRatings(),
   ])
 
   const serialized = properties.map(p => {
@@ -19,8 +22,10 @@ export default async function Home() {
       checkIn: b.checkInDate.toISOString(),
       checkOut: b.checkOutDate.toISOString()
     }))
+
+    const rating = ratings[p.id] || { avg: 0, count: 0 }
     
-    return { ...p, images, amenities, pBookings }
+    return { ...p, images, amenities, pBookings, rating }
   })
 
   return (
@@ -33,6 +38,7 @@ export default async function Home() {
             <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: 'var(--cozy-dark)' }}>Cozy B&B</span>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <DarkModeToggle />
             <Link href="/" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
               🏠 Stays
             </Link>

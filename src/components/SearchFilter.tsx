@@ -79,7 +79,16 @@ export default function SearchFilter({ properties }: { properties: any[] }) {
                   <Link href={`/property/${p.id}`} style={{ textDecoration: 'none' }}>
                     <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>{p.name}</h3>
                   </Link>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{p.location}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>{p.location}</p>
+                    {p.rating && p.rating.count > 0 && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem' }}>
+                        <span style={{ color: '#F59E0B' }}>★</span>
+                        <span style={{ fontWeight: 700 }}>{p.rating.avg}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>({p.rating.count})</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
                 {p.type === 'OWNED' && <span className="badge badge-blue">Verified</span>}
                 {p.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}

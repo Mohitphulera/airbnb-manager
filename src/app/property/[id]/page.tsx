@@ -1,11 +1,18 @@
 import { getPropertyById } from '@/actions/propertyDetailActions'
+import { getReviewsForProperty, getPropertyAverageRating } from '@/actions/reviewActions'
 import Link from 'next/link'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
+import ReviewSection from '@/components/ReviewSection'
+import DarkModeToggle from '@/components/DarkModeToggle'
 import { notFound } from 'next/navigation'
 
 export default async function PropertyDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const property = await getPropertyById(id)
+  const [property, reviews, ratingData] = await Promise.all([
+    getPropertyById(id),
+    getReviewsForProperty(id),
+    getPropertyAverageRating(id),
+  ])
 
   if (!property) notFound()
 
@@ -14,7 +21,7 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   let amenities: string[] = []
   try { if (property.amenities) amenities = JSON.parse(property.amenities) } catch {}
 
-  const bookings = property.bookings.map(b => ({
+  const bookings = property.bookings.map((b: any) => ({
     checkIn: b.checkInDate.toISOString(),
     checkOut: b.checkOutDate.toISOString(),
   }))
@@ -28,6 +35,11 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
     updatedAt: property.updatedAt.toISOString(),
   }
 
+  const serializedReviews = reviews.map((r: any) => ({
+    ...r,
+    createdAt: r.createdAt.toISOString(),
+  }))
+
   return (
     <>
       {/* Sticky Nav */}
@@ -38,11 +50,12 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
             <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: 'var(--cozy-dark)' }}>Cozy B&B</span>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <DarkModeToggle />
             <Link href="/" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
               🏠 Stays
             </Link>
             <Link href="/properties-for-sale" className="btn btn-outline" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              🏷️ Buy Property
+              🏷️ Buy
             </Link>
             <Link href="/login" className="btn btn-secondary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
               Host Login
@@ -51,7 +64,21 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
         </div>
       </nav>
 
-      <PropertyDetailClient property={serializedProperty} />
+      <PropertyDetailClient
+        property={serializedProperty}
+        avgRating={ratingData.avg}
+        reviewCount={ratingData.count}
+      />
+
+      {/* Reviews Section */}
+      <div className="container" style={{ paddingBottom: '2rem' }}>
+        <ReviewSection
+          propertyId={id}
+          reviews={serializedReviews}
+          avgRating={ratingData.avg}
+          reviewCount={ratingData.count}
+        />
+      </div>
 
       <footer className="site-footer">
         <div className="container">

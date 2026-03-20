@@ -22,6 +22,8 @@ model Property {
 
   bookings        Booking[]
   expenses        Expense[]
+  reviews         Review[]
+  bookingRequests BookingRequest[]
 }
 
 model Booking {
@@ -67,6 +69,33 @@ model SaleProperty {
   features        String?          // JSON string array: ["Garden","Parking","24x7 Security",...]
   whatsappNumber  String?
   monthlyRentalEstimate Float?     // estimated rental income for ROI calc
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Review {
+  id              String   @id @default(cuid())
+  propertyId      String
+  property        Property @relation(fields: [propertyId], references: [id])
+  guestName       String
+  rating          Int      // 1–5
+  comment         String?
+  createdAt       DateTime @default(now())
+}
+
+model BookingRequest {
+  id              String   @id @default(cuid())
+  propertyId      String
+  property        Property @relation(fields: [propertyId], references: [id])
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  checkIn         DateTime
+  checkOut        DateTime
+  guests          Int      @default(1)
+  message         String?
+  status          String   @default("PENDING") // "PENDING","CONFIRMED","REJECTED","CANCELLED"
+  totalAmount     Float
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

@@ -5,6 +5,8 @@ import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { format, isWithinInterval, startOfDay, differenceInDays } from 'date-fns'
 import Link from 'next/link'
+import GuestBookingForm from './GuestBookingForm'
+import ShareProperty from './ShareProperty'
 
 const AMENITY_ICONS: Record<string, string> = {
   'WiFi': '📶', 'Pool': '🏊', 'AC': '❄️', 'Kitchen': '🍳',
@@ -12,11 +14,12 @@ const AMENITY_ICONS: Record<string, string> = {
   'Gym': '💪', 'Balcony': '🌅',
 }
 
-export default function PropertyDetailClient({ property }: { property: any }) {
+export default function PropertyDetailClient({ property, avgRating, reviewCount }: { property: any; avgRating: number; reviewCount: number }) {
   const [currentImg, setCurrentImg] = useState(0)
   const [selectedRange, setSelectedRange] = useState<{from: Date | undefined, to: Date | undefined}>({ from: undefined, to: undefined })
   const [showAllAmenities, setShowAllAmenities] = useState(false)
   const [lightbox, setLightbox] = useState(false)
+  const [showBookingForm, setShowBookingForm] = useState(false)
 
   const images: string[] = property.images || []
   const amenities: string[] = property.amenities || []
@@ -171,9 +174,19 @@ export default function PropertyDetailClient({ property }: { property: any }) {
                 {property.type === 'OWNED' && <span className="badge badge-blue">✓ Verified</span>}
                 {property.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                📍 {property.location}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem', margin: 0 }}>
+                  📍 {property.location}
+                </p>
+                {reviewCount > 0 && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem' }}>
+                    <span style={{ color: '#F59E0B' }}>★</span>
+                    <span style={{ fontWeight: 700 }}>{avgRating}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>({reviewCount})</span>
+                  </span>
+                )}
+                <ShareProperty property={property} />
+              </div>
             </div>
 
             {/* Mobile Price Bar — only shows on small screens */}
@@ -289,23 +302,46 @@ export default function PropertyDetailClient({ property }: { property: any }) {
                 </div>
               )}
 
-              {/* CTA */}
-              <button
-                onClick={handleWhatsApp}
-                className="btn btn-primary"
-                style={{ width: '100%', borderRadius: '12px', padding: '0.75rem', fontSize: '0.9375rem' }}
-                disabled={!selectedRange.from || !selectedRange.to}
-              >
-                {selectedRange.from && selectedRange.to
-                  ? `💬 Book via WhatsApp — ₹${totalPrice.toLocaleString('en-IN')}`
-                  : '📅 Pick dates to book'
-                }
-              </button>
+              {/* CTA Buttons */}
+              {showBookingForm && selectedRange.from && selectedRange.to ? (
+                <GuestBookingForm
+                  property={property}
+                  checkIn={selectedRange.from}
+                  checkOut={selectedRange.to}
+                  nights={nights}
+                  totalPrice={totalPrice}
+                  onClose={() => setShowBookingForm(false)}
+                />
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowBookingForm(true)}
+                    className="btn btn-primary"
+                    style={{ width: '100%', borderRadius: '12px', padding: '0.75rem', fontSize: '0.9375rem' }}
+                    disabled={!selectedRange.from || !selectedRange.to}
+                  >
+                    {selectedRange.from && selectedRange.to
+                      ? `📩 Book Now — ₹${totalPrice.toLocaleString('en-IN')}`
+                      : '📅 Pick dates to book'
+                    }
+                  </button>
 
-              {selectedRange.from && selectedRange.to && (
-                <p style={{ textAlign: 'center', fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                  You won&apos;t be charged yet
-                </p>
+                  {selectedRange.from && selectedRange.to && (
+                    <button
+                      onClick={handleWhatsApp}
+                      className="btn btn-secondary"
+                      style={{ width: '100%', borderRadius: '12px', padding: '0.625rem', fontSize: '0.8125rem', marginTop: '0.5rem' }}
+                    >
+                      💬 Or message on WhatsApp
+                    </button>
+                  )}
+
+                  {selectedRange.from && selectedRange.to && (
+                    <p style={{ textAlign: 'center', fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                      No payment needed now
+                    </p>
+                  )}
+                </>
               )}
             </div>
           </div>
