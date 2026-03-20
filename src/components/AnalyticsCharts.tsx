@@ -19,7 +19,7 @@ export function RevenueChart({ data }: { data: any[] }) {
           <YAxis axisLine={false} tickLine={false} stroke="#94A3B8" fontSize={11} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} dx={-5} />
           <Tooltip
             contentStyle={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: '10px', fontSize: '0.8125rem', boxShadow: '0 4px 16px rgba(43, 108, 176, 0.1)' }}
-            formatter={(val: any, name: string) => [`₹${Number(val).toLocaleString('en-IN')}`, name.charAt(0).toUpperCase() + name.slice(1)]}
+            formatter={(val: any, name: any) => [`₹${Number(val).toLocaleString('en-IN')}`, String(name).charAt(0).toUpperCase() + String(name).slice(1)]}
           />
           <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
           <Area type="monotone" dataKey="revenue" stroke="#2B6CB0" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRev)" name="Revenue" />
@@ -40,7 +40,7 @@ export function SourcePieChart({ data }: { data: Record<string, number> }) {
     <div style={{ width: '100%', height: '200px' }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={chartData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} style={{ fontSize: '0.6875rem', fontWeight: 600 }}>
+          <Pie data={chartData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3} label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`} style={{ fontSize: '0.6875rem', fontWeight: 600 }}>
             {chartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
           </Pie>
           <Tooltip formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Revenue']} contentStyle={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: '10px', fontSize: '0.8125rem' }} />
@@ -79,7 +79,7 @@ export function ExpensePieChart({ data }: { data: Record<string, number> }) {
     <div style={{ width: '100%', height: '200px' }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={chartData} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} style={{ fontSize: '0.625rem', fontWeight: 600 }}>
+          <Pie data={chartData} cx="50%" cy="50%" outerRadius={75} dataKey="value" label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`} style={{ fontSize: '0.625rem', fontWeight: 600 }}>
             {chartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
           </Pie>
           <Tooltip formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Amount']} contentStyle={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: '10px', fontSize: '0.8125rem' }} />
