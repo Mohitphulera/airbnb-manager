@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Property {
+  id              String    @id @default(cuid())
+  name            String
+  description     String
+  location        String
+  imageUrls       String?   // JSON string array
+  amenities       String?   // JSON string array: ["WiFi","Pool","AC",...]
+  type            String    // "OWNED" or "COMMISSION"
+  commissionRate  Float?
+  pricePerNight   Float
+  whatsappNumber  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  bookings        Booking[]
+  expenses        Expense[]
+}
+
+model Booking {
+  id              String   @id @default(cuid())
+  propertyId      String
+  property        Property @relation(fields: [propertyId], references: [id])
+  customerName    String
+  customerPhone   String?
+  checkInDate     DateTime
+  checkOutDate    DateTime
+  totalAmount     Float
+  source          String   // "AIRBNB" or "DIRECT" or "OTHER"
+  commissionOwed  Float?
+  cleaningStatus  String   @default("PENDING") // "PENDING", "IN_PROGRESS", "DONE"
+  notes           String?  // Staff notes, key handover, etc.
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Expense {
+  id              String   @id @default(cuid())
+  propertyId      String
+  property        Property @relation(fields: [propertyId], references: [id])
+  description     String
+  amount          Float
+  category        String   // "CLEANING","REPAIR","UTILITY","OTHER"
+  date            DateTime
+  createdAt       DateTime @default(now())
+}
+
+model SaleProperty {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  location        String
+  price           Float
+  area            Float?           // in sq ft
+  bedrooms        Int?
+  bathrooms       Int?
+  propertyType    String           // "APARTMENT","VILLA","PLOT","COMMERCIAL","FARMHOUSE"
+  status          String   @default("AVAILABLE")  // "AVAILABLE","SOLD","UNDER_NEGOTIATION"
+  imageUrls       String?          // JSON string array
+  features        String?          // JSON string array: ["Garden","Parking","24x7 Security",...]
+  whatsappNumber  String?
+  monthlyRentalEstimate Float?     // estimated rental income for ROI calc
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
