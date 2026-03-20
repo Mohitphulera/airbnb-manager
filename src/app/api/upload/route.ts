@@ -1,11 +1,29 @@
 import { NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Cloudinary config must be inside the request handler for serverless environments
+// Upload a single buffer to Cloudinary and return the optimized URL
+function uploadToCloudinary(buffer: Buffer): Promise<string> {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      { folder: 'airbnb-manager', resource_type: 'image' },
+      (error, result) => {
+        if (error) reject(error)
+        else {
+          let url = result?.secure_url || ''
+          // Auto-format for browser compatibility (HEIC → JPEG, etc.)
+          url = url.replace('/upload/', '/upload/f_auto,q_auto/')
+          url = url.replace(/\.[^/.]+$/, '.jpg')
+          resolve(url)
+        }
+      }
+    ).end(buffer)
+  })
+}
+
 export async function POST(request: Request) {
   if (!process.env.CLOUDINARY_API_SECRET) {
-    console.error("Missing CLOUDINARY_API_SECRET")
-    return NextResponse.json({ error: 'Server misconfiguration: API Secret missing' }, { status: 500 })
+    console.error('Missing CLOUDINARY_API_SECRET')
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
   }
 
   cloudinary.config({
@@ -21,37 +39,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No files provided' }, { status: 400 })
   }
 
-  const urls: string[] = []
+  // Upload all files in parallel for speed (fixes multi-file timeout)
+  try {
+    const uploadPromises = files.map(async (file) => {
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      return uploadToCloudinary(buffer)
+    })
 
-  for (const file of files) {
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    try {
-      // Uploading from memory directly to Cloudinary via a stream buffer
-      const uploadResult = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: 'airbnb-manager' }, 
-          (error, result) => {
-            if (error) reject(error)
-            else resolve(result?.secure_url)
-          }
-        ).end(buffer)
-      })
-
-      let finalUrl = uploadResult as string
-      
-      // Auto-format HEIC and other raw files to WebP/JPEG so browsers can render them
-      finalUrl = finalUrl.replace('/upload/', '/upload/f_auto,q_auto/')
-      // Change extension to jpg so it doesn't force a download of raw heic
-      finalUrl = finalUrl.replace(/\.[^/.]+$/, ".jpg")
-
-      urls.push(finalUrl)
-    } catch (error) {
-      console.error("Cloudinary upload error:", error)
-      return NextResponse.json({ error: 'Failed to upload to cloud' }, { status: 500 })
-    }
+    const urls = await Promise.all(uploadPromises)
+    return NextResponse.json({ urls })
+  } catch (error) {
+    console.error('Cloudinary upload error:', error)
+    return NextResponse.json({ error: 'Failed to upload to cloud' }, { status: 500 })
   }
-
-  return NextResponse.json({ urls })
 }

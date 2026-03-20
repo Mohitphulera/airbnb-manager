@@ -632,4 +632,10 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   .container {
     padding: 0 1rem;
   }
+  /* Property Detail Mobile */
+  .detail-gallery {
+    grid-template-columns: 1fr !important;
+    max-height: 280px !important;
+  }
 }
+

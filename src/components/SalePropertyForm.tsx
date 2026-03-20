@@ -29,48 +29,24 @@ export default function SalePropertyForm() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
-
-    let uploadedUrls: string[] = []
     setUploading(true)
-    try {
-      // 1. Get secure signature from our backend
-      const signRes = await fetch('/api/sign-cloudinary', { method: 'POST' })
-      const { timestamp, signature, cloudName, apiKey } = await signRes.json()
 
-      // 2. Upload directly from browser to Cloudinary (bypassing Vercel's strict 4MB payload limit)
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const uploadData = new FormData()
-        uploadData.append('file', file)
-        uploadData.append('api_key', apiKey)
-        uploadData.append('timestamp', timestamp)
-        uploadData.append('signature', signature)
-        uploadData.append('folder', 'airbnb-manager')
-        
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-          method: 'POST',
-          body: uploadData
-        })
-        const data = await res.json()
-        
-        let finalUrl = data.secure_url
-        finalUrl = finalUrl.replace('/upload/', '/upload/f_auto,q_auto/')
-        finalUrl = finalUrl.replace(/\.[^/.]+$/, ".jpg")
-        return finalUrl
-      })
-      
-      uploadedUrls = await Promise.all(uploadPromises)
-      if (uploadedUrls.length > 0) {
-        setImageUrls(prev => [...prev, ...uploadedUrls])
-        showToast(`${uploadedUrls.length} photo(s) uploaded`, 'success')
+    const formData = new FormData()
+    Array.from(files).forEach(f => formData.append('files', f))
+
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.urls) {
+        setImageUrls(prev => [...prev, ...data.urls])
+        showToast(`${data.urls.length} photo(s) uploaded`, 'success')
       }
-    } catch (error) {
-      console.error('Direct Cloudinary upload failed:', error)
+    } catch (err) {
+      console.error('Upload failed', err)
       showToast('Photo upload failed', 'error')
-      alert('Failed to upload photos. Please try again or use smaller files.')
-    } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ''
     }
+    setUploading(false)
+    if (fileRef.current) fileRef.current.value = ''
   }
 
   const addUrlManual = () => {

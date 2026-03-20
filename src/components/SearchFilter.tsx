@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import ImageGallery from './ImageGallery'
 import ClientBookingAction from './ClientBookingAction'
 
@@ -66,14 +67,18 @@ export default function SearchFilter({ properties }: { properties: any[] }) {
       <div className="property-grid fade-up fade-up-3">
         {filtered.map(p => (
           <div key={p.id} className="property-card">
-            <div className="property-image-wrap">
-              <ImageGallery urls={p.images} />
-            </div>
+            <Link href={`/property/${p.id}`}>
+              <div className="property-image-wrap" style={{ cursor: 'pointer' }}>
+                <ImageGallery urls={p.images} />
+              </div>
+            </Link>
 
             <div className="property-content">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>{p.name}</h3>
+                  <Link href={`/property/${p.id}`} style={{ textDecoration: 'none' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>{p.name}</h3>
+                  </Link>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{p.location}</p>
                 </div>
                 {p.type === 'OWNED' && <span className="badge badge-blue">Verified</span>}
@@ -103,6 +108,9 @@ export default function SearchFilter({ properties }: { properties: any[] }) {
                   <span style={{ fontWeight: 700, fontSize: '1rem' }}>₹{p.pricePerNight.toLocaleString('en-IN')}</span>
                   <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}> / night</span>
                 </div>
+                <Link href={`/property/${p.id}`} className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.375rem 0.875rem', borderRadius: '8px' }}>
+                  View Details →
+                </Link>
               </div>
 
               <div style={{ marginTop: '0.75rem' }}>
