@@ -242,6 +242,23 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 
 .property-content { padding: 0.875rem 0.25rem; }
 
+/* ======================= ADMIN LAYOUT ======================= */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+  background: var(--background);
+}
+
+.admin-mobile-topbar {
+  display: none;
+}
+
 /* ======================= SIDEBAR ======================= */
 .sidebar {
   width: 250px; min-width: 250px;
@@ -250,6 +267,7 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   display: flex; flex-direction: column;
   position: relative;
   overflow: hidden;
+  z-index: 200;
 }
 .sidebar::before {
   content: '';
@@ -266,6 +284,50 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   display: flex; align-items: center; gap: 0.625rem;
   padding: 0.5rem 0.625rem; margin-bottom: 2rem;
   position: relative;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* Hamburger */
+.hamburger-btn {
+  background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 6px;
+}
+.hamburger-line {
+  display: block; width: 22px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.hamburger-line.open:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger-line.open:nth-child(2) { opacity: 0; }
+.hamburger-line.open:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ======================= DASHBOARD GRIDS ======================= */
+.dash-ops-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.dash-charts-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.dash-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .nav-link {
@@ -312,7 +374,6 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 .metric-card:hover::before { opacity: 1; }
 
 .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.75rem; }
-@media (max-width: 900px) { .metrics-row { grid-template-columns: repeat(2, 1fr); } }
 
 /* ======================= ANIMATIONS ======================= */
 @keyframes fadeUp {
@@ -417,7 +478,6 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 
 /* ======================= ADMIN PAGE LAYOUTS ======================= */
 .admin-grid { display: grid; grid-template-columns: 360px 1fr; gap: 1.75rem; }
-@media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }
 
 .admin-sidebar-card {
   background: #fff; border: 1px solid var(--border);
@@ -600,8 +660,61 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   font-weight: 600;
 }
 
-/* ======================= RESPONSIVE ======================= */
+/* ======================= RESPONSIVE: TABLET ======================= */
+@media (max-width: 1024px) {
+  .admin-grid { grid-template-columns: 1fr; }
+  .dash-charts-grid { grid-template-columns: 1fr; }
+  .dash-two-col { grid-template-columns: 1fr; }
+  .dash-ops-grid { grid-template-columns: 1fr 1fr; }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ======================= RESPONSIVE: MOBILE ======================= */
 @media (max-width: 768px) {
+  /* Admin Layout */
+  .admin-layout { flex-direction: column; }
+  .admin-main { padding: 1rem; padding-top: 4.5rem; }
+
+  .admin-mobile-topbar {
+    display: flex !important;
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 300;
+    background: linear-gradient(135deg, #1E3A5F 0%, #1A2744 100%);
+    padding: 0.75rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 400;
+    width: 280px; min-width: 280px;
+    padding-top: 1rem;
+  }
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+  .sidebar-overlay {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 350;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Dashboard Grids */
+  .dash-ops-grid { grid-template-columns: 1fr !important; }
+  .dash-charts-grid { grid-template-columns: 1fr !important; }
+  .dash-two-col { grid-template-columns: 1fr !important; }
+  .metrics-row { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .dash-header { flex-direction: column; gap: 0.75rem; }
+
+  /* Public */
   .public-nav-inner {
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -626,16 +739,28 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .metrics-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
   .container {
     padding: 0 1rem;
   }
+
   /* Property Detail Mobile */
   .detail-gallery {
     grid-template-columns: 1fr !important;
     max-height: 280px !important;
   }
+
+  /* Tables Mobile */
+  .table-container { font-size: 0.75rem; }
+  th, td { padding: 0.625rem 0.5rem; font-size: 0.75rem; }
+
+  /* Metric cards smaller padding */
+  .metric-card { padding: 1rem; }
 }
 
+/* ======================= RESPONSIVE: SMALL MOBILE ======================= */
+@media (max-width: 480px) {
+  .metrics-row { grid-template-columns: 1fr; }
+  .metric-card { padding: 0.875rem; }
+  h1 { font-size: 1.375rem; }
+  h2 { font-size: 1.25rem; }
+}

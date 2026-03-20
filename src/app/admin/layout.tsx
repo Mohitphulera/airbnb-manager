@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { logoutAction } from '@/actions/authActions'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const navItems = [
     { href: '/admin', label: '🎯 Dashboard', exact: true },
@@ -26,8 +28,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <aside className="sidebar">
+    <div className="admin-layout">
+      {/* Mobile top bar */}
+      <div className="admin-mobile-topbar">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hamburger-btn" aria-label="Toggle menu">
+          <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="logo-img-sidebar" style={{ width: '30px', height: '30px' }} />
+          <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#fff' }}>Cozy B&B</span>
+        </div>
+        <div style={{ width: '36px' }} />
+      </div>
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-logo">
           <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="logo-img-sidebar" style={{ width: '34px', height: '34px' }} />
           <span style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>Cozy B&B</span>
@@ -42,6 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               key={item.href}
               href={item.href}
               className={`nav-link ${isActive(item.href, item.exact) ? 'nav-link-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
             >
               {item.label}
             </Link>
@@ -57,6 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               key={item.href}
               href={item.href}
               className={`nav-link ${isActive(item.href) ? 'nav-link-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
             >
               {item.label}
             </Link>
@@ -72,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </form>
         </nav>
       </aside>
-      <main style={{ flex: 1, padding: '2rem 2.5rem', overflowY: 'auto', background: 'var(--background)' }}>
+      <main className="admin-main">
         {children}
       </main>
     </div>

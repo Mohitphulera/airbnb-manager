@@ -17,7 +17,7 @@ export default async function AdminDashboard() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: '1.75rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="dash-header">
           <div>
             <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>
               {greeting} 👋
@@ -58,7 +58,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ===== DAILY OPS SECTION ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="dash-ops-grid">
         {/* Today's Check-ins */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem' }}>
@@ -142,7 +142,7 @@ export default async function AdminDashboard() {
       )}
 
       {/* ===== CHARTS ROW ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="dash-charts-grid">
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <h3 style={{ marginBottom: '0.25rem' }}>Revenue & Profit Trend</h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Last 12 months · Revenue, profit & expenses</p>
@@ -162,7 +162,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ===== PROPERTY P&L + OCCUPANCY ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="dash-two-col">
         {/* Per-Property P&L */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -217,7 +217,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ===== PRICING SUGGESTIONS + EMPTY NIGHTS ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="dash-two-col">
         {/* Smart Pricing */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <h3 style={{ margin: '0 0 1rem 0' }}>🤖 Smart Pricing Suggestions</h3>
