@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Ensure we have configured cloudinary (requires .env variables)
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
-
+// Cloudinary config must be inside the request handler for serverless environments
 export async function POST(request: Request) {
+  if (!process.env.CLOUDINARY_API_SECRET) {
+    console.error("Missing CLOUDINARY_API_SECRET")
+    return NextResponse.json({ error: 'Server misconfiguration: API Secret missing' }, { status: 500 })
+  }
+
+  cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  })
+
   const formData = await request.formData()
   const files = formData.getAll('files') as File[]
 
