@@ -39,7 +39,14 @@ export async function POST(request: Request) {
         ).end(buffer)
       })
 
-      urls.push(uploadResult as string)
+      let finalUrl = uploadResult as string
+      
+      // Auto-format HEIC and other raw files to WebP/JPEG so browsers can render them
+      finalUrl = finalUrl.replace('/upload/', '/upload/f_auto,q_auto/')
+      // Change extension to jpg so it doesn't force a download of raw heic
+      finalUrl = finalUrl.replace(/\.[^/.]+$/, ".jpg")
+
+      urls.push(finalUrl)
     } catch (error) {
       console.error("Cloudinary upload error:", error)
       return NextResponse.json({ error: 'Failed to upload to cloud' }, { status: 500 })
