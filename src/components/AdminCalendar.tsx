@@ -125,16 +125,16 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
         <div className="calendar-detail-panel" style={{ marginTop: '1.25rem', animation: 'fadeUp 0.3s ease' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ margin: 0, fontSize: '1rem' }}>
-              📅 {format(selectedDate, 'EEEE, d MMMM yyyy')}
+              Schedule: {format(selectedDate, 'EEEE, d MMMM yyyy')}
             </h3>
             <button onClick={() => setSelectedDate(null)} className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem' }}>
-              ✕ Close
+              Close
             </button>
           </div>
 
           {selectedBookings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏖️</div>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}></div>
               <p style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No bookings on this date</p>
               <p style={{ fontSize: '0.8125rem' }}>This day is available for all properties</p>
             </div>
@@ -158,7 +158,7 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
                         {b.source}
                       </span>
                       <span className={`badge ${b.cleaningStatus === 'DONE' ? 'badge-green' : b.cleaningStatus === 'IN_PROGRESS' ? 'badge-yellow' : 'badge-gray'}`}>
-                        🧹 {b.cleaningStatus}
+                        {b.cleaningStatus}
                       </span>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
 
                   {b.notes && (
                     <div style={{ marginTop: '0.625rem', padding: '0.5rem 0.75rem', background: '#FFFBEB', borderRadius: '8px', fontSize: '0.8125rem', color: '#92400E' }}>
-                      📝 {b.notes}
+                      {b.notes}
                     </div>
                   )}
                 </div>

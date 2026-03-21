@@ -22,7 +22,7 @@ export default async function AdminDashboard() {
         <div className="dash-header">
           <div>
             <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>
-              {greeting} 👋
+              {greeting}
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
               {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
@@ -30,7 +30,7 @@ export default async function AdminDashboard() {
             </p>
           </div>
           <Link href="/admin/analytics" className="btn btn-outline" style={{ fontSize: '0.8125rem' }}>
-            📊 Full Analytics
+            View Analytics
           </Link>
         </div>
       </div>
@@ -71,11 +71,11 @@ export default async function AdminDashboard() {
             <div key={b.id} style={{ background: '#ECFDF5', borderRadius: '10px', padding: '0.625rem 0.75rem', marginBottom: '0.5rem', border: '1px solid rgba(5,150,105,0.1)' }}>
               <div style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{b.customerName}</div>
               <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{b.property.name}</div>
-              {b.notes && <div style={{ fontSize: '0.6875rem', color: '#065F46', marginTop: '0.25rem', fontStyle: 'italic' }}>📝 {b.notes}</div>}
+              {b.notes && <div style={{ fontSize: '0.6875rem', color: '#065F46', marginTop: '0.25rem', fontStyle: 'italic' }}>{b.notes}</div>}
             </div>
           )) : (
             <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
-              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>✨</div>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}></div>
               No check-ins today
             </div>
           )}
@@ -84,7 +84,7 @@ export default async function AdminDashboard() {
         {/* Today's Check-outs */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem' }}>
-            <h3 style={{ margin: 0, fontSize: '0.9375rem' }}>🚪 Check-outs Today</h3>
+            <h3 style={{ margin: 0, fontSize: '0.9375rem' }}>Check-outs Today</h3>
             <span className="badge badge-yellow">{todayCheckOuts.length}</span>
           </div>
           {todayCheckOuts.length > 0 ? todayCheckOuts.map((b: any) => (
@@ -93,13 +93,13 @@ export default async function AdminDashboard() {
               <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{b.property.name}</div>
               <div style={{ fontSize: '0.6875rem', marginTop: '0.25rem' }}>
                 <span className={`badge ${b.cleaningStatus === 'DONE' ? 'badge-green' : b.cleaningStatus === 'IN_PROGRESS' ? 'badge-yellow' : 'badge-gray'}`} style={{ fontSize: '0.5625rem' }}>
-                  🧹 {b.cleaningStatus}
+                  {b.cleaningStatus}
                 </span>
               </div>
             </div>
           )) : (
             <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
-              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>✨</div>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}></div>
               No check-outs today
             </div>
           )}
@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
         {/* Cleaning Schedule */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem' }}>
-            <h3 style={{ margin: 0, fontSize: '0.9375rem' }}>🧹 Cleaning Queue</h3>
+            <h3 style={{ margin: 0, fontSize: '0.9375rem' }}>Cleaning Queue</h3>
             <span className={`badge ${cleaningNeeded.length > 0 ? 'badge-pink' : 'badge-green'}`}>{cleaningNeeded.length}</span>
           </div>
           {cleaningNeeded.length > 0 ? cleaningNeeded.map((b: any) => (
@@ -116,7 +116,7 @@ export default async function AdminDashboard() {
               <div style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{b.property.name}</div>
               <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>After {b.customerName}'s checkout</div>
               <div style={{ fontSize: '0.6875rem', marginTop: '0.25rem', color: 'var(--primary)', fontWeight: 600 }}>
-                {b.cleaningStatus === 'PENDING' ? '⏳ Pending' : '🔄 In Progress'}
+                {b.cleaningStatus === 'PENDING' ? 'Pending' : '🔄 In Progress'}
               </div>
             </div>
           )) : (
@@ -168,7 +168,7 @@ export default async function AdminDashboard() {
         {/* Per-Property P&L */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ margin: 0 }}>💰 Property P&L</h3>
+            <h3 style={{ margin: 0 }}>Amount Property P&L</h3>
           </div>
           <div className="table-container">
             <table>
@@ -210,7 +210,7 @@ export default async function AdminDashboard() {
 
         {/* Occupancy Chart */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ marginBottom: '0.25rem' }}>📊 Occupancy by Property</h3>
+          <h3 style={{ marginBottom: '0.25rem' }}>Analytics: Occupancy by Property</h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Last 90 days · Green = good, red = needs attention</p>
           {propertyPnL.length > 0 ? <OccupancyChart data={occupancyData} /> : (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No data yet</div>
@@ -222,7 +222,7 @@ export default async function AdminDashboard() {
       <div className="dash-two-col">
         {/* Smart Pricing */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem 0' }}>🤖 Smart Pricing Suggestions</h3>
+          <h3 style={{ margin: '0 0 1rem 0' }}>Smart Pricing Suggestions</h3>
           {pricingSuggestions.length > 0 ? pricingSuggestions.map(s => (
             <div key={s.propertyId} style={{ background: s.type === 'increase' ? '#ECFDF5' : s.type === 'decrease' ? '#FEF2F2' : 'var(--cozy-blue-light)', borderRadius: '10px', padding: '0.875rem', marginBottom: '0.625rem', border: `1px solid ${s.type === 'increase' ? 'rgba(5,150,105,0.15)' : s.type === 'decrease' ? 'rgba(220,38,38,0.1)' : 'rgba(43,108,176,0.1)'}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
@@ -250,7 +250,7 @@ export default async function AdminDashboard() {
 
         {/* Empty Nights Filler */}
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem 0' }}>🔥 Empty Nights Filler</h3>
+          <h3 style={{ margin: '0 0 1rem 0' }}>Empty Nights (Next 30 Days) Filler</h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.875rem' }}>Upcoming empty nights in the next 30 days</p>
           {emptyNights.length > 0 ? emptyNights.map(en => {
             const consecutive = findConsecutiveGaps(en.dates)
@@ -284,7 +284,7 @@ export default async function AdminDashboard() {
       {/* ===== UPCOMING CHECK-INS ===== */}
       {upcomingCheckIns.length > 0 && (
         <div className="metric-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
-          <h3 style={{ margin: '0 0 0.875rem 0' }}>📅 Upcoming Check-ins (Next 7 Days)</h3>
+          <h3 style={{ margin: '0 0 0.875rem 0' }}>Schedule: Upcoming Check-ins (Next 7 Days)</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '0.625rem' }}>
             {upcomingCheckIns.map((b: any) => (
               <div key={b.id} style={{ background: 'var(--cozy-blue-light)', borderRadius: '10px', padding: '0.75rem', border: '1px solid rgba(43,108,176,0.1)' }}>

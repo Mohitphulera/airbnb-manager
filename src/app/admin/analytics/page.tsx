@@ -18,7 +18,7 @@ export default async function AnalyticsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>📊 Advanced Analytics</h1>
+          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>Advanced Analytics</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Deep insights into your property business performance</p>
         </div>
         <Link href="/admin" className="btn btn-outline" style={{ fontSize: '0.8125rem' }}>← Dashboard</Link>
@@ -44,7 +44,7 @@ export default async function AnalyticsPage() {
       {/* Insights */}
       {insights.length > 0 && (
         <div className="metric-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', background: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)', border: '1px solid rgba(217,119,6,0.15)' }}>
-          <h3 style={{ margin: '0 0 0.75rem', fontSize: '0.9375rem' }}>💡 AI Insights</h3>
+          <h3 style={{ margin: '0 0 0.75rem', fontSize: '0.9375rem' }}>AI Insights</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
             {insights.map((insight, i) => (
               <div key={i} style={{ fontSize: '0.8125rem', lineHeight: 1.5, padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>{insight}</div>
@@ -107,7 +107,7 @@ export default async function AnalyticsPage() {
       {/* Pricing + Empty Nights */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem' }}>🤖 Smart Pricing</h3>
+          <h3 style={{ margin: '0 0 1rem' }}>Smart Pricing</h3>
           {pricingSuggestions.map(s => (
             <div key={s.propertyId} style={{ background: s.type === 'increase' ? '#ECFDF5' : s.type === 'decrease' ? '#FEF2F2' : 'var(--cozy-blue-light)', borderRadius: '10px', padding: '0.75rem', marginBottom: '0.5rem', border: `1px solid ${s.type === 'increase' ? 'rgba(5,150,105,0.15)' : s.type === 'decrease' ? 'rgba(220,38,38,0.1)' : 'rgba(43,108,176,0.1)'}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
@@ -125,14 +125,14 @@ export default async function AnalyticsPage() {
         </div>
 
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem' }}>🔥 Empty Nights (Next 30 Days)</h3>
+          <h3 style={{ margin: '0 0 1rem' }}>Empty Nights (Next 30 Days) (Next 30 Days)</h3>
           {emptyNights.length > 0 ? emptyNights.map(en => (
             <div key={en.propertyId} style={{ marginBottom: '0.75rem', padding: '0.75rem', background: en.dates.length > 15 ? '#FEF2F2' : '#FAFAFA', borderRadius: '10px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                 <span style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{en.property}</span>
                 <span className={`badge ${en.dates.length > 15 ? 'badge-pink' : en.dates.length > 7 ? 'badge-yellow' : 'badge-green'}`}>{en.dates.length} nights</span>
               </div>
-              {en.dates.length > 10 && <p style={{ fontSize: '0.6875rem', color: '#B45309', fontWeight: 600 }}>💡 Consider offering a 10-15% discount</p>}
+              {en.dates.length > 10 && <p style={{ fontSize: '0.6875rem', color: '#B45309', fontWeight: 600 }}>Consider offering a 10-15% discount</p>}
             </div>
           )) : <p style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)' }}>All nights are accounted for!</p>}
         </div>

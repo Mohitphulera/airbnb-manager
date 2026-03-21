@@ -28,7 +28,7 @@ export default function ShareProperty({ property }: { property: any }) {
           <div className="confirm-dialog" onClick={e => e.stopPropagation()} style={{ textAlign: 'left', maxWidth: '420px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0, fontSize: '1.0625rem' }}>Share this property</h3>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}>✕</button>
+              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}></button>
             </div>
 
             {/* QR Code */}
@@ -51,7 +51,7 @@ export default function ShareProperty({ property }: { property: any }) {
                 onClick={copy}
               />
               <button onClick={copy} className="btn btn-primary" style={{ borderRadius: '8px', whiteSpace: 'nowrap', fontSize: '0.8125rem' }}>
-                📋 Copy
+                Copy
               </button>
             </div>
 

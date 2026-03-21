@@ -21,7 +21,7 @@ const FEATURE_ICONS: Record<string, string> = {
   'Gym': '💪',
   'Club House': '🏛️',
   'Park': '🌳',
-  'Gated Community': '🏘️',
+  'Gated Community': '',
   'Corner Plot': '📐',
   'Vastu Compliant': '🧭',
 }
@@ -62,7 +62,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
       property.area && `${property.area} sqft`,
       property.bedrooms && `${property.bedrooms} BHK`,
     ].filter(Boolean).join(' · ')
-    const msg = `Hi! I'm interested in your property:\n\n📍 *${property.title}*\n📌 ${property.location}\n💰 ${formatPrice(property.price)}${details ? `\n📏 ${details}` : ''}\n\nI would like to inquire about this property and schedule a visit.${nameStr}${phoneStr}`
+    const msg = `Hi! I'm interested in your property:\n\nLocation: *${property.title}*\n${property.location}\n${formatPrice(property.price)}${details ? `\n${details}` : ''}\n\nI would like to inquire about this property and schedule a visit.${nameStr}${phoneStr}`
     window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank')
     setSelectedProperty(null)
     setInquiryName('')
@@ -150,7 +150,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                   <div>
                     <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>{p.title}</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      📍 {p.location}
+                      Location: {p.location}
                     </p>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                   )}
                   {p.bedrooms && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                      <span style={{ fontSize: '0.875rem' }}>🛏️</span> {p.bedrooms} BHK
+                      <span style={{ fontSize: '0.875rem' }}></span> {p.bedrooms} BHK
                     </div>
                   )}
                   {p.bathrooms && (
@@ -212,7 +212,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                   </div>
                   <div style={{ display: 'flex', gap: '0.375rem' }}>
                     <button onClick={() => { setRoiProperty(p); setCustomRent(''); }} className="btn btn-outline" style={{ borderRadius: '10px', padding: '0.5rem 0.75rem', fontSize: '0.75rem' }}>
-                      📊 ROI
+                      ROI
                     </button>
                     <button
                       onClick={() => setSelectedProperty(p)}
@@ -231,7 +231,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
 
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-muted)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏘️</div>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}></div>
           <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>No matching properties</p>
           <p>Try adjusting your search or filters</p>
         </div>
@@ -257,13 +257,13 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ margin: 0 }}>📊 ROI Calculator</h3>
+              <h3 style={{ margin: 0 }}>ROI Calculator</h3>
               <button onClick={() => setRoiProperty(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
             </div>
 
             <div style={{ background: 'var(--cozy-blue-light)', borderRadius: '12px', padding: '1rem', marginBottom: '1.25rem' }}>
               <p style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{roiProperty.title}</p>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>📍 {roiProperty.location}</p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Location: {roiProperty.location}</p>
               <p style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.125rem' }}>{formatPrice(roiProperty.price)}</p>
             </div>
 
@@ -337,13 +337,13 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ margin: 0 }}>📩 Inquire About Property</h3>
+              <h3 style={{ margin: 0 }}>Inquire About Property</h3>
               <button onClick={() => setSelectedProperty(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
             </div>
 
             <div style={{ background: 'var(--cozy-blue-light)', borderRadius: '12px', padding: '1rem', marginBottom: '1.25rem' }}>
               <p style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{selectedProperty.title}</p>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>📍 {selectedProperty.location}</p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Location: {selectedProperty.location}</p>
               <p style={{ fontWeight: 700, color: 'var(--primary)' }}>{formatPrice(selectedProperty.price)}</p>
             </div>
 

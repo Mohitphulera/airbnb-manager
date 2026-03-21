@@ -5,7 +5,7 @@ import { confirmBookingRequest, updateBookingRequestStatus } from '@/actions/boo
 import { showToast } from '@/components/Toast'
 
 const STATUS_STYLES: Record<string, { className: string; label: string }> = {
-  PENDING: { className: 'badge-yellow', label: '⏳ Pending' },
+  PENDING: { className: 'badge-yellow', label: 'Pending' },
   CONFIRMED: { className: 'badge-green', label: '✅ Confirmed' },
   REJECTED: { className: 'badge-gray', label: '❌ Rejected' },
   CANCELLED: { className: 'badge-gray', label: '🚫 Cancelled' },
@@ -41,7 +41,7 @@ export default function BookingRequestsPanel({ requests }: { requests: any[] }) 
     const checkIn = new Date(req.checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
     const checkOut = new Date(req.checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
     const msg = action === 'confirm'
-      ? `Hello ${req.guestName}! 🎉 Your booking for *${req.property.name}* has been CONFIRMED!\n\n📅 Check-in: ${checkIn}\n📅 Check-out: ${checkOut}\n💰 Total: ₹${req.totalAmount.toLocaleString('en-IN')}\n\nWe look forward to hosting you! 🏠`
+      ? `Hello ${req.guestName}! Your booking for *${req.property.name}* has been CONFIRMED!\n\nCheck-in: ${checkIn}\nCheck-out: ${checkOut}\nTotal: ₹${req.totalAmount.toLocaleString('en-IN')}\n\nWe look forward to hosting you! `
       : `Hello ${req.guestName}, unfortunately your booking request for ${req.property.name} (${checkIn} - ${checkOut}) could not be confirmed at this time. Please feel free to try other dates.`
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
   }

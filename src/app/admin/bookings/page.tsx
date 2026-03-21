@@ -20,12 +20,12 @@ export default async function BookingsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
-          <h1>📋 Bookings</h1>
+          <h1>Bookings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{bookings.length} bookings recorded</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <a href="/api/export-expenses" className="btn btn-outline" download style={{ fontSize: '0.8125rem' }}>📥 Export CSV</a>
-          <a href="/api/export" className="btn btn-outline" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>📥 Export Excel</a>
+          <a href="/api/export-expenses" className="btn btn-outline" download style={{ fontSize: '0.8125rem' }}>Export CSV</a>
+          <a href="/api/export" className="btn btn-outline" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>Export Excel</a>
         </div>
       </div>
 
@@ -35,7 +35,7 @@ export default async function BookingsPage() {
           <div className="metric-card" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0 }}>
-                📩 Guest Booking Requests
+                Guest Booking Requests
                 {pendingCount > 0 && (
                   <span style={{
                     background: '#EF4444', color: '#fff', borderRadius: '50%',
@@ -52,7 +52,7 @@ export default async function BookingsPage() {
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>📝 New Booking</h3>
+          <h3 style={{ marginBottom: '1rem' }}>New Booking</h3>
           <BookingForm properties={properties} />
         </div>
 
@@ -82,7 +82,7 @@ export default async function BookingsPage() {
                     <td>
                       <div style={{ fontWeight: 500 }}>{b.customerName}</div>
                       {b.customerPhone && <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{b.customerPhone}</div>}
-                      {b.notes && <div style={{ fontSize: '0.625rem', color: 'var(--primary)', marginTop: '0.125rem', fontStyle: 'italic' }}>📝 {b.notes.length > 30 ? b.notes.slice(0, 30) + '…' : b.notes}</div>}
+                      {b.notes && <div style={{ fontSize: '0.625rem', color: 'var(--primary)', marginTop: '0.125rem', fontStyle: 'italic' }}>{b.notes.length > 30 ? b.notes.slice(0, 30) + '…' : b.notes}</div>}
                     </td>
                     <td style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                       {new Date(b.checkInDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} → {new Date(b.checkOutDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}

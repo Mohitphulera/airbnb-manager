@@ -66,7 +66,7 @@ export default function ReviewSection({ propertyId, reviews, avgRating, reviewCo
           )}
         </div>
         <button onClick={() => setShowForm(!showForm)} className="btn btn-outline" style={{ borderRadius: '8px', fontSize: '0.8125rem' }}>
-          {showForm ? 'Cancel' : '✍️ Write a Review'}
+          {showForm ? 'Cancel' : 'Write a Review'}
         </button>
       </div>
 

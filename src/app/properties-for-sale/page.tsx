@@ -26,10 +26,10 @@ export default async function PropertiesForSalePage() {
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Link href="/" className="btn btn-outline" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              🏠 Stays
+              Stays
             </Link>
             <Link href="/properties-for-sale" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              🏷️ Buy Property
+              Sale Buy Property
             </Link>
             <Link href="/login" className="btn btn-secondary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
               Host Login
@@ -42,7 +42,7 @@ export default async function PropertiesForSalePage() {
       <header className="container hero-section fade-up">
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ECFDF5', padding: '0.35rem 0.875rem', borderRadius: '20px', marginBottom: '1rem', fontSize: '0.8125rem', color: 'var(--cozy-success)', fontWeight: 600 }}>
-            🏷️ Premium properties for sale
+            Sale Premium properties for sale
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, maxWidth: '560px', lineHeight: '1.1', marginBottom: '0.75rem', letterSpacing: '-0.035em' }}>
             Find your dream

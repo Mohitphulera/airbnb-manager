@@ -176,7 +176,7 @@ export default function PropertyForm() {
     setSubmitting(true)
     try {
       await addProperty(formData)
-      showToast('🏠 Property added successfully!', 'success')
+      showToast('Property added successfully!', 'success')
       formRef.current?.reset()
       setType('OWNED')
       setAmenities([])
@@ -278,7 +278,7 @@ export default function PropertyForm() {
           onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = 'var(--primary)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '⏳' : '📷'}</div>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '' : ''}</div>
           <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
             {uploading
               ? `Uploading ${uploadProgress.completed} of ${uploadProgress.total}...`

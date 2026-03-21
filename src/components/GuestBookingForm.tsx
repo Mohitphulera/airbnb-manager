@@ -56,7 +56,7 @@ export default function GuestBookingForm({ property, checkIn, checkOut, nights, 
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, margin: 0 }}>Complete Your Booking</h3>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}>✕</button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}></button>
       </div>
 
       {/* Summary */}
@@ -90,7 +90,7 @@ export default function GuestBookingForm({ property, checkIn, checkOut, nights, 
           <textarea name="message" className="form-input" rows={2} placeholder="Any special requests..." />
         </div>
         <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} disabled={submitting} style={{ width: '100%', borderRadius: '10px', padding: '0.75rem', fontSize: '0.9375rem', marginTop: '0.25rem' }}>
-          {submitting ? 'Sending...' : `📩 Request Booking — ₹${totalPrice.toLocaleString('en-IN')}`}
+          {submitting ? 'Sending...' : `Request Booking — ₹${totalPrice.toLocaleString('en-IN')}`}
         </button>
         <p style={{ textAlign: 'center', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
           No payment needed now. The host will confirm availability first.

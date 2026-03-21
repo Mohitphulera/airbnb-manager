@@ -34,7 +34,7 @@ export default async function SalePropertiesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1>🏷️ Properties for Sale</h1>
+          <h1>Properties for Sale</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
             {totalListed} listed · {available} available · {sold} sold
           </p>
@@ -43,7 +43,7 @@ export default async function SalePropertiesPage() {
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>➕ List New Property</h3>
+          <h3 style={{ marginBottom: '1rem' }}>List New Property</h3>
           <SalePropertyForm />
         </div>
 

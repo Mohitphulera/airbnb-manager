@@ -19,7 +19,7 @@ export default function BookingForm({ properties }: { properties: any[] }) {
       setError(result.error)
       showToast(result.error, 'error')
     } else {
-      showToast('📋 Booking added successfully!', 'success')
+      showToast('Booking added successfully!', 'success')
       formRef.current?.reset()
     }
     setSubmitting(false)
@@ -27,7 +27,7 @@ export default function BookingForm({ properties }: { properties: any[] }) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-      {error && <div style={{ background: '#FEF2F2', color: 'var(--danger)', padding: '0.625rem 0.875rem', borderRadius: '10px', fontSize: '0.8125rem', border: '1px solid rgba(220,38,38,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>⚠️ {error}</div>}
+      {error && <div style={{ background: '#FEF2F2', color: 'var(--danger)', padding: '0.625rem 0.875rem', borderRadius: '10px', fontSize: '0.8125rem', border: '1px solid rgba(220,38,38,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{error}</div>}
 
       <div className="form-group">
         <label className="form-label">Property</label>

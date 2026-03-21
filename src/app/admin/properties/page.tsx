@@ -17,7 +17,7 @@ export default async function PropertiesPage() {
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>✨ Add Property</h3>
+          <h3 style={{ marginBottom: '1rem' }}>Add Property</h3>
           <PropertyForm />
         </div>
 

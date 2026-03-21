@@ -73,7 +73,7 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
               </button>
             </>
           )}
-          <button onClick={() => setLightbox(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+          <button onClick={() => setLightbox(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', fontSize: '18px', cursor: 'pointer' }}></button>
           <div style={{ position: 'absolute', bottom: '20px', color: '#fff', fontSize: '0.875rem', fontWeight: 600 }}>
             {currentImg + 1} / {images.length}
           </div>
@@ -143,7 +143,7 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
               height: '240px', background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '1rem'
             }}>
-              📷 No photos available
+              No photos available
             </div>
           )}
 
@@ -321,8 +321,8 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                     disabled={!selectedRange.from || !selectedRange.to}
                   >
                     {selectedRange.from && selectedRange.to
-                      ? `📩 Book Now — ₹${totalPrice.toLocaleString('en-IN')}`
-                      : '📅 Pick dates to book'
+                      ? `Book Now — ₹${totalPrice.toLocaleString('en-IN')}`
+                      : 'Pick dates to book'
                     }
                   </button>
 

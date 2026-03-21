@@ -54,10 +54,10 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <DarkModeToggle />
             <Link href="/" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              🏠 Stays
+              Stays
             </Link>
             <Link href="/properties-for-sale" className="btn btn-outline" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              🏷️ Buy
+              Sale Buy
             </Link>
             <Link href="/login" className="btn btn-secondary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
               Host Login

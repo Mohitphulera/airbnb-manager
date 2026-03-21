@@ -5,7 +5,7 @@ import { showToast } from '@/components/Toast'
 import { useState } from 'react'
 
 const STATUS_CONFIG: Record<string, { emoji: string; label: string; badge: string; next: string }> = {
-  PENDING: { emoji: '⏳', label: 'Pending', badge: 'badge-gray', next: 'IN_PROGRESS' },
+  PENDING: { emoji: '', label: 'Pending', badge: 'badge-gray', next: 'IN_PROGRESS' },
   IN_PROGRESS: { emoji: '🔄', label: 'Cleaning', badge: 'badge-yellow', next: 'DONE' },
   DONE: { emoji: '✅', label: 'Clean', badge: 'badge-green', next: 'PENDING' },
 }
@@ -23,7 +23,7 @@ export default function CleaningStatusToggle({ bookingId, currentStatus }: { boo
       await updateCleaningStatus(bookingId, nextStatus)
       setStatus(nextStatus)
       const nextConfig = STATUS_CONFIG[nextStatus]
-      showToast(`🧹 Cleaning: ${nextConfig.label}`, 'success')
+      showToast(`Cleaning: ${nextConfig.label}`, 'success')
     } catch {
       showToast('Failed to update status', 'error')
     }

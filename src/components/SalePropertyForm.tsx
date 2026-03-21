@@ -162,7 +162,7 @@ export default function SalePropertyForm() {
     setSubmitting(true)
     try {
       await addSaleProperty(formData)
-      showToast('🏷️ Property listed for sale successfully!', 'success')
+      showToast('Property listed for sale successfully!', 'success')
       formRef.current?.reset()
       setFeatures([])
       setImageUrls([])
@@ -277,7 +277,7 @@ export default function SalePropertyForm() {
           onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = 'var(--primary)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '⏳' : '📷'}</div>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '' : ''}</div>
           <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
             {uploading
               ? `Uploading ${uploadProgress.completed} of ${uploadProgress.total}...`

@@ -41,7 +41,7 @@ export default function LoginPage() {
 
         {error && (
           <div style={{ background: '#FEF2F2', color: 'var(--danger)', padding: '0.7rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.8125rem', textAlign: 'center', border: '1px solid rgba(220, 38, 38, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
