@@ -6,6 +6,8 @@ import ReviewSection from '@/components/ReviewSection'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import { notFound } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PropertyDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const [property, reviews, ratingData] = await Promise.all([

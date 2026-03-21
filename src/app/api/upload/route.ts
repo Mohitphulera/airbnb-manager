@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB per file
+const MAX_FILES_PER_REQUEST = 5 // max files in a single request (client sends 1 at a time)
+
 // Upload a single buffer to Cloudinary and return the optimized URL
 function uploadToCloudinary(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -39,7 +42,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No files provided' }, { status: 400 })
   }
 
-  // Upload all files in parallel for speed (fixes multi-file timeout)
+  if (files.length > MAX_FILES_PER_REQUEST) {
+    return NextResponse.json({ error: `Maximum ${MAX_FILES_PER_REQUEST} files per request` }, { status: 400 })
+  }
+
+  // Validate file sizes
+  for (const file of files) {
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File "${file.name}" exceeds 10MB limit (${(file.size / 1024 / 1024).toFixed(1)}MB)` },
+        { status: 400 }
+      )
+    }
+  }
+
+  // Upload all files in parallel for speed
   try {
     const uploadPromises = files.map(async (file) => {
       const bytes = await file.arrayBuffer()

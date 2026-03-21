@@ -2,6 +2,8 @@ import { getBookings } from '@/actions/bookingActions'
 import { getProperties } from '@/actions/propertyActions'
 import AdminCalendar from '@/components/AdminCalendar'
 
+export const dynamic = 'force-dynamic'
+
 export default async function CalendarPage() {
   const [bookings, properties] = await Promise.all([
     getBookings(),

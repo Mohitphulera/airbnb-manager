@@ -5,6 +5,8 @@ import BookingForm from '@/components/BookingForm'
 import CleaningStatusToggle from '@/components/CleaningStatusToggle'
 import BookingRequestsPanel from '@/components/BookingRequestsPanel'
 
+export const dynamic = 'force-dynamic'
+
 export default async function BookingsPage() {
   const [bookings, properties, requests] = await Promise.all([
     getBookings(),

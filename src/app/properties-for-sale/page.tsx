@@ -2,6 +2,8 @@ import { getAvailableSaleProperties } from '@/actions/salePropertyActions'
 import Link from 'next/link'
 import SalePropertyBrowser from '@/components/SalePropertyBrowser'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PropertiesForSalePage() {
   const properties = await getAvailableSaleProperties()
 

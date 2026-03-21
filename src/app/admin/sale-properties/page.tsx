@@ -1,6 +1,8 @@
 import { getSaleProperties, deleteSaleProperty, updateSalePropertyStatus } from '@/actions/salePropertyActions'
 import SalePropertyForm from '@/components/SalePropertyForm'
 
+export const dynamic = 'force-dynamic'
+
 const TYPE_LABELS: Record<string, string> = {
   APARTMENT: '🏢 Apartment',
   VILLA: '🏡 Villa',

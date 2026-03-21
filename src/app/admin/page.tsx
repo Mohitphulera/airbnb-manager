@@ -2,6 +2,8 @@ import { getDashboardData } from '@/actions/bookingActions'
 import { RevenueChart, SourcePieChart, OccupancyChart, ExpensePieChart } from '@/components/AnalyticsCharts'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard() {
   const data = await getDashboardData()
   const { totals, todayCheckIns, todayCheckOuts, upcomingCheckIns, cleaningNeeded, emptyNights, propertyPnL, monthlyTrend, revenueBySource, pricingSuggestions, expenseByCategory, insights } = data

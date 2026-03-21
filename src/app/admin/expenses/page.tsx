@@ -3,6 +3,8 @@ import { getProperties } from '@/actions/propertyActions'
 import { getBookings } from '@/actions/bookingActions'
 import ExpenseForm from '@/components/ExpenseForm'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ExpensesPage() {
   const [expenses, properties, bookings] = await Promise.all([getExpenses(), getProperties(), getBookings()])
   const total = expenses.reduce((sum: number, e: any) => sum + e.amount, 0)

@@ -6,12 +6,114 @@ import { showToast } from '@/components/Toast'
 
 const ALL_AMENITIES = ['WiFi', 'Pool', 'AC', 'Kitchen', 'Parking', 'TV', 'Washer', 'Pet-Friendly', 'Gym', 'Balcony']
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILES = 20
+const CONCURRENT_UPLOADS = 3
+const MAX_IMAGE_DIMENSION = 2000
+
+// Compress image client-side before upload
+function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    // Skip non-image or small files
+    if (!file.type.startsWith('image/') || file.size < 500 * 1024) {
+      resolve(file)
+      return
+    }
+
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const { width, height } = img
+
+      // Skip if already small
+      if (width <= MAX_IMAGE_DIMENSION && height <= MAX_IMAGE_DIMENSION) {
+        resolve(file)
+        return
+      }
+
+      const canvas = document.createElement('canvas')
+      let newW = width
+      let newH = height
+      if (width > height) {
+        newW = MAX_IMAGE_DIMENSION
+        newH = Math.round(height * (MAX_IMAGE_DIMENSION / width))
+      } else {
+        newH = MAX_IMAGE_DIMENSION
+        newW = Math.round(width * (MAX_IMAGE_DIMENSION / height))
+      }
+
+      canvas.width = newW
+      canvas.height = newH
+      const ctx = canvas.getContext('2d')
+      ctx?.drawImage(img, 0, 0, newW, newH)
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+        } else {
+          resolve(file)
+        }
+      }, 'image/jpeg', 0.85)
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      resolve(file)
+    }
+    img.src = url
+  })
+}
+
+// Upload with concurrency control
+async function uploadWithConcurrency(
+  files: File[],
+  onProgress: (completed: number, total: number) => void
+): Promise<string[]> {
+  const urls: string[] = []
+  let completed = 0
+  const total = files.length
+
+  const queue = [...files]
+  const workers: Promise<void>[] = []
+
+  for (let i = 0; i < Math.min(CONCURRENT_UPLOADS, queue.length); i++) {
+    workers.push((async () => {
+      while (queue.length > 0) {
+        const file = queue.shift()
+        if (!file) break
+
+        try {
+          const compressed = await compressImage(file)
+          const formData = new FormData()
+          formData.append('files', compressed)
+
+          const res = await fetch('/api/upload', { method: 'POST', body: formData })
+          const data = await res.json()
+          if (data.urls && data.urls.length > 0) {
+            urls.push(...data.urls)
+          } else {
+            showToast(`Failed to upload: ${file.name}`, 'error')
+          }
+        } catch (err) {
+          console.error('Upload failed for', file.name, err)
+          showToast(`Failed: ${file.name}`, 'error')
+        }
+        completed++
+        onProgress(completed, total)
+      }
+    })())
+  }
+
+  await Promise.all(workers)
+  return urls
+}
+
 export default function PropertyForm() {
   const [type, setType] = useState('OWNED')
   const [amenities, setAmenities] = useState<string[]>([])
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState('')
+  const [uploadProgress, setUploadProgress] = useState({ completed: 0, total: 0 })
   const [urlInput, setUrlInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -21,35 +123,33 @@ export default function PropertyForm() {
     setAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
   }
 
-  // Upload files one at a time to avoid Vercel body size limits
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
-    setUploading(true)
 
     const fileArray = Array.from(files)
-    let uploaded = 0
-    const newUrls: string[] = []
 
-    for (const file of fileArray) {
-      setUploadProgress(`Uploading ${uploaded + 1} of ${fileArray.length}...`)
-      const formData = new FormData()
-      formData.append('files', file)
-
-      try {
-        const res = await fetch('/api/upload', { method: 'POST', body: formData })
-        const data = await res.json()
-        if (data.urls && data.urls.length > 0) {
-          newUrls.push(...data.urls)
-          uploaded++
-        } else {
-          showToast(`Failed to upload: ${file.name}`, 'error')
-        }
-      } catch (err) {
-        console.error('Upload failed for', file.name, err)
-        showToast(`Failed: ${file.name}`, 'error')
-      }
+    // Check max files
+    if (imageUrls.length + fileArray.length > MAX_FILES) {
+      showToast(`Maximum ${MAX_FILES} photos allowed. You have ${imageUrls.length} already.`, 'error')
+      if (fileRef.current) fileRef.current.value = ''
+      return
     }
+
+    // Validate file sizes
+    const oversized = fileArray.filter(f => f.size > MAX_FILE_SIZE)
+    if (oversized.length > 0) {
+      showToast(`${oversized.length} file(s) exceed 10MB limit — ${oversized.map(f => f.name).join(', ')}`, 'error')
+      if (fileRef.current) fileRef.current.value = ''
+      return
+    }
+
+    setUploading(true)
+    setUploadProgress({ completed: 0, total: fileArray.length })
+
+    const newUrls = await uploadWithConcurrency(fileArray, (completed, total) => {
+      setUploadProgress({ completed, total })
+    })
 
     if (newUrls.length > 0) {
       setImageUrls(prev => [...prev, ...newUrls])
@@ -57,7 +157,7 @@ export default function PropertyForm() {
     }
 
     setUploading(false)
-    setUploadProgress('')
+    setUploadProgress({ completed: 0, total: 0 })
     if (fileRef.current) fileRef.current.value = ''
   }
 
@@ -87,6 +187,8 @@ export default function PropertyForm() {
     }
     setSubmitting(false)
   }
+
+  const progressPct = uploadProgress.total > 0 ? Math.round((uploadProgress.completed / uploadProgress.total) * 100) : 0
 
   return (
     <form ref={formRef} action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -152,7 +254,12 @@ export default function PropertyForm() {
 
       {/* Image Upload Section */}
       <div className="form-group">
-        <label className="form-label">Property Photos</label>
+        <label className="form-label">
+          Property Photos
+          <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: '0.5rem', fontSize: '0.75rem' }}>
+            ({imageUrls.length}/{MAX_FILES})
+          </span>
+        </label>
         
         {/* Upload from device */}
         <div 
@@ -173,9 +280,23 @@ export default function PropertyForm() {
         >
           <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '⏳' : '📷'}</div>
           <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-            {uploading ? uploadProgress || 'Uploading...' : 'Click to upload photos'}
+            {uploading
+              ? `Uploading ${uploadProgress.completed} of ${uploadProgress.total}...`
+              : 'Click to upload photos'}
           </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>JPG, PNG, HEIC • Multiple files supported</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            JPG, PNG, HEIC • Max 10MB each • Up to {MAX_FILES} photos
+          </p>
+          <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+            Images are auto-compressed & uploaded 3 at a time
+          </p>
+
+          {/* Progress bar */}
+          {uploading && uploadProgress.total > 0 && (
+            <div className="upload-progress-bar" style={{ marginTop: '0.75rem' }}>
+              <div className="upload-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+          )}
         </div>
         <input 
           ref={fileRef} 

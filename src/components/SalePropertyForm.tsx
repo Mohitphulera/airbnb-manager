@@ -13,10 +13,94 @@ const PROPERTY_TYPES = [
   { value: 'FARMHOUSE', label: '🌾 Farmhouse' },
 ]
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILES = 20
+const CONCURRENT_UPLOADS = 3
+const MAX_IMAGE_DIMENSION = 2000
+
+function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/') || file.size < 500 * 1024) {
+      resolve(file)
+      return
+    }
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const { width, height } = img
+      if (width <= MAX_IMAGE_DIMENSION && height <= MAX_IMAGE_DIMENSION) {
+        resolve(file)
+        return
+      }
+      const canvas = document.createElement('canvas')
+      let newW = width, newH = height
+      if (width > height) {
+        newW = MAX_IMAGE_DIMENSION
+        newH = Math.round(height * (MAX_IMAGE_DIMENSION / width))
+      } else {
+        newH = MAX_IMAGE_DIMENSION
+        newW = Math.round(width * (MAX_IMAGE_DIMENSION / height))
+      }
+      canvas.width = newW
+      canvas.height = newH
+      const ctx = canvas.getContext('2d')
+      ctx?.drawImage(img, 0, 0, newW, newH)
+      canvas.toBlob((blob) => {
+        if (blob) resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+        else resolve(file)
+      }, 'image/jpeg', 0.85)
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+    img.src = url
+  })
+}
+
+async function uploadWithConcurrency(
+  files: File[],
+  onProgress: (completed: number, total: number) => void
+): Promise<string[]> {
+  const urls: string[] = []
+  let completed = 0
+  const total = files.length
+  const queue = [...files]
+  const workers: Promise<void>[] = []
+
+  for (let i = 0; i < Math.min(CONCURRENT_UPLOADS, queue.length); i++) {
+    workers.push((async () => {
+      while (queue.length > 0) {
+        const file = queue.shift()
+        if (!file) break
+        try {
+          const compressed = await compressImage(file)
+          const formData = new FormData()
+          formData.append('files', compressed)
+          const res = await fetch('/api/upload', { method: 'POST', body: formData })
+          const data = await res.json()
+          if (data.urls && data.urls.length > 0) {
+            urls.push(...data.urls)
+          } else {
+            showToast(`Failed to upload: ${file.name}`, 'error')
+          }
+        } catch (err) {
+          console.error('Upload failed for', file.name, err)
+          showToast(`Failed: ${file.name}`, 'error')
+        }
+        completed++
+        onProgress(completed, total)
+      }
+    })())
+  }
+
+  await Promise.all(workers)
+  return urls
+}
+
 export default function SalePropertyForm() {
   const [features, setFeatures] = useState<string[]>([])
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState({ completed: 0, total: 0 })
   const [urlInput, setUrlInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -29,24 +113,28 @@ export default function SalePropertyForm() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
-    setUploading(true)
 
     const fileArray = Array.from(files)
-    const newUrls: string[] = []
 
-    for (const file of fileArray) {
-      const formData = new FormData()
-      formData.append('files', file)
-      try {
-        const res = await fetch('/api/upload', { method: 'POST', body: formData })
-        const data = await res.json()
-        if (data.urls && data.urls.length > 0) {
-          newUrls.push(...data.urls)
-        }
-      } catch (err) {
-        console.error('Upload failed for', file.name, err)
-      }
+    if (imageUrls.length + fileArray.length > MAX_FILES) {
+      showToast(`Maximum ${MAX_FILES} photos allowed. You have ${imageUrls.length} already.`, 'error')
+      if (fileRef.current) fileRef.current.value = ''
+      return
     }
+
+    const oversized = fileArray.filter(f => f.size > MAX_FILE_SIZE)
+    if (oversized.length > 0) {
+      showToast(`${oversized.length} file(s) exceed 10MB limit`, 'error')
+      if (fileRef.current) fileRef.current.value = ''
+      return
+    }
+
+    setUploading(true)
+    setUploadProgress({ completed: 0, total: fileArray.length })
+
+    const newUrls = await uploadWithConcurrency(fileArray, (completed, total) => {
+      setUploadProgress({ completed, total })
+    })
 
     if (newUrls.length > 0) {
       setImageUrls(prev => [...prev, ...newUrls])
@@ -55,6 +143,7 @@ export default function SalePropertyForm() {
       showToast('Photo upload failed', 'error')
     }
     setUploading(false)
+    setUploadProgress({ completed: 0, total: 0 })
     if (fileRef.current) fileRef.current.value = ''
   }
 
@@ -83,6 +172,8 @@ export default function SalePropertyForm() {
     }
     setSubmitting(false)
   }
+
+  const progressPct = uploadProgress.total > 0 ? Math.round((uploadProgress.completed / uploadProgress.total) * 100) : 0
 
   return (
     <form ref={formRef} action={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -163,28 +254,44 @@ export default function SalePropertyForm() {
 
       {/* Image Upload Section */}
       <div className="form-group">
-        <label className="form-label">Property Photos</label>
+        <label className="form-label">
+          Property Photos
+          <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: '0.5rem', fontSize: '0.75rem' }}>
+            ({imageUrls.length}/{MAX_FILES})
+          </span>
+        </label>
 
         <div
-          onClick={() => fileRef.current?.click()}
+          onClick={() => !uploading && fileRef.current?.click()}
           style={{
             border: '2px dashed var(--border)',
             borderRadius: '12px',
             padding: '1.5rem',
             textAlign: 'center',
-            cursor: 'pointer',
+            cursor: uploading ? 'wait' : 'pointer',
             background: 'var(--cozy-blue-light)',
             transition: 'all 0.15s ease',
-            marginBottom: '0.75rem'
+            marginBottom: '0.75rem',
+            opacity: uploading ? 0.7 : 1,
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary)' }}
+          onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = 'var(--primary)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{uploading ? '⏳' : '📷'}</div>
           <p style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-            {uploading ? 'Uploading...' : 'Click to upload photos'}
+            {uploading
+              ? `Uploading ${uploadProgress.completed} of ${uploadProgress.total}...`
+              : 'Click to upload photos'}
           </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>JPG, PNG, WebP • Max 5MB each</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            JPG, PNG, HEIC • Max 10MB each • Up to {MAX_FILES} photos
+          </p>
+
+          {uploading && uploadProgress.total > 0 && (
+            <div className="upload-progress-bar" style={{ marginTop: '0.75rem' }}>
+              <div className="upload-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+          )}
         </div>
         <input
           ref={fileRef}
@@ -231,7 +338,7 @@ export default function SalePropertyForm() {
         <input type="hidden" name="imageUrls" value={imageUrls.join(',')} />
       </div>
 
-      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%', marginTop: '0.5rem' }} disabled={submitting}>
+      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%', marginTop: '0.5rem' }} disabled={submitting || uploading}>
         {submitting ? 'Listing Property...' : 'List Property for Sale'}
       </button>
     </form>
