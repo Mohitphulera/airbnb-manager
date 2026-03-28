@@ -81,60 +81,42 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
   }
 
   return (
-    <div style={{ paddingBottom: '6rem', maxWidth: '1920px', margin: '0 auto', width: '100%' }}>
-      {/* Search & Filters */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '3rem' }} className="fade-up fade-up-1">
-        <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #1c1b1b', paddingBottom: '0.75rem', width: '100%', maxWidth: '640px' }}>
-          <span className="material-icons-outlined" style={{ color: '#1c1b1b', marginRight: '1rem', fontSize: '1.25rem' }}>search</span>
+    <div className="container" style={{ paddingBottom: '2rem' }}>
+      {/* Search */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }} className="fade-up fade-up-1">
+        <div className="search-bar-wrap">
+          <svg style={{ width: '18px', height: '18px', color: 'var(--text-muted)', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" strokeWidth="2" />
+            <path strokeLinecap="round" strokeWidth="2" d="m21 21-4.35-4.35" />
+          </svg>
           <input
-            placeholder="Search by property name or destination..."
+            placeholder="Search by property name or location…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontFamily: 'Inter, sans-serif', fontSize: '1.125rem', color: '#1c1b1b' }}
           />
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="filter-pills">
           {[
-            { value: 'ALL', label: 'All Investments' },
-            { value: 'APARTMENT', label: 'Penthouses & Apartments' },
-            { value: 'VILLA', label: 'Villas & Estates' },
-            { value: 'PLOT', label: 'Land Acquisitions' },
-            { value: 'COMMERCIAL', label: 'Commercial Yielder' },
-            { value: 'FARMHOUSE', label: 'Private Reserves' },
+            { value: 'ALL', label: 'All Types' },
+            { value: 'APARTMENT', label: 'Apartment' },
+            { value: 'VILLA', label: 'Villa' },
+            { value: 'PLOT', label: 'Plot' },
+            { value: 'COMMERCIAL', label: 'Commercial' },
+            { value: 'FARMHOUSE', label: 'Farmhouse' },
           ].map(t => (
-            <button 
-              key={t.value} 
-              onClick={() => setTypeFilter(t.value)}
-              style={{
-                fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase',
-                padding: '0.75rem 1.5rem', cursor: 'pointer', transition: 'all 0.2s',
-                background: typeFilter === t.value ? '#1c1b1b' : 'transparent',
-                color: typeFilter === t.value ? '#ffffff' : '#1c1b1b',
-                border: `1px solid ${typeFilter === t.value ? '#1c1b1b' : 'rgba(0,0,0,0.2)'}`
-              }}
-            >
+            <button key={t.value} className={`filter-pill ${typeFilter === t.value ? 'active' : ''}`} onClick={() => setTypeFilter(t.value)}>
               {t.label}
             </button>
           ))}
-          <div style={{ width: '1px', background: 'rgba(0,0,0,0.2)', margin: '0 0.5rem' }} />
+          <div style={{ width: '1px', background: 'var(--border)', margin: '0 0.25rem' }} />
           {[
-            { value: 'ALL', label: 'Any Capital' },
-            { value: 'UNDER_50L', label: 'Under ₹50L' },
-            { value: '50L_1CR', label: '₹50L – ₹1Cr' },
-            { value: '1CR_PLUS', label: '₹1Cr+' },
+            { value: 'ALL', label: 'Any Budget' },
+            { value: 'UNDER_50L', label: '< ₹50 L' },
+            { value: '50L_1CR', label: '₹50L–1Cr' },
+            { value: '1CR_PLUS', label: '₹1 Cr+' },
           ].map(r => (
-            <button 
-              key={r.value} 
-              onClick={() => setPriceRange(r.value)}
-              style={{
-                fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase',
-                padding: '0.75rem 1.5rem', cursor: 'pointer', transition: 'all 0.2s',
-                background: priceRange === r.value ? '#1c1b1b' : 'transparent',
-                color: priceRange === r.value ? '#ffffff' : '#1c1b1b',
-                border: `1px solid ${priceRange === r.value ? '#1c1b1b' : 'rgba(0,0,0,0.2)'}`
-              }}
-            >
+            <button key={r.value} className={`filter-pill ${priceRange === r.value ? 'active' : ''}`} onClick={() => setPriceRange(r.value)}>
               {r.label}
             </button>
           ))}
@@ -142,101 +124,111 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
       </div>
 
       {/* Results count */}
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#858383', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '2rem' }} className="fade-up fade-up-2">
-        {filtered.length} {filtered.length === 1 ? 'Opportunity' : 'Opportunities'} Discovered
+      <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '1rem' }} className="fade-up fade-up-2">
+        {filtered.length} {filtered.length === 1 ? 'property' : 'properties'} available
       </p>
 
       {/* Grid */}
-      <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '3rem 2rem' }} className="fade-up fade-up-3">
+      <motion.div layout className="property-grid fade-up fade-up-3">
         <AnimatePresence mode="popLayout">
-          {filtered.map((p, idx) => {
+          {filtered.map(p => {
             const roi = getROI(p)
             return (
               <motion.div 
                 layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                transition={{ duration: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                 key={p.id} 
-                style={{ display: 'flex', flexDirection: 'column' }}
+                className="property-card" 
+                style={{ border: '1px solid var(--border)' }}
               >
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '16/11', overflow: 'hidden', marginBottom: '1.25rem', background: '#e5e2e1' }}>
+                <div className="property-image-wrap">
                   <ImageGallery urls={p.images} />
                   {p.status === 'UNDER_NEGOTIATION' && (
-                    <div style={{ position: 'absolute', top: '1rem', left: '1rem', background: '#ffffff', color: '#1c1b1b', padding: '0.35rem 0.875rem', fontSize: '0.625rem', fontFamily: 'Inter, sans-serif', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', zIndex: 10 }}>
-                      Under Offer
+                    <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(217, 119, 6, 0.9)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '6px', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', backdropFilter: 'blur(4px)' }}>
+                      Under Negotiation
                     </div>
                   )}
-                  <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', background: 'rgba(28,27,27,0.85)', backdropFilter: 'blur(8px)', color: '#ffffff', padding: '0.35rem 0.875rem', fontSize: '0.625rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', zIndex: 10 }}>
+                  <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '6px', fontSize: '0.6875rem', fontWeight: 600, backdropFilter: 'blur(4px)' }}>
                     {TYPE_LABELS[p.propertyType] || p.propertyType}
                   </div>
                 </div>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div className="property-content" style={{ padding: '0.875rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
-                      <h3 style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.5rem', fontWeight: 800, color: '#1c1b1b', marginBottom: '0.25rem', letterSpacing: '-0.02em' }}>{p.title}</h3>
-                      <p style={{ fontFamily: 'Inter, sans-serif', color: '#444748', fontSize: '0.875rem' }}>
-                        {p.location}
+                      <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>{p.title}</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        Location: {p.location}
                       </p>
                     </div>
                   </div>
 
                   {/* Quick stats */}
-                  <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.625rem', flexWrap: 'wrap' }}>
                     {p.area && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontFamily: 'Inter, sans-serif' }}>
-                        <span style={{ fontSize: '0.5625rem', color: '#858383', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Total Area</span>
-                        <span style={{ fontSize: '0.875rem', color: '#1c1b1b', fontWeight: 600 }}>{p.area} sqft</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>square_foot</span> {p.area} sqft
                       </div>
                     )}
                     {p.bedrooms && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontFamily: 'Inter, sans-serif' }}>
-                        <span style={{ fontSize: '0.5625rem', color: '#858383', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Bedrooms</span>
-                        <span style={{ fontSize: '0.875rem', color: '#1c1b1b', fontWeight: 600 }}>{p.bedrooms} BHK</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>bed</span> {p.bedrooms} BHK
                       </div>
                     )}
                     {p.bathrooms && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontFamily: 'Inter, sans-serif' }}>
-                        <span style={{ fontSize: '0.5625rem', color: '#858383', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Baths</span>
-                        <span style={{ fontSize: '0.875rem', color: '#1c1b1b', fontWeight: 600 }}>{p.bathrooms}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>shower</span> {p.bathrooms} Bath
                       </div>
                     )}
                   </div>
 
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#444748', lineHeight: 1.6, marginBottom: '1.5rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.description}
                   </p>
 
+                  {/* Features */}
+                  {p.features && p.features.length > 0 && (
+                    <div className="amenity-list" style={{ marginTop: '0.5rem' }}>
+                      {p.features.slice(0, 4).map((f: string) => (
+                        <span key={f} className="amenity-tag">
+                          <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>{FEATURE_ICONS[f] || 'star_outline'}</span> {f}
+                        </span>
+                      ))}
+                      {p.features.length > 4 && (
+                        <span className="amenity-tag">+{p.features.length - 4}</span>
+                      )}
+                    </div>
+                  )}
+
                   {/* ROI Badge */}
                   {(p.monthlyRentalEstimate || 0) > 0 && roi && (
-                    <div style={{ background: '#fcf9f8', padding: '1rem', border: '1px solid rgba(119,90,25,0.2)', cursor: 'pointer', marginBottom: '1.5rem', transition: 'all 0.2s', position: 'relative', overflow: 'hidden' }} onClick={() => { setRoiProperty(p); setCustomRent(''); }} onMouseOver={e => e.currentTarget.style.background = '#ffdea5'} onMouseOut={e => e.currentTarget.style.background = '#fcf9f8'}>
+                    <div style={{ background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', borderRadius: '10px', padding: '0.5rem 0.75rem', marginTop: '0.625rem', border: '1px solid rgba(5,150,105,0.15)', cursor: 'pointer' }} onClick={() => { setRoiProperty(p); setCustomRent(''); }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.625rem', color: '#775a19', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>analytics</span> Financial Model
-                        </span>
-                        <span style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.125rem', fontWeight: 800, color: '#1c1b1b' }}>{roi.roi}% Yield</span>
+                        <span style={{ fontSize: '0.6875rem', color: '#065F46', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}><span className="material-icons-outlined" style={{ fontSize: '1rem' }}>trending_up</span> Investment Returns</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669' }}>{roi.roi}% ROI</span>
+                      </div>
+                      <div style={{ fontSize: '0.6875rem', color: '#065F46', marginTop: '0.125rem' }}>
+                        Est. ₹{(roi.monthlyRent).toLocaleString('en-IN')}/mo · Payback in {roi.paybackYears} yrs
                       </div>
                     </div>
                   )}
 
-                  <div style={{ flex: 1 }} />
-
                   {/* Price & Action */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.875rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border)' }}>
                     <div>
-                      <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontSize: '0.5625rem', color: '#858383', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.25rem' }}>Capital Required</span>
-                      <span style={{ fontFamily: '"Noto Serif", serif', fontWeight: 800, fontSize: '1.5rem', color: '#1c1b1b', lineHeight: 1 }}>{formatPrice(p.price)}</span>
+                      <span style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--primary)' }}>{formatPrice(p.price)}</span>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button onClick={() => { setRoiProperty(p); setCustomRent(''); }} style={{ background: 'transparent', border: '1px solid #1c1b1b', color: '#1c1b1b', cursor: 'pointer', padding: '0.625rem 1.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', transition: 'all 0.2s' }} onMouseOver={e => {e.currentTarget.style.background = '#1c1b1b'; e.currentTarget.style.color = '#ffffff'}} onMouseOut={e => {e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1c1b1b'}}>
-                        Data
+                    <div style={{ display: 'flex', gap: '0.375rem' }}>
+                      <button onClick={() => { setRoiProperty(p); setCustomRent(''); }} className="btn btn-outline" style={{ borderRadius: '10px', padding: '0.5rem 0.75rem', fontSize: '0.75rem' }}>
+                        ROI
                       </button>
                       <button
                         onClick={() => setSelectedProperty(p)}
-                        style={{ background: '#1c1b1b', border: '1px solid #1c1b1b', color: '#ffffff', cursor: 'pointer', padding: '0.625rem 1.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', transition: 'all 0.2s' }}
-                        onMouseOver={e => e.currentTarget.style.background = '#333333'} onMouseOut={e => e.currentTarget.style.background = '#1c1b1b'}
+                        className="btn btn-primary"
+                        style={{ borderRadius: '10px', padding: '0.5rem 1rem', fontSize: '0.8125rem' }}
                       >
                         Inquire
                       </button>
@@ -250,9 +242,10 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
       </motion.div>
 
       {filtered.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '8rem 1rem', color: '#858383', fontFamily: 'Inter, sans-serif' }}>
-          <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', color: '#1c1b1b', letterSpacing: '-0.02em' }}>Portfolio Empty</p>
-          <p style={{ letterSpacing: '0.1em', fontSize: '0.8125rem', textTransform: 'uppercase' }}>No architectural gems match your criteria.</p>
+        <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}></div>
+          <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>No matching properties</p>
+          <p>Try adjusting your search or filters</p>
         </div>
       )}
 
@@ -264,74 +257,84 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setRoiProperty(null)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(8px)', padding: '1rem' }}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              zIndex: 1000, backdropFilter: 'blur(4px)', padding: '1rem'
+            }}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: "spring", bounce: 0.2 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: '#fcf9f8', padding: '3rem', maxWidth: '600px', width: '100%', border: '1px solid rgba(0,0,0,0.1)', color: '#1c1b1b' }}
+              style={{
+                background: '#fff', borderRadius: 'var(--radius-lg)',
+                padding: '2rem', maxWidth: '480px', width: '100%',
+                boxShadow: 'var(--shadow-lg)'
+              }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h3 style={{ fontFamily: '"Noto Serif", serif', fontSize: '2rem', fontWeight: 800, margin: 0, letterSpacing: '-0.04em' }}>Investment Thesis</h3>
-                <span className="material-icons-outlined" onClick={() => setRoiProperty(null)} style={{ cursor: 'pointer', fontSize: '1.5rem', opacity: 0.5 }}>close</span>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h3 style={{ margin: 0 }}>ROI Calculator</h3>
+              <button onClick={() => setRoiProperty(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
+            </div>
 
-              <div style={{ borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '2rem', marginBottom: '2rem' }}>
-                <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>{roiProperty.title}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#858383' }}>{roiProperty.location}</p>
-                  <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.5rem', fontWeight: 800, color: '#1c1b1b' }}>{formatPrice(roiProperty.price)}</p>
-                </div>
-              </div>
+            <div style={{ background: 'var(--cozy-blue-light)', borderRadius: '12px', padding: '1rem', marginBottom: '1.25rem' }}>
+              <p style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{roiProperty.title}</p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Location: {roiProperty.location}</p>
+              <p style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.125rem' }}>{formatPrice(roiProperty.price)}</p>
+            </div>
 
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontSize: '0.625rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.75rem', color: '#858383' }}>Projected Monthly Yield (₹)</label>
-                <input
-                  type="number"
-                  placeholder={roiProperty.monthlyRentalEstimate ? `Market Estimate: ₹${roiProperty.monthlyRentalEstimate.toLocaleString('en-IN')}` : 'Enter amount'}
-                  value={customRent}
-                  onChange={e => setCustomRent(e.target.value)}
-                  style={{ width: '100%', background: 'none', border: '1px solid rgba(0,0,0,0.2)', padding: '1rem', fontFamily: 'Inter, sans-serif', fontSize: '1rem', outline: 'none', color: '#1c1b1b' }}
-                />
-              </div>
+            <div className="form-group" style={{ margin: '0 0 1rem 0' }}>
+              <label className="form-label">Expected Monthly Rental Income (₹)</label>
+              <input
+                type="number"
+                className="form-input"
+                placeholder={roiProperty.monthlyRentalEstimate ? `Estimated: ₹${roiProperty.monthlyRentalEstimate.toLocaleString('en-IN')}` : 'e.g. 25000'}
+                value={customRent}
+                onChange={e => setCustomRent(e.target.value)}
+              />
+              {roiProperty.monthlyRentalEstimate && !customRent && (
+                <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Using seller's estimate. Enter your own for custom calculation.</p>
+              )}
+            </div>
 
-              {(() => {
-                const roi = getROI(roiProperty)
-                if (!roi) return null
-                return (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-                    <div style={{ background: '#fcf9f8', padding: '1.5rem 1rem', textAlign: 'center' }}>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#858383', marginBottom: '0.5rem' }}>Annual ROI</p>
-                      <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '2rem', fontWeight: 800, color: '#775a19', lineHeight: 1 }}>{roi.roi}%</p>
-                    </div>
-                    <div style={{ background: '#fcf9f8', padding: '1.5rem 1rem', textAlign: 'center' }}>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#858383', marginBottom: '0.5rem' }}>Capital Payback</p>
-                      <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.5rem', fontWeight: 800, color: '#1c1b1b', lineHeight: 1, marginTop: '0.5rem' }}>{roi.paybackYears} yrs</p>
-                    </div>
-                    <div style={{ background: '#fcf9f8', padding: '1.5rem 1rem', textAlign: 'center' }}>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#858383', marginBottom: '0.5rem' }}>Monthly Cashflow</p>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.125rem', fontWeight: 600 }}>₹{roi.monthlyRent.toLocaleString('en-IN')}</p>
-                    </div>
-                    <div style={{ background: '#fcf9f8', padding: '1.5rem 1rem', textAlign: 'center' }}>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#858383', marginBottom: '0.5rem' }}>Annual Cashflow</p>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.125rem', fontWeight: 600 }}>₹{roi.annualRent.toLocaleString('en-IN')}</p>
-                    </div>
+            {(() => {
+              const roi = getROI(roiProperty)
+              if (!roi) return <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '1rem' }}>Enter monthly rent to see ROI</p>
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div style={{ background: '#ECFDF5', borderRadius: '12px', padding: '1rem', textAlign: 'center', border: '1px solid rgba(5,150,105,0.15)' }}>
+                    <p style={{ fontSize: '0.625rem', fontWeight: 700, color: '#065F46', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.375rem' }}>Annual ROI</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 800, color: '#059669' }}>{roi.roi}%</p>
                   </div>
-                )
-              })()}
+                  <div style={{ background: 'var(--cozy-blue-light)', borderRadius: '12px', padding: '1rem', textAlign: 'center', border: '1px solid rgba(43,108,176,0.1)' }}>
+                    <p style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.375rem' }}>Payback Period</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>{roi.paybackYears} yrs</p>
+                  </div>
+                  <div style={{ background: '#FAFAFA', borderRadius: '12px', padding: '1rem', textAlign: 'center', border: '1px solid var(--border)' }}>
+                    <p style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.375rem' }}>Monthly Income</p>
+                    <p style={{ fontSize: '1.125rem', fontWeight: 700 }}>₹{roi.monthlyRent.toLocaleString('en-IN')}</p>
+                  </div>
+                  <div style={{ background: '#FAFAFA', borderRadius: '12px', padding: '1rem', textAlign: 'center', border: '1px solid var(--border)' }}>
+                    <p style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.375rem' }}>Annual Income</p>
+                    <p style={{ fontSize: '1.125rem', fontWeight: 700 }}>₹{roi.annualRent.toLocaleString('en-IN')}</p>
+                  </div>
+                </div>
+              )
+            })()}
 
-              <button
-                onClick={() => { setRoiProperty(null); setSelectedProperty(roiProperty); }}
-                style={{ width: '100%', background: '#1c1b1b', color: '#ffffff', border: 'none', padding: '1.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.2s' }}
-                onMouseOver={e => e.currentTarget.style.background = '#333333'} onMouseOut={e => e.currentTarget.style.background = '#1c1b1b'}
-              >
-                Request Access
-              </button>
-            </motion.div>
+            <button
+              onClick={() => { setRoiProperty(null); setSelectedProperty(roiProperty); }}
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '0.825rem', borderRadius: '10px', fontSize: '0.9375rem', marginTop: '1rem' }}
+            >
+              💬 Interested? Inquire Now
+            </button>
           </motion.div>
-        )}
+        </motion.div>
+      )}
       </AnimatePresence>
 
       {/* Inquiry Modal */}
@@ -342,60 +345,68 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedProperty(null)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(8px)', padding: '1rem' }}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              zIndex: 1000, backdropFilter: 'blur(4px)', padding: '1rem'
+            }}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: "spring", bounce: 0.2 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: '#fcf9f8', padding: '3rem', maxWidth: '440px', width: '100%', border: '1px solid rgba(0,0,0,0.1)', color: '#1c1b1b' }}
+              style={{
+                background: '#fff', borderRadius: 'var(--radius-lg)',
+                padding: '2rem', maxWidth: '440px', width: '100%',
+                boxShadow: 'var(--shadow-lg)'
+              }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h3 style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.75rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>Inquire</h3>
-                <span className="material-icons-outlined" onClick={() => setSelectedProperty(null)} style={{ cursor: 'pointer', fontSize: '1.5rem', opacity: 0.5 }}>close</span>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h3 style={{ margin: 0 }}>Inquire About Property</h3>
+              <button onClick={() => setSelectedProperty(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
+            </div>
 
-              <div style={{ borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
-                <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.25rem' }}>{selectedProperty.title}</p>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#858383', marginBottom: '0.5rem' }}>{selectedProperty.location}</p>
-                <p style={{ fontFamily: '"Noto Serif", serif', fontSize: '1.25rem', fontWeight: 800, color: '#1c1b1b' }}>{formatPrice(selectedProperty.price)}</p>
-              </div>
+            <div style={{ background: 'var(--cozy-blue-light)', borderRadius: '12px', padding: '1rem', marginBottom: '1.25rem' }}>
+              <p style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{selectedProperty.title}</p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Location: {selectedProperty.location}</p>
+              <p style={{ fontWeight: 700, color: 'var(--primary)' }}>{formatPrice(selectedProperty.price)}</p>
+            </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontSize: '0.625rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.75rem', color: '#858383' }}>Primary Concierge Name</label>
-                  <input
-                    placeholder="Enter full name"
-                    value={inquiryName}
-                    onChange={e => setInquiryName(e.target.value)}
-                    style={{ width: '100%', background: 'none', border: '1px solid rgba(0,0,0,0.2)', padding: '1rem', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', outline: 'none', color: '#1c1b1b' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontSize: '0.625rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.75rem', color: '#858383' }}>Direct Line (Phone)</label>
-                  <input
-                    placeholder="Enter phone number"
-                    value={inquiryPhone}
-                    onChange={e => setInquiryPhone(e.target.value)}
-                    style={{ width: '100%', background: 'none', border: '1px solid rgba(0,0,0,0.2)', padding: '1rem', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', outline: 'none', color: '#1c1b1b' }}
-                  />
-                </div>
-
-                <button
-                  onClick={() => handleInquiry(selectedProperty)}
-                  style={{ width: '100%', background: '#1c1b1b', color: '#ffffff', border: 'none', padding: '1.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.2s', marginTop: '1rem' }}
-                  onMouseOver={e => e.currentTarget.style.background = '#333333'} onMouseOut={e => e.currentTarget.style.background = '#1c1b1b'}
-                >
-                  Contact Equity Partner
-                </button>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.625rem', color: '#858383', textAlign: 'center', letterSpacing: '0.05em' }}>
-                  A representative will connect via WhatsApp.
-                </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Your Name (optional)</label>
+                <input
+                  className="form-input"
+                  placeholder="e.g. Raj Sharma"
+                  value={inquiryName}
+                  onChange={e => setInquiryName(e.target.value)}
+                />
               </div>
-            </motion.div>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Your Phone (optional)</label>
+                <input
+                  className="form-input"
+                  placeholder="e.g. 9876543210"
+                  value={inquiryPhone}
+                  onChange={e => setInquiryPhone(e.target.value)}
+                />
+              </div>
+              <button
+                onClick={() => handleInquiry(selectedProperty)}
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '0.825rem', borderRadius: '10px', fontSize: '0.9375rem' }}
+              >
+                Send Inquiry via WhatsApp
+              </button>
+              <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                You&apos;ll be redirected to WhatsApp with a pre-filled message
+              </p>
+            </div>
           </motion.div>
-        )}
+        </motion.div>
+      )}
       </AnimatePresence>
     </div>
   )
