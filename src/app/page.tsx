@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
-import ImageGallery from '@/components/ImageGallery'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,200 +13,140 @@ export default async function Home() {
   const properties = await getProperties()
 
   return (
-    <div className="curator-page">
+    <div className="st-page">
       {/* Navigation */}
-      <nav className="curator-nav">
-        <div className="curator-nav-inner">
-          <Link href="/" className="curator-logo-wrap">
-            <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
-            <span className="curator-logo-text">Cozy BnB</span>
+      <nav className="st-nav">
+        <div className="st-nav-inner">
+          <Link href="/" className="st-nav-brand">
+            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
+            <span className="st-nav-name">Cozy B&B</span>
           </Link>
-          <div className="curator-nav-links">
-            <Link href="#stays" className="curator-nav-link active">Discover</Link>
-            <Link href="/properties-for-sale" className="curator-nav-link">Investments</Link>
-            <Link href="/login" className="curator-nav-link">Host Login</Link>
+          <div className="st-nav-links">
+            <Link href="/" className="st-nav-link st-nav-link-active">Airbnb Listings</Link>
+            <Link href="/properties-for-sale" className="st-nav-link">Properties for Sale</Link>
+            <Link href="/login" className="st-nav-link">Admin Login</Link>
           </div>
-          <Link href="/properties-for-sale" className="curator-btn-primary">Inquire</Link>
+          <div className="st-nav-actions">
+            <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
+          </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header className="curator-hero">
-        <div className="curator-hero-bg">
-          <img
-            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80"
-            alt="Luxury villa"
-            className="curator-hero-img"
-          />
-          <div className="curator-hero-gradient" />
-        </div>
-        <div className="curator-hero-content">
-          <div className="curator-hero-badge">
-            <span className="curator-badge-dot" />
-            Exclusive Opportunities
+      {/* Hero */}
+      <section className="st-hero">
+        <div className="st-hero-inner">
+          <div className="st-hero-row">
+            <div className="st-hero-text">
+              <span className="st-label">The Collection</span>
+              <h1 className="st-hero-title">
+                Discover <br /><em>Premium</em> Stays
+              </h1>
+            </div>
+            <div className="st-hero-desc">
+              <p className="st-hero-subtitle">
+                A curated selection of architectural masterpieces designed for the contemporary traveler.
+              </p>
+            </div>
           </div>
-          <h1 className="curator-hero-title">
-            Escape to <br /><em>Extraordinary</em>
-          </h1>
-          <p className="curator-hero-subtitle">
-            The most significant architectural homes, curated for the discerning investor. Access private listings that define luxury and long-term legacy.
-          </p>
-          <div className="curator-hero-ctas">
-            <Link href="#stays" className="curator-btn-white">Explore Collection</Link>
-            <Link href="/properties-for-sale" className="curator-btn-ghost">View Investments</Link>
+          {/* Search Bar */}
+          <div className="st-search">
+            <div className="st-search-field st-search-field-bordered">
+              <span className="st-search-label">Destination</span>
+              <input type="text" placeholder="Where to?" className="st-search-input" />
+            </div>
+            <div className="st-search-field st-search-field-bordered">
+              <span className="st-search-label">Arrival & Departure</span>
+              <input type="text" placeholder="Select dates" className="st-search-input" />
+            </div>
+            <div className="st-search-field">
+              <span className="st-search-label">Occupancy</span>
+              <input type="text" placeholder="Add guests" className="st-search-input" />
+            </div>
+            <button className="st-search-btn">
+              <span className="material-symbols-outlined">search</span>
+            </button>
           </div>
         </div>
-        <div className="curator-scroll-indicator">
-          <span>Scroll to Discover</span>
-          <div className="curator-scroll-line" />
-        </div>
-      </header>
+      </section>
 
-      {/* Curated Collections */}
-      <section id="stays" className="curator-section">
-        <div className="curator-section-header">
-          <div>
-            <h2 className="curator-heading">Signature Acquisitions</h2>
-            <p className="curator-subheading">Hand-picked for their aesthetic merit and investment potential.</p>
-          </div>
-          <Link href="/properties-for-sale" className="curator-view-all">
-            View Full Portfolio
-            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
-          </Link>
-        </div>
-
-        <div className="curator-property-grid">
-          {properties.map((p: any, i: number) => {
+      {/* Property Grid */}
+      <section className="st-grid-section">
+        <div className="st-grid">
+          {properties.map((p: any) => {
             let images: string[] = []
             try { if (p.imageUrls) images = JSON.parse(p.imageUrls) } catch {}
             return (
-              <Link href={`/property/${p.id}`} key={p.id} className={`curator-card ${i === 1 ? 'curator-card-offset' : ''}`}>
-                <div className="curator-card-image">
+              <Link href={`/property/${p.id}`} key={p.id} className="st-card">
+                <div className="st-card-image">
                   {images.length > 0 ? (
-                    <img src={images[0]} alt={p.name} className="curator-card-img" />
+                    <img src={images[0]} alt={p.name} className="st-card-img" />
                   ) : (
-                    <div className="curator-card-placeholder">
-                      <span className="material-icons-outlined">apartment</span>
+                    <div className="st-card-placeholder">
+                      <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>apartment</span>
                     </div>
                   )}
-                  <div className="curator-card-overlay" />
-                  {i === 0 && <span className="curator-card-badge">Newly Listed</span>}
+                  <div className="st-card-badge">
+                    {p.type === 'OWNED' ? 'Owned' : 'Partner'}
+                  </div>
                 </div>
-                <div className="curator-card-info">
-                  <div>
-                    <h3 className="curator-card-title">{p.name}</h3>
-                    <p className="curator-card-location">
-                      <span className="material-icons-outlined" style={{ fontSize: '14px' }}>location_on</span>
-                      {p.location}
-                    </p>
-                    <div className="curator-card-stats">
-                      <div>
-                        <span className="curator-stat-label">Per Night</span>
-                        <span className="curator-stat-value">₹{p.pricePerNight.toLocaleString('en-IN')}</span>
-                      </div>
-                      <div>
-                        <span className="curator-stat-label">Type</span>
-                        <span className="curator-stat-value curator-stat-accent">{p.type === 'OWNED' ? 'Owned' : 'Partner'}</span>
-                      </div>
+                <div className="st-card-info">
+                  <div className="st-card-row">
+                    <div>
+                      <h3 className="st-card-title">{p.name}</h3>
+                      <p className="st-card-location">{p.location}</p>
+                    </div>
+                    <div className="st-card-price">
+                      <p className="st-card-price-val">₹{p.pricePerNight.toLocaleString('en-IN')}</p>
+                      <p className="st-card-price-unit">per night</p>
                     </div>
                   </div>
-                  <div className="curator-card-arrow">
-                    <span className="material-icons-outlined">north_east</span>
+                  <div className="st-card-cta">
+                    Check Availability
+                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
                   </div>
                 </div>
               </Link>
             )
           })}
           {properties.length === 0 && (
-            <div className="curator-empty">
-              <span className="material-icons-outlined" style={{ fontSize: '48px', color: '#ccc' }}>villa</span>
-              <p>No properties available. Check back soon.</p>
+            <div className="st-empty">
+              <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#d1d5db' }}>villa</span>
+              <p>No properties available yet.</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="curator-philosophy">
-        <div className="curator-philosophy-inner">
-          <div className="curator-philosophy-image-wrap">
-            <div className="curator-philosophy-blur" />
-            <div className="curator-philosophy-img-container">
-              <img
-                src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80"
-                alt="Modern architecture"
-                className="curator-philosophy-img"
-              />
-            </div>
-            <div className="curator-philosophy-quote">
-              <p className="curator-quote-text">&ldquo;Architecture is the art of how we waste space.&rdquo;</p>
-              <span className="curator-quote-author">— Philip Johnson</span>
-            </div>
-          </div>
-          <div className="curator-philosophy-content">
-            <h2 className="curator-heading">Our Investment <br /><em className="curator-accent">Philosophy</em></h2>
-            <div className="curator-pillars">
-              {[
-                { num: '01', title: 'Vetted Heritage', desc: 'Rigorous audits ensure architectural significance and appreciating financial value.' },
-                { num: '02', title: 'Personal Touch', desc: 'Every guest receives white-glove concierge service throughout their stay.' },
-                { num: '03', title: 'Privileged Access', desc: 'Portfolio members enjoy exclusive usage rights at preferred internal rates.' },
-                { num: '04', title: 'Seamless Stewardship', desc: 'From preservation to management, we protect your asset while maximizing utility.' },
-              ].map(p => (
-                <div key={p.num} className="curator-pillar">
-                  <span className="curator-pillar-num">{p.num}</span>
-                  <h4 className="curator-pillar-title">{p.title}</h4>
-                  <p className="curator-pillar-desc">{p.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="curator-newsletter">
-        <h2 className="curator-heading" style={{ textAlign: 'center' }}>Join the inner circle.</h2>
-        <p className="curator-subheading" style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-          Early access to private listings and quarterly market insights from our curation team.
-        </p>
-        <form className="curator-newsletter-form">
-          <input type="email" placeholder="Your Email Address" className="curator-newsletter-input" />
-          <button type="button" className="curator-btn-primary">Apply for Membership</button>
-        </form>
-        <p className="curator-newsletter-terms">By subscribing you agree to our invitation terms.</p>
-      </section>
-
       {/* Footer */}
-      <footer className="curator-footer">
-        <div className="curator-footer-grid">
-          <div className="curator-footer-brand">
-            <Link href="/" className="curator-logo-wrap">
-              <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
-              <span className="curator-logo-text">Cozy BnB</span>
-            </Link>
-            <p className="curator-footer-tagline">Premium stays and investment<br />properties, curated for you.</p>
+      <footer className="st-footer">
+        <div className="st-footer-inner">
+          <div className="st-footer-top">
+            <div className="st-footer-brand">
+              <div className="st-nav-brand">
+                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'grayscale(1) brightness(0.5)' }} />
+                <span className="st-nav-name">Cozy B&B</span>
+              </div>
+              <p className="st-footer-tagline">
+                Defining the future of luxury hospitality through meticulous curation and architectural excellence.
+              </p>
+            </div>
+            <div className="st-footer-cols">
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Company</span>
+                <Link href="/">Discover</Link>
+                <Link href="/properties-for-sale">Investments</Link>
+                <Link href="/login">Host Portal</Link>
+              </div>
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Legal</span>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+              </div>
+            </div>
           </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Portfolio</h5>
-            <ul className="curator-footer-links">
-              <li><Link href="/">Recent Listings</Link></li>
-              <li><Link href="/properties-for-sale">Investments</Link></li>
-            </ul>
+          <div className="st-footer-bottom">
+            <p>&copy; {new Date().getFullYear()} Cozy B&B. All rights reserved.</p>
           </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Company</h5>
-            <ul className="curator-footer-links">
-              <li><Link href="/login">Admin Login</Link></li>
-              <li><a href="#">Privacy</a></li>
-            </ul>
-          </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Connect</h5>
-            <p className="curator-footer-quote">&ldquo;Design is intelligence made visible.&rdquo;</p>
-          </div>
-        </div>
-        <div className="curator-footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Cozy BnB &amp; Properties. All rights reserved.</p>
         </div>
       </footer>
     </div>

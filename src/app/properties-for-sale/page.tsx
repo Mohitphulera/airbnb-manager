@@ -16,87 +16,79 @@ export default async function PropertiesForSalePage() {
   })
 
   return (
-    <div className="curator-page">
+    <div className="st-page">
       {/* Navigation */}
-      <nav className="curator-nav">
-        <div className="curator-nav-inner">
-          <Link href="/" className="curator-logo-wrap">
-            <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
-            <span className="curator-logo-text">Cozy BnB</span>
+      <nav className="st-nav">
+        <div className="st-nav-inner">
+          <Link href="/" className="st-nav-brand">
+            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
+            <span className="st-nav-name">Cozy B&B</span>
           </Link>
-          <div className="curator-nav-links">
-            <Link href="/" className="curator-nav-link">Discover</Link>
-            <Link href="/properties-for-sale" className="curator-nav-link active">Investments</Link>
-            <Link href="/login" className="curator-nav-link">Host Login</Link>
+          <div className="st-nav-links">
+            <Link href="/" className="st-nav-link">Airbnb Listings</Link>
+            <Link href="/properties-for-sale" className="st-nav-link st-nav-link-active">Properties for Sale</Link>
+            <Link href="/login" className="st-nav-link">Admin Login</Link>
           </div>
-          <Link href="/properties-for-sale" className="curator-btn-primary">Inquire</Link>
+          <div className="st-nav-actions">
+            <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
+          </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <header className="curator-hero" style={{ minHeight: '60vh' }}>
-        <div className="curator-hero-bg">
-          <img
-            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80"
-            alt="Investment property"
-            className="curator-hero-img"
-          />
-          <div className="curator-hero-gradient" />
-        </div>
-        <div className="curator-hero-content">
-          <div className="curator-hero-badge">
-            <span className="curator-badge-dot" />
-            Investment-Grade Assets
+      <section className="st-hero">
+        <div className="st-hero-inner" style={{ paddingBottom: '4rem' }}>
+          <div className="st-hero-row" style={{ marginBottom: '0' }}>
+            <div className="st-hero-text">
+              <span className="st-label">Investment-Grade Assets</span>
+              <h1 className="st-hero-title">
+                Investment<br /><em>Catalog</em>
+              </h1>
+            </div>
+            <div className="st-hero-desc">
+              <p className="st-hero-subtitle">
+                Curated opportunities in architectural excellence and high-yield real&nbsp;estate.
+              </p>
+            </div>
           </div>
-          <h1 className="curator-hero-title" style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}>
-            Investment<br /><em>Catalog</em>
-          </h1>
-          <p className="curator-hero-subtitle">
-            Curated opportunities in architectural excellence and high-yield real&nbsp;estate.
-          </p>
         </div>
-        <div className="curator-scroll-indicator">
-          <span>Browse Properties</span>
-          <div className="curator-scroll-line" />
-        </div>
-      </header>
+      </section>
 
       {/* Property Browser */}
-      <section className="curator-section">
+      <section className="st-grid-section" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
         <SalePropertyBrowser properties={JSON.parse(JSON.stringify(serialized))} />
       </section>
 
       {/* Footer */}
-      <footer className="curator-footer">
-        <div className="curator-footer-grid">
-          <div className="curator-footer-brand">
-            <Link href="/" className="curator-logo-wrap">
-              <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
-              <span className="curator-logo-text">Cozy BnB</span>
-            </Link>
-            <p className="curator-footer-tagline">Premium stays and investment<br />properties, curated for you.</p>
+      <footer className="st-footer">
+        <div className="st-footer-inner">
+          <div className="st-footer-top">
+            <div className="st-footer-brand">
+              <div className="st-nav-brand">
+                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'grayscale(1) brightness(0.5)' }} />
+                <span className="st-nav-name">Cozy B&B</span>
+              </div>
+              <p className="st-footer-tagline">
+                Defining the future of luxury hospitality through meticulous curation and architectural excellence.
+              </p>
+            </div>
+            <div className="st-footer-cols">
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Company</span>
+                <Link href="/">Discover</Link>
+                <Link href="/properties-for-sale">Investments</Link>
+                <Link href="/login">Host Portal</Link>
+              </div>
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Legal</span>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+              </div>
+            </div>
           </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Portfolio</h5>
-            <ul className="curator-footer-links">
-              <li><Link href="/">Discover Stays</Link></li>
-              <li><Link href="/properties-for-sale">Investments</Link></li>
-            </ul>
+          <div className="st-footer-bottom">
+            <p>&copy; {new Date().getFullYear()} Cozy B&B. All rights reserved.</p>
           </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Company</h5>
-            <ul className="curator-footer-links">
-              <li><Link href="/login">Host Portal</Link></li>
-              <li><a href="#">Privacy</a></li>
-            </ul>
-          </div>
-          <div className="curator-footer-col">
-            <h5 className="curator-footer-heading">Connect</h5>
-            <p className="curator-footer-quote">&ldquo;Real estate is the foundation of all wealth.&rdquo;</p>
-          </div>
-        </div>
-        <div className="curator-footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Cozy BnB &amp; Properties. All rights reserved.</p>
         </div>
       </footer>
     </div>
