@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import ImageGallery from './ImageGallery'
 import ClientBookingAction from './ClientBookingAction'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const AMENITY_ICONS: Record<string, string> = {
   'WiFi': '📶', 'Pool': '🏊', 'AC': '❄️', 'Kitchen': '🍳',
@@ -64,71 +65,81 @@ export default function SearchFilter({ properties }: { properties: any[] }) {
       </p>
 
       {/* Grid */}
-      <div className="property-grid fade-up fade-up-3">
-        {filtered.map(p => (
-          <div key={p.id} className="property-card">
-            <Link href={`/property/${p.id}`}>
-              <div className="property-image-wrap" style={{ cursor: 'pointer' }}>
-                <ImageGallery urls={p.images} />
-              </div>
-            </Link>
+      <motion.div layout className="property-grid fade-up fade-up-3">
+        <AnimatePresence mode="popLayout">
+          {filtered.map(p => (
+            <motion.div 
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 200, damping: 20 }}
+              key={p.id} 
+              className="property-card"
+            >
+              <Link href={`/property/${p.id}`}>
+                <div className="property-image-wrap" style={{ cursor: 'pointer' }}>
+                  <ImageGallery urls={p.images} />
+                </div>
+              </Link>
 
-            <div className="property-content">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <Link href={`/property/${p.id}`} style={{ textDecoration: 'none' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>{p.name}</h3>
-                  </Link>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>{p.location}</p>
-                    {p.rating && p.rating.count > 0 && (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem' }}>
-                        <span style={{ color: '#F59E0B' }}>★</span>
-                        <span style={{ fontWeight: 700 }}>{p.rating.avg}</span>
-                        <span style={{ color: 'var(--text-muted)' }}>({p.rating.count})</span>
+              <div className="property-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <Link href={`/property/${p.id}`} style={{ textDecoration: 'none' }}>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>{p.name}</h3>
+                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>{p.location}</p>
+                      {p.rating && p.rating.count > 0 && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem' }}>
+                          <span style={{ color: '#F59E0B' }}>★</span>
+                          <span style={{ fontWeight: 700 }}>{p.rating.avg}</span>
+                          <span style={{ color: 'var(--text-muted)' }}>({p.rating.count})</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {p.type === 'OWNED' && <span className="badge badge-blue">Verified</span>}
+                  {p.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}
+                </div>
+
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {p.description}
+                </p>
+
+                {/* Amenities */}
+                {p.amenities && p.amenities.length > 0 && (
+                  <div className="amenity-list">
+                    {p.amenities.slice(0, 5).map((a: string) => (
+                      <span key={a} className="amenity-tag">
+                        {AMENITY_ICONS[a] || '✦'} {a}
                       </span>
+                    ))}
+                    {p.amenities.length > 5 && (
+                      <span className="amenity-tag">+{p.amenities.length - 5}</span>
                     )}
                   </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
+                  <div>
+                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>₹{p.pricePerNight.toLocaleString('en-IN')}</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}> / night</span>
+                  </div>
+                  <Link href={`/property/${p.id}`} className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.375rem 0.875rem', borderRadius: '8px' }}>
+                    View Details →
+                  </Link>
                 </div>
-                {p.type === 'OWNED' && <span className="badge badge-blue">Verified</span>}
-                {p.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}
-              </div>
 
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {p.description}
-              </p>
-
-              {/* Amenities */}
-              {p.amenities && p.amenities.length > 0 && (
-                <div className="amenity-list">
-                  {p.amenities.slice(0, 5).map((a: string) => (
-                    <span key={a} className="amenity-tag">
-                      {AMENITY_ICONS[a] || '✦'} {a}
-                    </span>
-                  ))}
-                  {p.amenities.length > 5 && (
-                    <span className="amenity-tag">+{p.amenities.length - 5}</span>
-                  )}
+                <div style={{ marginTop: '0.75rem' }}>
+                  <ClientBookingAction property={p} bookings={p.pBookings} />
                 </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
-                <div>
-                  <span style={{ fontWeight: 700, fontSize: '1rem' }}>₹{p.pricePerNight.toLocaleString('en-IN')}</span>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}> / night</span>
-                </div>
-                <Link href={`/property/${p.id}`} className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.375rem 0.875rem', borderRadius: '8px' }}>
-                  View Details →
-                </Link>
               </div>
-
-              <div style={{ marginTop: '0.75rem' }}>
-                <ClientBookingAction property={p} bookings={p.pBookings} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
 
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-muted)' }}>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import SearchFilter from '@/components/SearchFilter'
 import DarkModeToggle from '@/components/DarkModeToggle'
 import Image from 'next/image'
+import FadeUp from '@/components/FadeUp'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,7 +79,7 @@ export default async function Home() {
         <div className="hero-dots" />
 
         {/* Floating property card preview */}
-        <div className="hero-float-card fade-up fade-up-3">
+        <FadeUp delay={0.4} className="hero-float-card">
           <div className="hero-float-inner">
             <Image src="/logo-cozybnb.jpg" alt="Cozy BnB" width={56} height={56} className="hero-float-logo" />
             <div>
@@ -86,46 +87,54 @@ export default async function Home() {
               <div className="hero-float-desc">Trusted by hosts & guests</div>
             </div>
           </div>
-        </div>
+        </FadeUp>
 
         <div className="container">
           <div className="hero-content">
-            <div className="hero-badge fade-up fade-up-1">
-              <span className="hero-badge-dot" />
-              Handpicked stays, direct bookings
-            </div>
-            <h1 className="hero-title fade-up fade-up-1">
-              Find places to stay
-              <br />
-              <span className="gradient-text">that you'll love</span>
-            </h1>
-            <p className="hero-subtitle fade-up fade-up-2">
-              Curated bed & breakfast properties for your perfect getaway. 
-              Book directly with verified hosts for the best experience, always.
-            </p>
+            <FadeUp delay={0.1}>
+              <div className="hero-badge">
+                <span className="hero-badge-dot" />
+                Handpicked stays, direct bookings
+              </div>
+            </FadeUp>
+            <FadeUp delay={0.2}>
+              <h1 className="hero-title">
+                Find places to stay
+                <br />
+                <span className="gradient-text">that you'll love</span>
+              </h1>
+            </FadeUp>
+            <FadeUp delay={0.3}>
+              <p className="hero-subtitle">
+                Curated bed & breakfast properties for your perfect getaway. 
+                Book directly with verified hosts for the best experience, always.
+              </p>
+            </FadeUp>
 
             {/* Trust Stats Bar */}
-            <div className="trust-stats fade-up fade-up-3">
-              <div className="trust-stat">
-                <span className="trust-stat-value">{totalProperties > 0 ? `${totalProperties}+` : '50+'}</span>
-                <span className="trust-stat-label">Properties</span>
+            <FadeUp delay={0.4}>
+              <div className="trust-stats">
+                <div className="trust-stat">
+                  <span className="trust-stat-value">{totalProperties > 0 ? `${totalProperties}+` : '50+'}</span>
+                  <span className="trust-stat-label">Properties</span>
+                </div>
+                <div className="trust-stat-divider" />
+                <div className="trust-stat">
+                  <span className="trust-stat-value">{totalBookings > 0 ? `${totalBookings}+` : '100+'}</span>
+                  <span className="trust-stat-label">Happy Stays</span>
+                </div>
+                <div className="trust-stat-divider" />
+                <div className="trust-stat">
+                  <span className="trust-stat-value">{avgRating > 0 ? `${avgRating.toFixed(1)}` : '5.0'}</span>
+                  <span className="trust-stat-label">Avg Rating</span>
+                </div>
+                <div className="trust-stat-divider" />
+                <div className="trust-stat">
+                  <span className="trust-stat-value">24/7</span>
+                  <span className="trust-stat-label">Support</span>
+                </div>
               </div>
-              <div className="trust-stat-divider" />
-              <div className="trust-stat">
-                <span className="trust-stat-value">{totalBookings > 0 ? `${totalBookings}+` : '100+'}</span>
-                <span className="trust-stat-label">Happy Stays</span>
-              </div>
-              <div className="trust-stat-divider" />
-              <div className="trust-stat">
-                <span className="trust-stat-value">{avgRating > 0 ? `${avgRating.toFixed(1)}` : '5.0'}</span>
-                <span className="trust-stat-label">Avg Rating</span>
-              </div>
-              <div className="trust-stat-divider" />
-              <div className="trust-stat">
-                <span className="trust-stat-value">24/7</span>
-                <span className="trust-stat-label">Support</span>
-              </div>
-            </div>
+            </FadeUp>
           </div>
         </div>
       </header>

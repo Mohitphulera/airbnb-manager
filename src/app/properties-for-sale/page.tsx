@@ -1,6 +1,7 @@
 import { getAvailableSaleProperties } from '@/actions/salePropertyActions'
 import Link from 'next/link'
 import SalePropertyBrowser from '@/components/SalePropertyBrowser'
+import FadeUp from '@/components/FadeUp'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,19 +40,25 @@ export default async function PropertiesForSalePage() {
       </nav>
 
       {/* Hero */}
-      <header className="container hero-section fade-up">
+      <header className="container hero-section">
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ECFDF5', padding: '0.35rem 0.875rem', borderRadius: '20px', marginBottom: '1rem', fontSize: '0.8125rem', color: 'var(--cozy-success)', fontWeight: 600 }}>
-            Sale Premium properties for sale
-          </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, maxWidth: '560px', lineHeight: '1.1', marginBottom: '0.75rem', letterSpacing: '-0.035em' }}>
-            Find your dream
-            <br />
-            <span className="gradient-text">property to own</span>
-          </h1>
-          <p style={{ color: 'var(--text-muted)', maxWidth: '480px', fontSize: '1.0625rem', lineHeight: '1.7' }}>
-            Explore our curated selection of apartments, villas, plots, and more. Inquire directly and make it yours.
-          </p>
+          <FadeUp delay={0.1}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ECFDF5', padding: '0.35rem 0.875rem', borderRadius: '20px', marginBottom: '1rem', fontSize: '0.8125rem', color: 'var(--cozy-success)', fontWeight: 600 }}>
+              Sale Premium properties for sale
+            </div>
+          </FadeUp>
+          <FadeUp delay={0.2}>
+            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, maxWidth: '560px', lineHeight: '1.1', marginBottom: '0.75rem', letterSpacing: '-0.035em' }}>
+              Find your dream
+              <br />
+              <span className="gradient-text">property to own</span>
+            </h1>
+          </FadeUp>
+          <FadeUp delay={0.3}>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '480px', fontSize: '1.0625rem', lineHeight: '1.7' }}>
+              Explore our curated selection of apartments, villas, plots, and more. Inquire directly and make it yours.
+            </p>
+          </FadeUp>
         </div>
       </header>
 
