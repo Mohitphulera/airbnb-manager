@@ -401,7 +401,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                 💬 Send Inquiry via WhatsApp
               </button>
               <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-                You'll be redirected to WhatsApp with a pre-filled message
+                You&apos;ll be redirected to WhatsApp with a pre-filled message
               </p>
             </div>
           </motion.div>

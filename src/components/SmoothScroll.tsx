@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use client'
 
 import { ReactLenis } from '@studio-freight/react-lenis'
-import { ReactNode } from 'react'
 
-export default function SmoothScroll({ children }: { children: ReactNode }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function SmoothScroll({ children }: { children: any }) {
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
       {children}
