@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CURATOR | Architectural Investments</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#ffdea5",
+              "on-secondary-fixed-variant": "#5d4201",
+              "on-tertiary-fixed-variant": "#4c463d",
+              "tertiary-fixed-dim": "#cfc5b9",
+              "outline-variant": "#c4c7c7",
+              "on-primary": "#ffffff",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#e9c176",
+              "surface-container": "#f0eded",
+              "tertiary-fixed": "#ece1d5",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#261900",
+              "surface-variant": "#e5e2e1",
+              "on-tertiary-container": "#8b8278",
+              "surface": "#fcf9f8",
+              "on-primary-container": "#858383",
+              "on-error": "#ffffff",
+              "surface-bright": "#fcf9f8",
+              "inverse-surface": "#313030",
+              "secondary-container": "#fed488",
+              "secondary": "#775a19",
+              "primary-container": "#1c1b1b",
+              "on-tertiary-fixed": "#201b13",
+              "surface-container-highest": "#e5e2e1",
+              "primary-fixed": "#e5e2e1",
+              "tertiary": "#000000",
+              "on-primary-fixed-variant": "#474746",
+              "inverse-primary": "#c8c6c5",
+              "outline": "#747878",
+              "on-surface-variant": "#444748",
+              "surface-container-low": "#f6f3f2",
+              "surface-container-high": "#eae7e7",
+              "surface-dim": "#dcd9d9",
+              "on-background": "#1c1b1b",
+              "primary": "#000000",
+              "inverse-on-surface": "#f3f0ef",
+              "primary-fixed-dim": "#c8c6c5",
+              "on-surface": "#1c1b1b",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#5f5e5e",
+              "error": "#ba1a1a",
+              "background": "#fcf9f8",
+              "on-primary-fixed": "#1c1b1b",
+              "tertiary-container": "#201b13",
+              "error-container": "#ffdad6",
+              "on-secondary-container": "#785a1a"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #fcf9f8; color: #1c1b1b; }
+        .serif { font-family: 'Noto Serif', serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface selection:bg-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-xl no-border bg-surface-container-low/10">
+<div class="flex justify-between items-center px-12 py-6 max-w-[1920px] mx-auto">
+<div class="font-['Noto_Serif'] text-2xl font-bold tracking-tighter text-black dark:text-white">CURATOR</div>
+<div class="hidden md:flex gap-12 items-center font-['Noto_Serif'] tracking-tight text-lg">
+<a class="text-black dark:text-white border-b border-black dark:border-white pb-1" href="#">Discover</a>
+<a class="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors" href="#">Investments</a>
+<a class="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors" href="#">Our Story</a>
+</div>
+<div class="flex items-center gap-8">
+<button class="material-symbols-outlined text-neutral-900 dark:text-neutral-50 scale-100 active:scale-95 transition-transform" data-icon="search">search</button>
+<button class="px-8 py-2 bg-primary text-on-primary font-body text-sm tracking-widest uppercase hover:bg-primary-container transition-all">Contact</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative h-screen min-h-[800px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="Ultra-modern brutalist villa with floor-to-ceiling windows overlooking a Mediterranean cliffside at dusk with warm interior lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7UnsRyte4SMSPzlofjHhGg9QCmhRx9jkEQqDpoAuY_bC8r68jKcUCCcVrvlHmrQbMf0ySt7wXg5XfyOoKOVhIfxECCFKpojhF4Jzx46hV-dARztO-uwp2JRmbCHxpVsPipRe7zDrpVyIIngxkR36uX-Vaa6VBsr3JKqxAZNyiggFa4rQL0x_MS5rmSuKBpLblCcyK02WDV1iGsHo4076UBeJYGk-OmasIwvSKbEvDNWHLEATy1jMHbfrmNC-CbtgSsM4MGtSWlf1u"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+</div>
+<div class="relative z-10 px-12 md:px-24 max-w-[1920px] mx-auto w-full grid grid-cols-1 md:grid-cols-12">
+<div class="md:col-span-8 lg:col-span-6">
+<span class="inline-block py-1 px-3 bg-secondary-fixed text-on-secondary-fixed font-label text-[10px] tracking-[0.2em] uppercase mb-8">Exclusive Opportunities</span>
+<h1 class="serif text-white text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9] mb-8">
+                    Escape to <br/>Extraordinary
+                </h1>
+<p class="text-white/80 font-body text-xl max-w-lg mb-12 leading-relaxed">
+                    The finest architectural gems curated for the global investor. Access off-market properties that define the future of luxury living and wealth preservation.
+                </p>
+<div class="flex gap-4">
+<button class="bg-white text-black px-12 py-5 font-body text-sm font-semibold tracking-widest uppercase hover:bg-secondary-fixed-dim transition-all">Explore Gems</button>
+<button class="border border-white/30 backdrop-blur-md text-white px-12 py-5 font-body text-sm font-semibold tracking-widest uppercase hover:bg-white/10 transition-all">Request Access</button>
+</div>
+</div>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50 flex flex-col items-center gap-4">
+<span class="font-label text-[10px] tracking-widest uppercase vertical-rl">Scroll to Explore</span>
+<div class="w-px h-16 bg-gradient-to-b from-white/50 to-transparent"></div>
+</div>
+</section>
+<!-- Content Sections -->
+<main class="relative z-20">
+<!-- Curated Collections -->
+<section class="py-32 px-12 max-w-[1920px] mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+<div class="max-w-2xl">
+<h2 class="serif text-5xl md:text-6xl font-bold tracking-tighter mb-6">Curated Collections</h2>
+<p class="font-body text-on-surface-variant text-lg">Hand-picked by our resident architects and investment analysts, these properties represent the pinnacle of design and yield.</p>
+</div>
+<button class="text-secondary font-label tracking-widest border-b border-secondary/30 pb-2 hover:border-secondary transition-all uppercase text-xs">View All Destinations</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+<!-- Property Card 1 -->
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden mb-8 aspect-[4/5] bg-surface-container-highest">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-105 transition-transform duration-700" data-alt="Sleek modern mansion with infinity pool and palm trees in Beverly Hills under a crisp blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcGkkMqj6RxKRQI33K7buemKovn_jwIb7djkmlGkZH3nfEZLtLzYYIZpwEeIQ0s00KU16zTM2IlxiICd66yrOkh7w0qSGb8jZyurH6F2BW13pI5TLVWzWnkLKRru1JPBLC2tbLLvGFducXAqbFAFh3ezfrcY0uZpPQFaCCRb3_sEngcuzZbdg7EkPxYx-2d8qMJmAngca0nZOHZzSBhWdV79iZRfv51R8jUYlBMHuqt_n1HIhFboEIpznC56Zi2KVOUkpo26SH5iE7"/>
+<div class="absolute top-6 left-6 flex flex-col gap-2">
+<span class="bg-white px-4 py-1 text-[10px] font-label tracking-widest uppercase">New Release</span>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="serif text-2xl font-bold mb-2">The Glass Pavilion</h3>
+<p class="font-body text-on-surface-variant text-sm mb-6">Monte Carlo, Monaco</p>
+<div class="grid grid-cols-2 gap-8 border-t border-outline-variant/15 pt-6">
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Nightly Rate</span>
+<span class="serif text-lg font-bold">€4,200</span>
+</div>
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Annual Yield</span>
+<span class="serif text-lg font-bold text-secondary">7.2%</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="north_east">north_east</span>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="group cursor-pointer translate-y-24">
+<div class="relative overflow-hidden mb-8 aspect-[4/5] bg-surface-container-highest">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-105 transition-transform duration-700" data-alt="Contemporary desert retreat with minimalist concrete architecture and cactus garden at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-4bt-iQek6ont4MLbLZSDLxN-EjDxPjfykvghaE2H4RlR18cOOHJjuLG79fDDpLDaj2tpyV4CP1XCy-zWyzKLnCdmKmHit0bA1haG-_ugc9vlvounp-qYidBiASoV7L4SZbimuxY5I_GrA5hTR6W-mG2sEUU1bBwtAk_eIh6v_JXHoluh9EmOiogMUD8GcUUz4vbxKOcubVpbvx-aG3mSuWKf5-xnYBiVx9-5260JG6Pp79R6w7fxHAFtXC9RdkGVmARXwIhiadTq"/>
+<div class="absolute top-6 left-6 flex flex-col gap-2">
+<span class="bg-primary text-white px-4 py-1 text-[10px] font-label tracking-widest uppercase">Off-Market</span>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="serif text-2xl font-bold mb-2">Desert Sanctuary</h3>
+<p class="font-body text-on-surface-variant text-sm mb-6">Joshua Tree, USA</p>
+<div class="grid grid-cols-2 gap-8 border-t border-outline-variant/15 pt-6">
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Nightly Rate</span>
+<span class="serif text-lg font-bold">$2,800</span>
+</div>
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Annual Yield</span>
+<span class="serif text-lg font-bold text-secondary">9.1%</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="north_east">north_east</span>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden mb-8 aspect-[4/5] bg-surface-container-highest">
+<img class="w-full h-full object-cover grayscale-[0.2] group-hover:scale-105 transition-transform duration-700" data-alt="European minimalist apartment with high ceilings, herringbone floors, and designer furniture in Paris" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmBl-aQEWzF8MTfvr5M9enwdmTqJdBiFhZ7MQf6Ydblg_h30imFqIlyQyyf52iVv0ZsLxMqxXzVkuTZIaHMmA76xcpdm0ku-d5A80nPg4n085yuf6pZetb0q5PVpC4NpfQqGZrnYON_btKCs4cR5KwiVrTyhuoeFFSmmIS5i_Ssumn_pmuvVJuzDh0nHZUxPnXDLawMBOgy63oQOsqAjxgs9L6yHC6jpyYwqGQwVaal9y3vQdMHdyxvhnL-6FKMnO666RsJn-ZNwW9"/>
+<div class="absolute top-6 left-6 flex flex-col gap-2">
+<span class="bg-white px-4 py-1 text-[10px] font-label tracking-widest uppercase">Heritage</span>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="serif text-2xl font-bold mb-2">Hausmann Atelier</h3>
+<p class="font-body text-on-surface-variant text-sm mb-6">Paris, France</p>
+<div class="grid grid-cols-2 gap-8 border-t border-outline-variant/15 pt-6">
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Nightly Rate</span>
+<span class="serif text-lg font-bold">€1,950</span>
+</div>
+<div>
+<span class="block font-label text-[9px] text-on-surface-variant uppercase tracking-widest mb-1">Annual Yield</span>
+<span class="serif text-lg font-bold text-secondary">5.8%</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="north_east">north_east</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Invest Section (Editorial Style) -->
+<section class="py-40 bg-surface-container-low mt-24">
+<div class="max-w-[1920px] mx-auto px-12 grid grid-cols-1 md:grid-cols-12 gap-24 items-center">
+<div class="md:col-span-5 relative">
+<div class="absolute -top-12 -left-12 w-48 h-48 bg-secondary-fixed/30 -z-10"></div>
+<img class="w-full aspect-square object-cover shadow-2xl" data-alt="Low angle shot of modern glass skyscrapers reflecting the morning sun with sharp architectural lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIfUriuvMBPYwhzJGGDg_a-rVNc_Y-oJIS9vtfbeaF4YO-maAadcIMeuJeRx71-W8YOgF0y1PskgzmZgwNs9G3xMczPPa4EnH0RiokGP10RZGbMsENsdMkmea7Cbc6v6nAqfPOICmKGomncsgYOJ80IGSSRGaQU_l0gK8BqPP_WKPXYQn4yD-Ms8BDO_iAvfvhtjnuEVgpBV1vRtt_tF_dFk30VkWlbRVrywAsZmD3_s0wpUZAL-t0Ns4c0JGT8Qc01aOfnz8f5pqN"/>
+<div class="absolute -bottom-8 -right-8 p-12 bg-primary text-white max-w-[280px]">
+<p class="serif italic text-xl">"Architecture is the art of how we waste space."</p>
+<span class="block mt-4 font-label text-[10px] tracking-widest uppercase opacity-60">— Philip Johnson</span>
+</div>
+</div>
+<div class="md:col-span-7">
+<h2 class="serif text-5xl md:text-7xl font-bold tracking-tighter mb-16 leading-tight">Investment Philosophy</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-16 gap-x-12">
+<div class="space-y-4">
+<span class="serif text-4xl text-secondary">01</span>
+<h4 class="serif text-2xl font-bold">Vetted Assets</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">Every property undergoes a 120-point architectural and financial audit to ensure longevity and capital growth.</p>
+</div>
+<div class="space-y-4">
+<span class="serif text-4xl text-secondary">02</span>
+<h4 class="serif text-2xl font-bold">Fractional Ownership</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">Diversify your portfolio by owning high-yield shares in multi-million dollar architectural masterpieces.</p>
+</div>
+<div class="space-y-4">
+<span class="serif text-4xl text-secondary">03</span>
+<h4 class="serif text-2xl font-bold">Global Mobility</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">Investors gain exclusive access to stay at any property within our portfolio worldwide at preferred member rates.</p>
+</div>
+<div class="space-y-4">
+<span class="serif text-4xl text-secondary">04</span>
+<h4 class="serif text-2xl font-bold">End-to-End Mgmt</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">From interior maintenance to high-end concierge services, we handle the complexity of asset management.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / CTA -->
+<section class="py-32 px-12 max-w-[1920px] mx-auto text-center border-b border-outline-variant/10">
+<h2 class="serif text-4xl md:text-5xl font-bold mb-8">Join the inner circle.</h2>
+<p class="font-body text-on-surface-variant text-lg mb-12 max-w-xl mx-auto">Receive early access to off-market architectural listings and quarterly market insights from our curators.</p>
+<form class="flex flex-col md:flex-row max-w-2xl mx-auto gap-4">
+<input class="flex-grow bg-surface-container-high px-8 py-4 border-none focus:ring-1 focus:ring-secondary transition-all" placeholder="Your professional email" type="email"/>
+<button class="bg-primary text-white px-12 py-4 font-label text-sm tracking-widest uppercase hover:bg-secondary-container hover:text-on-secondary-container transition-all">Subscribe</button>
+</form>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-20 px-12 bg-neutral-50 dark:bg-neutral-950">
+<div class="bg-neutral-100 dark:bg-neutral-900 h-[1px] w-full mb-12"></div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 max-w-[1920px] mx-auto items-start">
+<div class="space-y-8">
+<div class="font-['Noto_Serif'] text-xl font-bold text-black dark:text-white">CURATOR</div>
+<p class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">Defining the future of architectural investment since 2012.</p>
+</div>
+<div class="space-y-6">
+<h5 class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-bold text-neutral-900">Experience</h5>
+<ul class="space-y-4 font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Discover</a></li>
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Newsletter</a></li>
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Journal</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-bold text-neutral-900">Legal</h5>
+<ul class="space-y-4 font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Terms</a></li>
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Privacy</a></li>
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-bold text-neutral-900">Follow</h5>
+<ul class="space-y-4 font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Instagram</a></li>
+<li><a class="hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">LinkedIn</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-20 pt-8 border-t border-neutral-100 dark:border-neutral-900 flex justify-between items-center">
+<p class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">© 2024 THE CURATOR ARCHITECTURAL INVESTMENTS. ALL RIGHTS RESERVED.</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-neutral-300" data-icon="language">language</span>
+<span class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">EN / EUR</span>
+</div>
+</div>
+</footer>
+</body></html>

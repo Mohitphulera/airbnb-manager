@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#ffdea5",
+              "on-secondary-fixed-variant": "#5d4201",
+              "on-tertiary-fixed-variant": "#4c463d",
+              "tertiary-fixed-dim": "#cfc5b9",
+              "outline-variant": "#c4c7c7",
+              "on-primary": "#ffffff",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#e9c176",
+              "surface-container": "#f0eded",
+              "tertiary-fixed": "#ece1d5",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#261900",
+              "surface-variant": "#e5e2e1",
+              "on-tertiary-container": "#8b8278",
+              "surface": "#fcf9f8",
+              "on-primary-container": "#858383",
+              "on-error": "#ffffff",
+              "surface-bright": "#fcf9f8",
+              "inverse-surface": "#313030",
+              "secondary-container": "#fed488",
+              "secondary": "#775a19",
+              "primary-container": "#1c1b1b",
+              "on-tertiary-fixed": "#201b13",
+              "surface-container-highest": "#e5e2e1",
+              "primary-fixed": "#e5e2e1",
+              "tertiary": "#000000",
+              "on-primary-fixed-variant": "#474746",
+              "inverse-primary": "#c8c6c5",
+              "outline": "#747878",
+              "on-surface-variant": "#444748",
+              "surface-container-low": "#f6f3f2",
+              "surface-container-high": "#eae7e7",
+              "surface-dim": "#dcd9d9",
+              "on-background": "#1c1b1b",
+              "primary": "#000000",
+              "inverse-on-surface": "#f3f0ef",
+              "primary-fixed-dim": "#c8c6c5",
+              "on-surface": "#1c1b1b",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#5f5e5e",
+              "error": "#ba1a1a",
+              "background": "#fcf9f8",
+              "on-primary-fixed": "#1c1b1b",
+              "tertiary-container": "#201b13",
+              "error-container": "#ffdad6",
+              "on-secondary-container": "#785a1a"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0rem", "lg": "0rem", "xl": "0rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Noto Serif', serif; }
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fcf9f8; }
+        ::-webkit-scrollbar-thumb { background: #1c1b1b; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-xl no-border bg-surface-container-low/10">
+<div class="flex justify-between items-center px-12 py-6 max-w-[1920px] mx-auto">
+<div class="font-['Noto_Serif'] text-2xl font-bold tracking-tighter text-black dark:text-white">
+                CURATOR
+            </div>
+<div class="hidden md:flex items-center gap-12">
+<a class="font-['Noto_Serif'] tracking-tight text-lg text-black dark:text-white border-b border-black dark:border-white pb-1" href="#">Discover</a>
+<a class="font-['Noto_Serif'] tracking-tight text-lg text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors" href="#">Investments</a>
+<a class="font-['Noto_Serif'] tracking-tight text-lg text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors" href="#">Our Story</a>
+</div>
+<div class="flex items-center gap-8">
+<button class="material-symbols-outlined text-neutral-500">search</button>
+<button class="bg-primary text-on-primary px-10 py-4 font-body text-sm tracking-widest uppercase hover:bg-neutral-800 transition-all scale-100 active:scale-95">
+                    Contact
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-12 max-w-[1920px] mx-auto">
+<!-- Header Section -->
+<header class="mb-20">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div class="max-w-2xl">
+<span class="block font-label uppercase tracking-[0.2em] text-secondary text-sm mb-4">Institutional Grade Assets</span>
+<h1 class="font-headline text-7xl md:text-8xl font-extrabold tracking-tighter text-primary leading-none">
+                        Investment <br/> Catalog
+                    </h1>
+</div>
+<div class="max-w-xs md:text-right">
+<p class="font-body text-on-surface-variant text-lg leading-relaxed">
+                        Curated opportunities in architectural excellence and high-yield structural investments.
+                    </p>
+</div>
+</div>
+</header>
+<!-- Filters Bar: The "No-Line" Rule Applied -->
+<section class="mb-16 bg-surface-container-low p-8 flex flex-wrap items-end gap-12">
+<div class="flex flex-col gap-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-tertiary-container">Asset Class</label>
+<div class="relative min-w-[200px]">
+<select class="w-full bg-surface-container-high border-none text-sm font-medium py-3 pl-4 pr-10 focus:ring-0 appearance-none cursor-pointer">
+<option>All Assets</option>
+<option>Residential Luxury</option>
+<option>Commercial Structural</option>
+<option>Hospitality Prime</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-tertiary-container">Location</label>
+<div class="relative min-w-[200px]">
+<select class="w-full bg-surface-container-high border-none text-sm font-medium py-3 pl-4 pr-10 focus:ring-0 appearance-none cursor-pointer">
+<option>Global Markets</option>
+<option>London Metropolitan</option>
+<option>Singapore District 9</option>
+<option>Swiss Alps Region</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-on-tertiary-container">Entry Point</label>
+<div class="relative min-w-[200px]">
+<select class="w-full bg-surface-container-high border-none text-sm font-medium py-3 pl-4 pr-10 focus:ring-0 appearance-none cursor-pointer">
+<option>Any Value</option>
+<option>$5M - $15M</option>
+<option>$15M - $50M</option>
+<option>$50M+</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+</div>
+</div>
+<button class="ml-auto flex items-center gap-2 font-label text-xs uppercase tracking-widest border-b border-on-surface pb-1 hover:text-secondary hover:border-secondary transition-colors">
+                Clear All Filters
+            </button>
+</section>
+<!-- Investment Grid: Asymmetric Bento Influence -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-24 gap-x-12">
+<!-- Asset Card 01 -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Minimalist architectural villa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Stunning minimalist concrete villa with clean lines and floor to ceiling windows set against a dramatic desert sunset background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNJa6IFrH4g1Z8Gq7OG8nHWPUbrkPCstcH31D_BJo4ZY40rtAjUXsud5f4B_kv6d2iaWV0kRv19XkpZo6hnOoSwLmnH2LclpRYp56wi_nx0WyjdLqYD9YQNddkkJ-J7znRgEenakdfY3-nARvFRF3vtomPA4J_vfXVKc0_6Qm2pRll04f77qYoZdC4Z4k9FetVdD7tHkUVNbIkfKZ2mlG8ioA6YfwJDcm2ZoDOC9EJgsKW1kNxxrz1UYshGsUJjfiKX2OTEaI76iu4"/>
+<div class="absolute top-0 right-0 p-6">
+<span class="bg-primary text-on-primary font-label text-[10px] uppercase tracking-widest px-4 py-2">
+                            Available
+                        </span>
+</div>
+<!-- The Curator's Overlay -->
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"A masterclass in thermal mass architecture and passive cooling systems."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">The Monolith Collective</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">London, UK • Residential Luxury</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$12.4M</span>
+</div>
+</div>
+<!-- Metrics Block -->
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">12.4%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+28%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$1.1M</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Asset Card 02 (Featured/Larger) -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Glass commercial tower" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Dramatic high angle of a sleek modern glass skyscraper reflecting a clear blue sky and neighboring geometric buildings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQUc150QNv6-8L7-GENdx3dad0TVB8rVgVVKkAlwXGr101NQT_tD57jPgUBGxio0XJHU-qOYRUTlAkbvSlyjVLx2M3pgHMPkf6GJr9lVtfcaZmwtFwSS5Utj15SUgfWzL9vYxulsxadmmQBWpfuUvh-PX8CC-j9lSBIO19Dpx5a6AZZj3y1Yku8gvtBCPqFJxgAWkQbUIky44EXQwzN5_XYLys0WXZ-Ht0ucW11XWjuCHaQBeMLrAO0BvK1MsUqpQL9QNqGbA2At0H"/>
+<div class="absolute top-0 right-0 p-6">
+<span class="bg-secondary text-on-secondary font-label text-[10px] uppercase tracking-widest px-4 py-2">
+                            Limited Tier
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"Optimized for tech-sector tenancy with flexible floorplate modularity."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">Vertex Plaza Towers</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">Singapore • Commercial Prime</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$42.0M</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">8.9%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+15%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$3.8M</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Asset Card 03 -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Luxury coastal estate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Exclusive white mediterranean villa on a rugged cliff overlooking deep blue ocean water at bright midday" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbPtNBTGQ9bcw2j5lBrzEdf1giugjaPEL9-u9t8jEsJnxpH5_t-bOHABvtya7e-DoJp09f-JKheqBulvEHifGSjGvQQGJ8_2E_WejA8trqfqd15q3xIcWWsNZ40IOXNFn_CcKUirhwFBP58m59wu5nRY09-aBHNHD8oiZR3C9BNEl_VrTdkOeSLMnpfJ8CMZ-WnUFUyr48dxeF5s-0j3knmxmZWdUlHbtm00dq6J0DrSjDoTqnl3nRsngu5P6BuHOXAaL3Wi2ArN8T"/>
+<div class="absolute top-0 right-0 p-6">
+<span class="bg-primary text-on-primary font-label text-[10px] uppercase tracking-widest px-4 py-2">
+                            Under Review
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"A scarcity-driven investment in a protected shoreline ecological zone."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">Azure Cliff Retreat</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">Mykonos, GR • Hospitality</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$18.5M</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">14.1%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+42%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$2.2M</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Asset Card 04 -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Brutalist office structure" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Monolithic brutalist concrete office building with rhythmic window patterns and harsh shadows in black and white style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIu0MAj4nsRwXFrD40-eexyY2S-sd6pHmT0IW7w8wLMQMMBtUA6J02pHCKcXETi2wyZGEmMID527PiS17MiGMBmWTkCp_-vc0NxnmeYmlwT5L60XthA90mWevG4zBCqCegPx4AtvziFBN2_f1RsiLzu0iwnJpXVpmFuMvqUMDnUxoTOJwcxbpP9wUeCRYW1LK7nU356KYInfZr-P9TIpFQ3bDdXaWks6YunHQDr8ZM4unIOuInbbW4QHBuHlOUAsVxrQxah0S58JM3"/>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"Re-adaptive use potential for high-density urban residential conversion."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">The Brutalist Core</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">Berlin, GER • Mixed-Use</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$9.2M</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">10.5%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+12%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$850K</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Asset Card 05 -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Luxury modern home with pool" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Ultra luxury modern home with glowing pool and expansive wooden deck under a starry evening sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmHGTiyEy315lglDgDQcNJFpRtCT5iY-dkrGKZHmoXK6WR0JB0z6jaigmwraIBYPKd5bAOIs6wMkXVlQ5bKSkOyX3HCCFi_0TLYZqTMjP0Wm6qCMyj7VdhsFapGK0PBQEJ0-fT02d92LaCni1NYAn1iBTA8GdYViwBFwIRkMEX37oliHzyFVv2kKpH_FD2Fl9Ip_5XrGTtXYa_xmBx3CyjLUvIckX2-XkyF5dfJaOUnGBJHk2oNyitUEpbZ5nx9bC1qI6jf9qVBntS"/>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"Prime short-term rental asset with 95% historical occupancy rate."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">The Glass Pavilion</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">Malibu, USA • Residential Luxury</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$24.8M</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">11.2%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+34%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$1.9M</p>
+</div>
+</div>
+</div>
+</article>
+<!-- Asset Card 06 -->
+<article class="group relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden relative">
+<img alt="Modern corporate lobby" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Vast futuristic corporate lobby with polished marble floors, sculptural light fixtures and minimalist seating areas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCurHP3FMvzqRsRugxLJC5C8tkWT9RjRw3jKK7OJiGgxS7jbrv-taa7elmzqGp3h43IM-PA2ShIOqYxkHXZ6xfeUqO2pY1i0MrT_QRFkzs2qprpRp-adNzMPyOUp9aaOJ8Llf7J5SdZMx8_jPf26JRP2JDdZlLUtzcS9aQ8b6yuz-fYuhY7ChYUfLDO7DA2xAz3N50ge8swPNTxkwBfvjqer63wHm96vOTcOYHaXHNDsj7IWphjDr4gfgYdIUfbtwYUrhPOE1xq5hhi"/>
+<div class="absolute top-0 right-0 p-6">
+<span class="bg-primary text-on-primary font-label text-[10px] uppercase tracking-widest px-4 py-2">
+                            Newly Appraised
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-primary-container/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+<p class="font-body text-white/80 text-sm italic">"Triple-A rated anchor tenants with 15-year lease commitments."</p>
+</div>
+</div>
+<div class="mt-8 relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tight mb-2">Infinity HQ Hub</h3>
+<p class="font-label text-xs text-secondary tracking-widest uppercase">Zurich, CH • Commercial Prime</p>
+</div>
+<div class="text-right">
+<span class="font-headline text-2xl font-bold">$68.0M</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 p-6 bg-surface-container-low">
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Projected ROI</p>
+<p class="font-headline text-xl font-bold text-primary">7.5%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Growth (5Y)</p>
+<p class="font-headline text-xl font-bold text-primary">+8%</p>
+</div>
+<div>
+<p class="font-label text-[9px] uppercase tracking-tighter text-on-tertiary-container mb-1">Net Revenue</p>
+<p class="font-headline text-xl font-bold text-primary">$5.1M</p>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-24 flex justify-center">
+<button class="group flex items-center gap-4 py-6 px-16 border border-outline-variant/30 hover:bg-primary hover:text-on-primary transition-all duration-300">
+<span class="font-label text-sm uppercase tracking-[0.3em]">Load More Assets</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-neutral-50 dark:bg-neutral-950 w-full py-20 px-12">
+<div class="bg-neutral-100 dark:bg-neutral-900 h-[1px] w-full mb-12"></div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 max-w-[1920px] mx-auto items-start">
+<div class="space-y-6">
+<div class="font-['Noto_Serif'] text-xl font-bold text-black dark:text-white">THE CURATOR</div>
+<p class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 max-w-[200px] leading-loose">
+                    Defining the intersection of architecture, aesthetics, and high-yield capital placement.
+                </p>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="font-['Inter'] uppercase tracking-[0.2em] text-[11px] font-bold text-neutral-900 dark:text-neutral-50 mb-2">Connect</h4>
+<a class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Newsletter</a>
+<a class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Instagram</a>
+<a class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">LinkedIn</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="font-['Inter'] uppercase tracking-[0.2em] text-[11px] font-bold text-neutral-900 dark:text-neutral-50 mb-2">Legal</h4>
+<a class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Terms</a>
+<a class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors underline-offset-4 hover:underline" href="#">Privacy</a>
+</div>
+<div class="space-y-6 lg:text-right">
+<p class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-medium text-neutral-400">© 2024 THE CURATOR ARCHITECTURAL INVESTMENTS. ALL RIGHTS RESERVED.</p>
+<div class="flex lg:justify-end gap-6">
+<span class="material-symbols-outlined text-neutral-300">verified</span>
+<span class="material-symbols-outlined text-neutral-300">security</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
