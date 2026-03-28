@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
 
+html { scroll-behavior: smooth; }
 :root {
   /* ===== Cozy BnB Brand ===== */
   --cozy-blue: #2563EB;
@@ -235,6 +236,7 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 .property-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
 .property-image-wrap {
   position: relative; width: 100%; aspect-ratio: 16/10;
+  min-height: 180px;
   border-radius: var(--radius); overflow: hidden; background: var(--surface);
 }
 .property-content { padding: 0.875rem 0.25rem; }
