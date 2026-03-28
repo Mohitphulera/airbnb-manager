@@ -1258,6 +1258,12 @@ html.dark .footer-brand-name { color: #E2E8F0; }
   letter-spacing: 0.15em; text-transform: uppercase; color: #6b7280;
 }
 
+/* ───── Hamburger (hidden on desktop) ───── */
+.st-hamburger {
+  display: none; background: none; border: none; cursor: pointer; color: #1a1a1a; padding: 0.25rem;
+}
+.st-mobile-menu { display: none; }
+
 /* ═══════════════════════ STITCH RESPONSIVE: TABLET ═══════════════════════ */
 @media (min-width: 768px) {
   .st-hero-row { flex-direction: row; align-items: flex-end; justify-content: space-between; }
@@ -1267,31 +1273,76 @@ html.dark .footer-brand-name { color: #E2E8F0; }
 
 /* ═══════════════════════ STITCH RESPONSIVE: MOBILE ═══════════════════════ */
 @media (max-width: 767px) {
-  .st-nav-inner { padding: 0 1.25rem; }
+  /* Compact Nav */
+  .st-nav { height: 3.5rem; }
+  .st-nav-inner { padding: 0 1rem; }
+  .st-nav-name { font-size: 1rem; }
+  .st-nav-logo { width: 2rem; height: 2rem; }
   .st-nav-links { display: none; }
   .st-nav-actions { display: none; }
-  .st-hero-inner { padding: 4rem 1.25rem; }
-  .st-hero-row { margin-bottom: 2rem; }
-  .st-hero-title { font-size: clamp(2.5rem, 10vw, 3.5rem); }
-  .st-search {
-    flex-direction: column; border-radius: 16px; padding: 0.75rem;
-    gap: 0;
+
+  /* Hamburger visible */
+  .st-hamburger { display: flex; align-items: center; justify-content: center; }
+
+  /* Slide-down mobile menu */
+  .st-mobile-menu {
+    display: flex; flex-direction: column; gap: 0;
+    position: fixed; top: 3.5rem; left: 0; right: 0; z-index: 99;
+    background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 0.5rem 0; animation: st-slide-down 0.2s ease;
   }
-  .st-search-field { padding: 0.75rem 1rem; }
-  .st-search-field-bordered { border-right: none; border-bottom: 1px solid #e5e7eb; }
-  .st-search-btn { width: 100%; border-radius: 12px; height: 3rem; }
-  .st-grid-section { padding: 3rem 1.25rem; }
-  .st-grid { grid-template-columns: 1fr; gap: 3rem; }
+  @keyframes st-slide-down {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .st-mobile-link {
+    display: block; padding: 0.875rem 1.5rem;
+    font-family: 'Manrope', sans-serif; font-size: 0.6875rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase; color: #6b7280;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .st-mobile-link:hover, .st-mobile-link:active { background: #f5f5f5; color: #1a1a1a; }
+  .st-mobile-link-active { color: #1a1a1a; font-weight: 700; }
+
+  /* Hero compact */
+  .st-hero { padding-top: 3.5rem; }
+  .st-hero-inner { padding: 2.5rem 1.25rem 2rem; }
+  .st-hero-row { margin-bottom: 1.5rem; gap: 1rem; }
+  .st-hero-title { font-size: clamp(2rem, 9vw, 3rem); }
+  .st-hero-subtitle { max-width: 100%; font-size: 0.8125rem; }
+
+  /* Search bar stacks vertically */
+  .st-search {
+    flex-direction: column; border-radius: 16px; padding: 0.75rem; gap: 0;
+  }
+  .st-search-field { padding: 0.625rem 1rem; }
+  .st-search-field-bordered { border-right: none; border-bottom: 1px solid #f0f0f0; }
+  .st-search-btn { width: 100%; border-radius: 12px; height: 2.75rem; margin-top: 0.25rem; }
+
+  /* Property grid — single column */
+  .st-grid-section { padding: 2rem 1.25rem; }
+  .st-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .st-card { padding: 0; margin: 0; }
-  .st-card-title { font-size: 1.5rem; }
-  .st-footer { padding: 3rem 1.25rem; }
+  .st-card-image { margin-bottom: 1rem; aspect-ratio: 4/3; }
+  .st-card-title { font-size: 1.375rem; }
+  .st-card-price-val { font-size: 1.125rem; }
+  .st-card-cta { padding: 0.75rem 0; font-size: 0.5625rem; }
+  .st-card-info { gap: 1rem; }
+
+  /* Footer */
+  .st-footer { padding: 2.5rem 1.25rem; }
   .st-footer-top { flex-direction: column; gap: 2rem; margin-bottom: 2rem; }
   .st-footer-cols { gap: 2rem; }
+  .st-footer-bottom { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
 }
 
 /* ═══════════════════════ STITCH: 2-col at tablet ═══════════════════════ */
 @media (min-width: 768px) and (max-width: 1023px) {
   .st-grid { grid-template-columns: repeat(2, 1fr); }
+  .st-hero-inner { padding: 5rem 2rem; }
+  .st-grid-section { padding: 4rem 2rem; }
+  .st-footer { padding: 4rem 2rem; }
 }
 
 

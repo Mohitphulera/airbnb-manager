@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
+import MobileNav from '@/components/MobileNav'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +30,7 @@ export default async function Home() {
           <div className="st-nav-actions">
             <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
           </div>
+          <MobileNav activePage="home" />
         </div>
       </nav>
 

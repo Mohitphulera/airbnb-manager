@@ -1,6 +1,7 @@
 import { getAvailableSaleProperties } from '@/actions/salePropertyActions'
 import Link from 'next/link'
 import SalePropertyBrowser from '@/components/SalePropertyBrowser'
+import MobileNav from '@/components/MobileNav'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,6 +33,7 @@ export default async function PropertiesForSalePage() {
           <div className="st-nav-actions">
             <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
           </div>
+          <MobileNav activePage="investments" />
         </div>
       </nav>
 
