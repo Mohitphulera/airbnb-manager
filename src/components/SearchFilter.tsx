@@ -7,9 +7,9 @@ import ClientBookingAction from './ClientBookingAction'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const AMENITY_ICONS: Record<string, string> = {
-  'WiFi': '📶', 'Pool': '🏊', 'AC': '❄️', 'Kitchen': '🍳',
-  'Parking': '🅿️', 'TV': '📺', 'Washer': '👕', 'Pet-Friendly': '🐾',
-  'Gym': '💪', 'Balcony': '🌅',
+  'WiFi': 'wifi', 'Pool': 'pool', 'AC': 'ac_unit', 'Kitchen': 'kitchen',
+  'Parking': 'local_parking', 'TV': 'tv', 'Washer': 'local_laundry_service', 'Pet-Friendly': 'pets',
+  'Gym': 'fitness_center', 'Balcony': 'balcony',
 }
 
 export default function SearchFilter({ properties }: { properties: any[] }) {
@@ -113,7 +113,8 @@ export default function SearchFilter({ properties }: { properties: any[] }) {
                   <div className="amenity-list">
                     {p.amenities.slice(0, 5).map((a: string) => (
                       <span key={a} className="amenity-tag">
-                        {AMENITY_ICONS[a] || '✦'} {a}
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>{AMENITY_ICONS[a] || 'star_outline'}</span>
+                        {a}
                       </span>
                     ))}
                     {p.amenities.length > 5 && (

@@ -78,10 +78,8 @@ h2 { font-size: 1.5rem; }
 h3 { font-size: 1.125rem; }
 
 .gradient-text {
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--cozy-dark);
+  font-weight: 800;
 }
 
 /* ═══════════════════════ BUTTONS ═══════════════════════ */
@@ -228,11 +226,13 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.75rem;
 }
 .property-card {
-  border-radius: var(--radius-lg); overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  transition: all 0.25s ease;
   background: #fff;
+  box-shadow: var(--shadow-sm);
 }
-.property-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-card-hover); }
+.property-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
 .property-image-wrap {
   position: relative; width: 100%; aspect-ratio: 16/10;
   border-radius: var(--radius); overflow: hidden; background: var(--surface);
@@ -570,10 +570,8 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 /* ═══════════════════════ PUBLIC NAV ═══════════════════════ */
 .public-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(250, 251, 255, 0.80);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
   padding: 0.75rem 0;
 }
 .public-nav-inner { display: flex; justify-content: space-between; align-items: center; }
@@ -587,108 +585,43 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 
 /* ═══════════════════════ HERO SECTION ═══════════════════════ */
 .hero-section {
-  position: relative; padding: 5rem 0 4.5rem;
-  overflow: hidden; min-height: 460px;
-  display: flex; align-items: center;
+  position: relative; padding: 6rem 0 5rem;
+  overflow: hidden; min-height: auto;
+  display: flex; align-items: flex-start;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
 }
 
-.hero-bg {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 15% 50%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 85% 20%, rgba(124, 58, 237, 0.06) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 90%, rgba(14, 165, 233, 0.05) 0%, transparent 40%);
-  background-size: 200% 200%;
-  animation: meshGradient 20s ease infinite;
-  pointer-events: none; z-index: 0;
+.hero-content { 
+  position: relative; z-index: 1; max-width: 800px;
+  margin: 0 auto; display: flex; flex-direction: column; align-items: center;
 }
-
-/* Animated orbs — blurred gradient circles */
-.hero-orb {
-  position: absolute; border-radius: 50%;
-  pointer-events: none; z-index: 0;
-  filter: blur(60px);
-}
-.hero-orb-1 {
-  width: 400px; height: 400px;
-  top: -120px; right: -80px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.08));
-  animation: orbFloat1 16s ease-in-out infinite;
-}
-.hero-orb-2 {
-  width: 300px; height: 300px;
-  bottom: -100px; left: -60px;
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.10), rgba(16, 185, 129, 0.06));
-  animation: orbFloat2 20s ease-in-out infinite 3s;
-}
-.hero-orb-3 {
-  width: 180px; height: 180px;
-  top: 30%; right: 20%;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(37, 99, 235, 0.06));
-  animation: orbFloat3 12s ease-in-out infinite 1s;
-}
-
-.hero-dots {
-  position: absolute; top: 15%; right: 8%;
-  width: 140px; height: 140px;
-  background-image: radial-gradient(circle, rgba(37, 99, 235, 0.08) 1.5px, transparent 1.5px);
-  background-size: 18px 18px;
-  pointer-events: none; z-index: 0; opacity: 0.5;
-}
-
-/* Floating card preview */
-.hero-float-card {
-  position: absolute; top: 15%; right: 10%;
-  z-index: 1; animation: cardFloat 6s ease-in-out infinite;
-}
-.hero-float-inner {
-  display: flex; align-items: center; gap: 0.875rem;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: 16px; padding: 1rem 1.5rem;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.08), 0 2px 8px rgba(0,0,0,0.04);
-}
-.hero-float-logo {
-  border-radius: 14px; object-fit: cover;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
-}
-.hero-float-title {
-  font-weight: 800; font-size: 0.9375rem; letter-spacing: -0.02em;
-  color: var(--cozy-dark);
-}
-.hero-float-desc {
-  font-size: 0.6875rem; color: var(--text-muted); font-weight: 500;
-}
-
-.hero-content { position: relative; z-index: 1; max-width: 600px; }
 
 .hero-badge {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  background: rgba(37, 99, 235, 0.06);
-  border: 1px solid rgba(37, 99, 235, 0.1);
+  background: transparent;
+  border: 1px solid var(--border);
   padding: 0.4rem 1rem; border-radius: 24px;
-  margin-bottom: 1.25rem; font-size: 0.8125rem;
-  color: var(--primary); font-weight: 600;
-  backdrop-filter: blur(8px);
+  margin-bottom: 1.5rem; font-size: 0.8125rem;
+  color: var(--text-muted); font-weight: 600;
 }
 .hero-badge-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--cozy-success);
-  box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
-  animation: pulse 2s ease infinite;
 }
 
 .hero-title {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
-  font-weight: 800; line-height: 1.08;
-  margin-bottom: 1rem; letter-spacing: -0.04em;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800; line-height: 1.05;
+  margin-bottom: 1.25rem; letter-spacing: -0.04em;
+  color: var(--cozy-dark);
 }
 
 .hero-subtitle {
-  color: var(--text-muted); max-width: 460px;
-  font-size: 1.0625rem; line-height: 1.7;
-  margin-bottom: 0.5rem;
+  color: var(--text-muted); max-width: 540px;
+  font-size: 1.125rem; line-height: 1.6;
+  margin-bottom: 2rem; margin-inline: auto;
 }
 
 /* ═══════════════════════ TRUST STATS ═══════════════════════ */

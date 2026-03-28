@@ -67,28 +67,6 @@ export default async function Home() {
 
       {/* ───── Hero Section ───── */}
       <header className="hero-section">
-        {/* Animated gradient mesh */}
-        <div className="hero-bg" />
-        
-        {/* Animated orbs */}
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
-        <div className="hero-orb hero-orb-3" />
-        
-        {/* Decorative grid dots */}
-        <div className="hero-dots" />
-
-        {/* Floating property card preview */}
-        <FadeUp delay={0.4} className="hero-float-card">
-          <div className="hero-float-inner">
-            <Image src="/logo-cozybnb.jpg" alt="Cozy BnB" width={56} height={56} className="hero-float-logo" />
-            <div>
-              <div className="hero-float-title">Cozy BnB</div>
-              <div className="hero-float-desc">Trusted by hosts & guests</div>
-            </div>
-          </div>
-        </FadeUp>
-
         <div className="container">
           <div className="hero-content">
             <FadeUp delay={0.1}>

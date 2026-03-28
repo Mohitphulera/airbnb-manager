@@ -21,18 +21,21 @@ export default async function PropertiesForSalePage() {
       {/* Sticky Nav */}
       <nav className="public-nav">
         <div className="container public-nav-inner">
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+          <Link href="/" className="nav-logo-wrap">
             <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="logo-img" style={{ width: '38px', height: '38px' }} />
-            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: 'var(--cozy-dark)' }}>Cozy B&B</span>
+            <div className="nav-logo-text-group">
+              <span className="nav-logo-text">Cozy BnB</span>
+              <span className="nav-logo-sub">& Properties</span>
+            </div>
           </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Link href="/" className="btn btn-outline" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
+          <div className="public-nav-links">
+            <Link href="/" className="btn btn-glass">
               Stays
             </Link>
-            <Link href="/properties-for-sale" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              Sale Buy Property
+            <Link href="/properties-for-sale" className="btn btn-primary nav-btn-active">
+              Buy Property
             </Link>
-            <Link href="/login" className="btn btn-secondary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
+            <Link href="/login" className="btn btn-secondary">
               Host Login
             </Link>
           </div>
@@ -40,25 +43,28 @@ export default async function PropertiesForSalePage() {
       </nav>
 
       {/* Hero */}
-      <header className="container hero-section">
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <FadeUp delay={0.1}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ECFDF5', padding: '0.35rem 0.875rem', borderRadius: '20px', marginBottom: '1rem', fontSize: '0.8125rem', color: 'var(--cozy-success)', fontWeight: 600 }}>
-              Sale Premium properties for sale
-            </div>
-          </FadeUp>
-          <FadeUp delay={0.2}>
-            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, maxWidth: '560px', lineHeight: '1.1', marginBottom: '0.75rem', letterSpacing: '-0.035em' }}>
-              Find your dream
-              <br />
-              <span className="gradient-text">property to own</span>
-            </h1>
-          </FadeUp>
-          <FadeUp delay={0.3}>
-            <p style={{ color: 'var(--text-muted)', maxWidth: '480px', fontSize: '1.0625rem', lineHeight: '1.7' }}>
-              Explore our curated selection of apartments, villas, plots, and more. Inquire directly and make it yours.
-            </p>
-          </FadeUp>
+      <header className="hero-section">
+        <div className="container">
+          <div className="hero-content">
+            <FadeUp delay={0.1}>
+              <div className="hero-badge">
+                <span className="hero-badge-dot" />
+                Premium properties for sale
+              </div>
+            </FadeUp>
+            <FadeUp delay={0.2}>
+              <h1 className="hero-title">
+                Find your dream
+                <br />
+                property to own
+              </h1>
+            </FadeUp>
+            <FadeUp delay={0.3}>
+              <p className="hero-subtitle">
+                Explore our curated selection of apartments, villas, plots, and more. Inquire directly and make it yours.
+              </p>
+            </FadeUp>
+          </div>
         </div>
       </header>
 

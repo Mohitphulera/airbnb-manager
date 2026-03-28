@@ -5,26 +5,26 @@ import ImageGallery from '@/components/ImageGallery'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const TYPE_LABELS: Record<string, string> = {
-  APARTMENT: '🏢 Apartment',
-  VILLA: '🏡 Villa',
-  PLOT: '📐 Plot / Land',
-  COMMERCIAL: '🏪 Commercial',
-  FARMHOUSE: '🌾 Farmhouse',
+  APARTMENT: 'Apartment',
+  VILLA: 'Villa',
+  PLOT: 'Plot / Land',
+  COMMERCIAL: 'Commercial',
+  FARMHOUSE: 'Farmhouse',
 }
 
 const FEATURE_ICONS: Record<string, string> = {
-  'Garden': '🌿',
-  'Parking': '🅿️',
-  'Swimming Pool': '🏊',
-  '24x7 Security': '🔒',
-  'Lift': '🛗',
-  'Power Backup': '⚡',
-  'Gym': '💪',
-  'Club House': '🏛️',
-  'Park': '🌳',
-  'Gated Community': '',
-  'Corner Plot': '📐',
-  'Vastu Compliant': '🧭',
+  'Garden': 'yard',
+  'Parking': 'local_parking',
+  'Swimming Pool': 'pool',
+  '24x7 Security': 'security',
+  'Lift': 'elevator',
+  'Power Backup': 'bolt',
+  'Gym': 'fitness_center',
+  'Club House': 'bungalow',
+  'Park': 'park',
+  'Gated Community': 'fence',
+  'Corner Plot': 'crop_square',
+  'Vastu Compliant': 'explore',
 }
 
 function formatPrice(price: number): string {
@@ -99,11 +99,11 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
         <div className="filter-pills">
           {[
             { value: 'ALL', label: 'All Types' },
-            { value: 'APARTMENT', label: '🏢 Apartment' },
-            { value: 'VILLA', label: '🏡 Villa' },
-            { value: 'PLOT', label: '📐 Plot' },
-            { value: 'COMMERCIAL', label: '🏪 Commercial' },
-            { value: 'FARMHOUSE', label: '🌾 Farmhouse' },
+            { value: 'APARTMENT', label: 'Apartment' },
+            { value: 'VILLA', label: 'Villa' },
+            { value: 'PLOT', label: 'Plot' },
+            { value: 'COMMERCIAL', label: 'Commercial' },
+            { value: 'FARMHOUSE', label: 'Farmhouse' },
           ].map(t => (
             <button key={t.value} className={`filter-pill ${typeFilter === t.value ? 'active' : ''}`} onClick={() => setTypeFilter(t.value)}>
               {t.label}
@@ -170,17 +170,17 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                   <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.625rem', flexWrap: 'wrap' }}>
                     {p.area && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                        <span style={{ fontSize: '0.875rem' }}>📏</span> {p.area} sqft
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>square_foot</span> {p.area} sqft
                       </div>
                     )}
                     {p.bedrooms && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                        <span style={{ fontSize: '0.875rem' }}></span> {p.bedrooms} BHK
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>bed</span> {p.bedrooms} BHK
                       </div>
                     )}
                     {p.bathrooms && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                        <span style={{ fontSize: '0.875rem' }}>🚿</span> {p.bathrooms} Bath
+                        <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>shower</span> {p.bathrooms} Bath
                       </div>
                     )}
                   </div>
@@ -194,7 +194,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                     <div className="amenity-list" style={{ marginTop: '0.5rem' }}>
                       {p.features.slice(0, 4).map((f: string) => (
                         <span key={f} className="amenity-tag">
-                          {FEATURE_ICONS[f] || '✦'} {f}
+                          <span className="material-icons-outlined" style={{ fontSize: '1rem' }}>{FEATURE_ICONS[f] || 'star_outline'}</span> {f}
                         </span>
                       ))}
                       {p.features.length > 4 && (
@@ -207,7 +207,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                   {(p.monthlyRentalEstimate || 0) > 0 && roi && (
                     <div style={{ background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', borderRadius: '10px', padding: '0.5rem 0.75rem', marginTop: '0.625rem', border: '1px solid rgba(5,150,105,0.15)', cursor: 'pointer' }} onClick={() => { setRoiProperty(p); setCustomRent(''); }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.6875rem', color: '#065F46', fontWeight: 600 }}>📈 Investment Returns</span>
+                        <span style={{ fontSize: '0.6875rem', color: '#065F46', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}><span className="material-icons-outlined" style={{ fontSize: '1rem' }}>trending_up</span> Investment Returns</span>
                         <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669' }}>{roi.roi}% ROI</span>
                       </div>
                       <div style={{ fontSize: '0.6875rem', color: '#065F46', marginTop: '0.125rem' }}>
@@ -230,7 +230,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                         className="btn btn-primary"
                         style={{ borderRadius: '10px', padding: '0.5rem 1rem', fontSize: '0.8125rem' }}
                       >
-                        💬 Inquire
+                        Inquire
                       </button>
                     </div>
                   </div>
@@ -398,7 +398,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                 className="btn btn-primary"
                 style={{ width: '100%', padding: '0.825rem', borderRadius: '10px', fontSize: '0.9375rem' }}
               >
-                💬 Send Inquiry via WhatsApp
+                Send Inquiry via WhatsApp
               </button>
               <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', textAlign: 'center' }}>
                 You&apos;ll be redirected to WhatsApp with a pre-filled message
