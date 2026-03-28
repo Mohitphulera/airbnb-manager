@@ -31,12 +31,18 @@ export default async function ExpensesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1>Expense & Tax Tracker</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Earnings & Expenses</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{expenses.length} expenses logged · Track every rupee</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <a href="/api/export-expenses" className="btn btn-outline" download style={{ fontSize: '0.8125rem' }}>Export CSV</a>
-          <a href="/api/export" className="btn btn-outline" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>Export Excel</a>
+          <a href="/api/export-expenses" className="btn btn-secondary" download style={{ fontSize: '0.8125rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>download</span>
+            Export CSV
+          </a>
+          <a href="/api/export" className="btn btn-secondary" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>table_chart</span>
+            Export Excel
+          </a>
         </div>
       </div>
 
@@ -63,9 +69,12 @@ export default async function ExpensesPage() {
       {/* Category + Property Breakdown */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 0.875rem' }}>Analytics: By Category</h3>
+          <h3 style={{ margin: '0 0 0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>category</span>
+            By Category
+          </h3>
           {Object.entries(categories).map(([cat, amt]) => (
-            <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f0f0f0' }}>
+            <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #F1F5F9' }}>
               <span className={`badge ${catColor[cat] || 'badge-gray'}`}>{cat}</span>
               <span style={{ fontWeight: 700, color: '#B45309' }}>₹{amt.toLocaleString('en-IN')}</span>
             </div>
@@ -73,9 +82,12 @@ export default async function ExpensesPage() {
           {Object.keys(categories).length === 0 && <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '1rem' }}>No expenses</p>}
         </div>
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 0.875rem' }}>Home By Property</h3>
+          <h3 style={{ margin: '0 0 0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>home_work</span>
+            By Property
+          </h3>
           {Object.values(propExpenses).sort((a, b) => b.amount - a.amount).map((pe, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f0f0f0' }}>
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #F1F5F9' }}>
               <span style={{ fontWeight: 600, fontSize: '0.8125rem' }}>{pe.name}</span>
               <span style={{ fontWeight: 700, color: '#B45309' }}>₹{pe.amount.toLocaleString('en-IN')}</span>
             </div>
@@ -86,7 +98,10 @@ export default async function ExpensesPage() {
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>Log Expense</h3>
+          <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>receipt_long</span>
+            Log Expense
+          </h3>
           <ExpenseForm properties={properties} />
         </div>
 

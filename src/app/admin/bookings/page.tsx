@@ -20,12 +20,18 @@ export default async function BookingsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
-          <h1>Bookings</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Reservations</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{bookings.length} bookings recorded</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <a href="/api/export-expenses" className="btn btn-outline" download style={{ fontSize: '0.8125rem' }}>Export CSV</a>
-          <a href="/api/export" className="btn btn-outline" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>Export Excel</a>
+          <a href="/api/export-expenses" className="btn btn-secondary" download style={{ fontSize: '0.8125rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>download</span>
+            Export CSV
+          </a>
+          <a href="/api/export" className="btn btn-secondary" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>table_chart</span>
+            Export Excel
+          </a>
         </div>
       </div>
 
@@ -34,13 +40,13 @@ export default async function BookingsPage() {
         <div style={{ marginBottom: '1.5rem' }}>
           <div className="metric-card" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0 }}>
+              <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>inbox</span>
                 Guest Booking Requests
                 {pendingCount > 0 && (
                   <span style={{
                     background: '#EF4444', color: '#fff', borderRadius: '50%',
                     fontSize: '0.6875rem', fontWeight: 700, padding: '0.125rem 0.5rem',
-                    marginLeft: '0.5rem', verticalAlign: 'super',
                   }}>{pendingCount}</span>
                 )}
               </h3>
@@ -52,12 +58,15 @@ export default async function BookingsPage() {
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>New Booking</h3>
+          <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>add_circle</span>
+            New Booking
+          </h3>
           <BookingForm properties={properties} />
         </div>
 
         <div className="admin-main-card">
-          <h3 style={{ marginBottom: '1rem' }}>All Bookings</h3>
+          <h3 style={{ marginBottom: '1rem' }}>All Reservations</h3>
           <div className="table-container">
             <table>
               <thead>
@@ -68,7 +77,7 @@ export default async function BookingsPage() {
                   <th>Source</th>
                   <th>Revenue</th>
                   <th>Commission</th>
-                  <th>🧹</th>
+                  <th>Cleaning</th>
                   <th></th>
                 </tr>
               </thead>

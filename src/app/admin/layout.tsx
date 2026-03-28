@@ -11,36 +11,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const navItems = [
-    { href: '/admin', label: 'Dashboard', exact: true, icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-    )},
-    { href: '/admin/analytics', label: 'Analytics', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-    )},
-    { href: '/admin/calendar', label: 'Calendar', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
-    )},
-    { href: '/admin/properties', label: 'Properties', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-    )},
-    { href: '/admin/bookings', label: 'Bookings', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg>
-    )},
-    { href: '/admin/expenses', label: 'Expenses', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
-    )},
+    { href: '/admin', label: 'Dashboard', exact: true, icon: 'dashboard' },
+    { href: '/admin/analytics', label: 'Analytics', icon: 'insights' },
+    { href: '/admin/calendar', label: 'Calendar', icon: 'calendar_today' },
+    { href: '/admin/properties', label: 'Listings', icon: 'home_work' },
+    { href: '/admin/bookings', label: 'Bookings', icon: 'assignment' },
+    { href: '/admin/expenses', label: 'Earnings', icon: 'payments' },
   ]
 
   const saleItems = [
-    { href: '/admin/sale-properties', label: 'Sale Listings', icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-    )},
+    { href: '/admin/sale-properties', label: 'Sale Listings', icon: 'sell' },
   ]
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
     return pathname.startsWith(href)
   }
+
+  const pageTitle = navItems.find(item => isActive(item.href, item.exact))?.label
+    || saleItems.find(item => isActive(item.href))?.label
+    || 'Portfolio Manager'
 
   return (
     <div className="admin-layout">
@@ -64,16 +54,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        {/* Logo / Brand */}
         <div className="sidebar-logo">
           <Image src="/logo-cozybnb.jpg" alt="Cozy BnB" width={36} height={36} className="logo-img-sidebar" />
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff', lineHeight: 1.2 }}>Cozy BnB</div>
-            <div style={{ fontSize: '0.625rem', color: 'rgba(255,255,255,0.4)', fontWeight: 500, letterSpacing: '0.03em' }}>& Properties</div>
+            <div style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#0F172A', lineHeight: 1.2 }}>The Architect</div>
+            <div style={{ fontSize: '0.5625rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>Superhost Status</div>
           </div>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <div className="sidebar-section-label">Management</div>
+        <nav style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: '0.5rem' }}>
           {navItems.map(item => (
             <Link
               key={item.href}
@@ -81,7 +71,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className={`nav-link ${isActive(item.href, item.exact) ? 'nav-link-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
-              <span className="nav-link-icon">{item.icon}</span>
+              <span className="nav-link-icon">
+                <span className="material-icons-outlined" style={{ fontSize: '20px' }}>{item.icon}</span>
+              </span>
               {item.label}
             </Link>
           ))}
@@ -96,28 +88,68 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className={`nav-link ${isActive(item.href) ? 'nav-link-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
-              <span className="nav-link-icon">{item.icon}</span>
+              <span className="nav-link-icon">
+                <span className="material-icons-outlined" style={{ fontSize: '20px' }}>{item.icon}</span>
+              </span>
               {item.label}
             </Link>
           ))}
 
+          {/* Add Property Button */}
+          <Link href="/admin/properties" className="sidebar-add-btn" style={{ textDecoration: 'none', marginTop: '0.5rem' }}>
+            + Add Property
+          </Link>
+
           <div style={{ flex: 1 }} />
 
-          <Link href="/" className="nav-link" style={{ color: 'rgba(255,255,255,0.4)' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-            Public Site
+          <Link href="/admin" className="nav-link" style={{ color: '#94A3B8' }}>
+            <span className="nav-link-icon">
+              <span className="material-icons-outlined" style={{ fontSize: '20px' }}>settings</span>
+            </span>
+            Settings
+          </Link>
+          <Link href="/" className="nav-link" style={{ color: '#94A3B8' }}>
+            <span className="nav-link-icon">
+              <span className="material-icons-outlined" style={{ fontSize: '20px' }}>help_outline</span>
+            </span>
+            Support
           </Link>
           <form action={logoutAction}>
             <button type="submit" className="nav-link nav-link-logout">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span className="nav-link-icon">
+                <span className="material-icons-outlined" style={{ fontSize: '20px' }}>logout</span>
+              </span>
               Logout
             </button>
           </form>
         </nav>
       </aside>
-      <main className="admin-main">
-        {children}
-      </main>
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        {/* Top Header Bar */}
+        <div className="admin-topbar">
+          <span className="admin-topbar-title">Portfolio Manager</span>
+          <div className="admin-topbar-search">
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#94A3B8' }}>search</span>
+            <input type="text" placeholder="Search properties, guests, or tasks..." />
+          </div>
+          <div className="admin-topbar-actions">
+            <button className="topbar-icon-btn" aria-label="Switch to Hosting">
+              <span className="material-icons-outlined" style={{ fontSize: '18px' }}>swap_horiz</span>
+            </button>
+            <button className="topbar-icon-btn" aria-label="Notifications">
+              <span className="material-icons-outlined" style={{ fontSize: '18px' }}>notifications</span>
+            </button>
+            <button className="topbar-icon-btn" aria-label="Grid view">
+              <span className="material-icons-outlined" style={{ fontSize: '18px' }}>grid_view</span>
+            </button>
+            <div className="topbar-avatar">CB</div>
+          </div>
+        </div>
+        <main className="admin-main">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

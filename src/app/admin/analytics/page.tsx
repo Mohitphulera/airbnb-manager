@@ -18,36 +18,43 @@ export default async function AnalyticsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>Advanced Analytics</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.25rem' }}>Growth Analytics</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Deep insights into your property business performance</p>
         </div>
-        <Link href="/admin" className="btn btn-outline" style={{ fontSize: '0.8125rem' }}>← Dashboard</Link>
+        <Link href="/admin" className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+          Dashboard
+        </Link>
       </div>
 
       {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.875rem', marginBottom: '1.5rem' }}>
         {[
-          { label: 'Revenue', value: `₹${totals.revenue.toLocaleString('en-IN')}`, color: 'var(--text-main)' },
-          { label: 'Net Profit', value: `₹${totals.profit.toLocaleString('en-IN')}`, color: totals.profit >= 0 ? 'var(--cozy-success)' : 'var(--danger)' },
-          { label: 'Profit Margin', value: `${profitMargin}%`, color: profitMargin > 50 ? 'var(--cozy-success)' : profitMargin > 20 ? '#D97706' : 'var(--danger)' },
-          { label: 'Avg Occupancy', value: `${avgOccupancy}%`, color: avgOccupancy > 60 ? 'var(--cozy-success)' : '#D97706' },
-          { label: 'RevPAR', value: `₹${avgRevPAR.toLocaleString('en-IN')}`, color: 'var(--primary)' },
-          { label: 'Empty Nights (30d)', value: `${totalEmptyNights}`, color: totalEmptyNights > 30 ? 'var(--danger)' : 'var(--cozy-success)' },
+          { label: 'Revenue', value: `₹${totals.revenue.toLocaleString('en-IN')}`, color: 'var(--text-main)', icon: 'trending_up' },
+          { label: 'Net Profit', value: `₹${totals.profit.toLocaleString('en-IN')}`, color: totals.profit >= 0 ? 'var(--cozy-success)' : 'var(--danger)', icon: 'savings' },
+          { label: 'Profit Margin', value: `${profitMargin}%`, color: profitMargin > 50 ? 'var(--cozy-success)' : profitMargin > 20 ? '#D97706' : 'var(--danger)', icon: 'percent' },
+          { label: 'Avg Occupancy', value: `${avgOccupancy}%`, color: avgOccupancy > 60 ? 'var(--cozy-success)' : '#D97706', icon: 'hotel' },
+          { label: 'RevPAR', value: `₹${avgRevPAR.toLocaleString('en-IN')}`, color: 'var(--primary)', icon: 'monetization_on' },
+          { label: 'Empty Nights', value: `${totalEmptyNights}`, color: totalEmptyNights > 30 ? 'var(--danger)' : 'var(--cozy-success)', icon: 'event_busy' },
         ].map((kpi, i) => (
           <div key={i} className="metric-card" style={{ padding: '1rem', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.375rem' }}>{kpi.label}</p>
-            <p style={{ fontSize: '1.25rem', fontWeight: 800, color: kpi.color, letterSpacing: '-0.02em' }}>{kpi.value}</p>
+            <span className="material-icons-outlined" style={{ fontSize: '20px', color: '#94A3B8', marginBottom: '0.375rem', display: 'block' }}>{kpi.icon}</span>
+            <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.25rem' }}>{kpi.label}</p>
+            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: kpi.color, letterSpacing: '-0.02em' }}>{kpi.value}</p>
           </div>
         ))}
       </div>
 
       {/* Insights */}
       {insights.length > 0 && (
-        <div className="metric-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', background: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)', border: '1px solid rgba(217,119,6,0.15)' }}>
-          <h3 style={{ margin: '0 0 0.75rem', fontSize: '0.9375rem' }}>AI Insights</h3>
+        <div className="metric-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 0.75rem', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#D97706' }}>auto_awesome</span>
+            AI Insights
+          </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
             {insights.map((insight, i) => (
-              <div key={i} style={{ fontSize: '0.8125rem', lineHeight: 1.5, padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>{insight}</div>
+              <div key={i} style={{ fontSize: '0.8125rem', lineHeight: 1.5, padding: '0.5rem 0.75rem', background: '#F8FAFC', borderRadius: '8px', border: '1px solid var(--border)' }}>{insight}</div>
             ))}
           </div>
         </div>
@@ -107,9 +114,12 @@ export default async function AnalyticsPage() {
       {/* Pricing + Empty Nights */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem' }}>Smart Pricing</h3>
+          <h3 style={{ margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>price_change</span>
+            Smart Pricing
+          </h3>
           {pricingSuggestions.map(s => (
-            <div key={s.propertyId} style={{ background: s.type === 'increase' ? '#ECFDF5' : s.type === 'decrease' ? '#FEF2F2' : 'var(--cozy-blue-light)', borderRadius: '10px', padding: '0.75rem', marginBottom: '0.5rem', border: `1px solid ${s.type === 'increase' ? 'rgba(5,150,105,0.15)' : s.type === 'decrease' ? 'rgba(220,38,38,0.1)' : 'rgba(43,108,176,0.1)'}` }}>
+            <div key={s.propertyId} style={{ background: s.type === 'increase' ? '#F0FDF4' : s.type === 'decrease' ? '#FEF2F2' : '#F8FAFC', borderRadius: '10px', padding: '0.75rem', marginBottom: '0.5rem', border: `1px solid ${s.type === 'increase' ? 'rgba(5,150,105,0.12)' : s.type === 'decrease' ? 'rgba(220,38,38,0.08)' : 'var(--border)'}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                 <span style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{s.propertyName}</span>
                 <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{s.occupancy30}% occupancy</span>
@@ -125,9 +135,12 @@ export default async function AnalyticsPage() {
         </div>
 
         <div className="metric-card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ margin: '0 0 1rem' }}>Empty Nights (Next 30 Days) (Next 30 Days)</h3>
+          <h3 style={{ margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: '#DC2626' }}>event_busy</span>
+            Empty Nights (Next 30 Days)
+          </h3>
           {emptyNights.length > 0 ? emptyNights.map(en => (
-            <div key={en.propertyId} style={{ marginBottom: '0.75rem', padding: '0.75rem', background: en.dates.length > 15 ? '#FEF2F2' : '#FAFAFA', borderRadius: '10px', border: '1px solid var(--border)' }}>
+            <div key={en.propertyId} style={{ marginBottom: '0.75rem', padding: '0.75rem', background: en.dates.length > 15 ? '#FEF2F2' : '#F8FAFC', borderRadius: '10px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                 <span style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{en.property}</span>
                 <span className={`badge ${en.dates.length > 15 ? 'badge-pink' : en.dates.length > 7 ? 'badge-yellow' : 'badge-green'}`}>{en.dates.length} nights</span>

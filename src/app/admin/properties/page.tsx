@@ -10,14 +10,28 @@ export default async function PropertiesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1>Properties</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>My Listings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{properties.length} properties in your portfolio</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '0.25rem' }}>
+            {['All Listings', `Active (${properties.filter((p: any) => p.type === 'OWNED').length})`, `Partners (${properties.filter((p: any) => p.type === 'COMMISSION').length})`].map((label, i) => (
+              <span key={label} style={{
+                padding: '0.375rem 0.875rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600,
+                cursor: 'pointer', color: i === 0 ? 'var(--primary)' : '#94A3B8',
+                borderBottom: i === 0 ? '2px solid var(--primary)' : '2px solid transparent',
+              }}>{label}</span>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="admin-grid">
         <div className="admin-sidebar-card">
-          <h3 style={{ marginBottom: '1rem' }}>Add Property</h3>
+          <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>add_home</span>
+            Add Property
+          </h3>
           <PropertyForm />
         </div>
 
@@ -41,7 +55,14 @@ export default async function PropertiesPage() {
                   try { if (p.amenities) amenities = JSON.parse(p.amenities) } catch {}
                   return (
                     <tr key={p.id}>
-                      <td style={{ fontWeight: 600 }}>{p.name}</td>
+                      <td>
+                        <div className="property-row-info">
+                          <div className="property-row-thumb">
+                            <span className="material-icons-outlined" style={{ color: '#94A3B8' }}>apartment</span>
+                          </div>
+                          <div className="property-row-name">{p.name}</div>
+                        </div>
+                      </td>
                       <td style={{ color: 'var(--text-muted)' }}>{p.location}</td>
                       <td><span className={`badge ${p.type === 'OWNED' ? 'badge-blue' : 'badge-yellow'}`}>{p.type === 'OWNED' ? 'Owned' : 'Partner'}</span></td>
                       <td style={{ fontWeight: 600 }}>₹{p.pricePerNight.toLocaleString('en-IN')}</td>
