@@ -18,7 +18,10 @@ export default async function Home() {
       {/* Navigation */}
       <nav className="curator-nav">
         <div className="curator-nav-inner">
-          <Link href="/" className="curator-logo">CURATOR</Link>
+          <Link href="/" className="curator-logo-wrap">
+            <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
+            <span className="curator-logo-text">Cozy BnB</span>
+          </Link>
           <div className="curator-nav-links">
             <Link href="#stays" className="curator-nav-link active">Discover</Link>
             <Link href="/properties-for-sale" className="curator-nav-link">Investments</Link>
@@ -178,8 +181,11 @@ export default async function Home() {
       <footer className="curator-footer">
         <div className="curator-footer-grid">
           <div className="curator-footer-brand">
-            <div className="curator-logo">CURATOR</div>
-            <p className="curator-footer-tagline">Elevating the standards of <br />property investment since 2024.</p>
+            <Link href="/" className="curator-logo-wrap">
+              <img src="/logo-cozybnb.jpg" alt="Cozy BnB" className="curator-logo-img" />
+              <span className="curator-logo-text">Cozy BnB</span>
+            </Link>
+            <p className="curator-footer-tagline">Premium stays and investment<br />properties, curated for you.</p>
           </div>
           <div className="curator-footer-col">
             <h5 className="curator-footer-heading">Portfolio</h5>
@@ -201,7 +207,7 @@ export default async function Home() {
           </div>
         </div>
         <div className="curator-footer-bottom">
-          <p>© 2024 CURATOR PROPERTY INVESTMENTS. ALL RIGHTS RESERVED.</p>
+          <p>&copy; {new Date().getFullYear()} Cozy BnB &amp; Properties. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -1070,9 +1070,15 @@ html.dark .footer-brand-name { color: #E2E8F0; }
   max-width: 1920px; margin: 0 auto;
   padding: 1.25rem 1.5rem;
 }
-.curator-logo {
-  font-family: 'Noto Serif', serif; font-size: 1.5rem; font-weight: 700;
-  letter-spacing: -0.03em; color: #1c1b1b; text-decoration: none;
+.curator-logo-wrap {
+  display: flex; align-items: center; gap: 0.5rem; text-decoration: none;
+}
+.curator-logo-img {
+  width: 36px; height: 36px; border-radius: 8px; object-fit: cover;
+}
+.curator-logo-text {
+  font-family: 'Noto Serif', serif; font-size: 1.375rem; font-weight: 700;
+  letter-spacing: -0.03em; color: #1c1b1b;
 }
 .curator-nav-links { display: flex; gap: 2.5rem; align-items: center; }
 .curator-nav-link {
