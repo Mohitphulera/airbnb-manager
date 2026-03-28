@@ -948,15 +948,35 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
     border-radius: 12px; margin-bottom: 0.5rem;
   }
 
-  /* Admin tables */
-  .table-container { font-size: 0.75rem; }
-  th, td { padding: 0.625rem 0.5rem; font-size: 0.75rem; }
-  .metric-card { padding: 1rem; }
+  /* Admin tables — make them properly scrollable on mobile */
+  .table-container { font-size: 0.6875rem; margin: 0 -0.5rem; border-radius: 8px; }
+  .table-container table { min-width: 640px; }
+  th, td { padding: 0.5rem 0.375rem; font-size: 0.6875rem; white-space: nowrap; }
+  th { font-size: 0.5625rem; letter-spacing: 0.08em; }
+  .metric-card { padding: 0.875rem; }
   .calendar-grid-outer { min-width: 480px; }
   .calendar-cell { min-height: 60px !important; }
   .booking-detail-info { grid-template-columns: 1fr 1fr; }
 
+  /* Admin sidebar form — more compact on mobile */
+  .admin-sidebar-card { padding: 1rem !important; }
+  .admin-sidebar-card .form-group { margin-bottom: 0.625rem; }
+  .admin-sidebar-card label { font-size: 0.6875rem; margin-bottom: 0.25rem; }
+  .admin-sidebar-card input, .admin-sidebar-card select, .admin-sidebar-card textarea {
+    padding: 0.5rem 0.625rem; font-size: 0.8125rem;
+  }
+
+  /* Expense category/property breakdown grid */
+  .admin-main-card > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+
   .nav-logo-sub { display: none; }
+
+  /* Badge sizing */
+  .badge { font-size: 0.5625rem !important; padding: 0.1875rem 0.5rem !important; }
+
+  /* Property row info in table */
+  .property-row-info { gap: 0.375rem; }
+  .property-row-name { font-size: 0.6875rem; }
 }
 
 /* ═══════════════════════ RESPONSIVE: SMALL MOBILE ═══════════════════════ */
