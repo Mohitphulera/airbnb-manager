@@ -18,40 +18,49 @@ const MAX_FILES = 20
 const CONCURRENT_UPLOADS = 3
 const MAX_IMAGE_DIMENSION = 2000
 
+// Compress & convert image client-side (handles iPhone HEIC → JPEG)
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {
-    if (!file.type.startsWith('image/') || file.size < 500 * 1024) {
+    if (!file.type.startsWith('image/') && !file.name.match(/\.(heic|heif)$/i)) {
       resolve(file)
       return
     }
+
+    const isHEIC = file.type === 'image/heic' || file.type === 'image/heif' || file.name.match(/\.(heic|heif)$/i)
+
     const img = new Image()
     const url = URL.createObjectURL(file)
     img.onload = () => {
       URL.revokeObjectURL(url)
       const { width, height } = img
-      if (width <= MAX_IMAGE_DIMENSION && height <= MAX_IMAGE_DIMENSION) {
-        resolve(file)
-        return
-      }
       const canvas = document.createElement('canvas')
       let newW = width, newH = height
-      if (width > height) {
-        newW = MAX_IMAGE_DIMENSION
-        newH = Math.round(height * (MAX_IMAGE_DIMENSION / width))
-      } else {
-        newH = MAX_IMAGE_DIMENSION
-        newW = Math.round(width * (MAX_IMAGE_DIMENSION / height))
+      if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
+        if (width > height) {
+          newW = MAX_IMAGE_DIMENSION
+          newH = Math.round(height * (MAX_IMAGE_DIMENSION / width))
+        } else {
+          newH = MAX_IMAGE_DIMENSION
+          newW = Math.round(width * (MAX_IMAGE_DIMENSION / height))
+        }
       }
       canvas.width = newW
       canvas.height = newH
       const ctx = canvas.getContext('2d')
       ctx?.drawImage(img, 0, 0, newW, newH)
+      // Always output JPEG — guarantees HEIC gets converted
       canvas.toBlob((blob) => {
-        if (blob) resolve(new File([blob], file.name, { type: 'image/jpeg' }))
-        else resolve(file)
+        if (blob) {
+          const safeName = file.name.replace(/\.(heic|heif)$/i, '.jpg')
+          resolve(new File([blob], safeName, { type: 'image/jpeg' }))
+        } else resolve(file)
       }, 'image/jpeg', 0.85)
     }
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      if (isHEIC) console.warn('Browser cannot decode HEIC, uploading raw for server-side conversion')
+      resolve(file)
+    }
     img.src = url
   })
 }
@@ -296,7 +305,7 @@ export default function SalePropertyForm() {
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           multiple
           onChange={handleFileUpload}
           style={{ display: 'none' }}

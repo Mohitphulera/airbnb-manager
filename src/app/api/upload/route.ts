@@ -8,14 +8,16 @@ const MAX_FILES_PER_REQUEST = 5 // max files in a single request (client sends 1
 function uploadToCloudinary(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload_stream(
-      { folder: 'airbnb-manager', resource_type: 'image' },
+      {
+        folder: 'airbnb-manager',
+        resource_type: 'image',
+        format: 'jpg',        // Force JPEG output — handles HEIC, HEIF, WebP, etc.
+        quality: 'auto:good',  // Cloudinary auto-quality
+      },
       (error, result) => {
         if (error) reject(error)
         else {
-          let url = result?.secure_url || ''
-          // Auto-format for browser compatibility (HEIC → JPEG, etc.)
-          url = url.replace('/upload/', '/upload/f_auto,q_auto/')
-          url = url.replace(/\.[^/.]+$/, '.jpg')
+          const url = result?.secure_url || ''
           resolve(url)
         }
       }
