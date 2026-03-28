@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
 
 html { scroll-behavior: smooth; }
@@ -1035,3 +1035,320 @@ html.dark .hero-float-inner { background: rgba(30,41,59,0.85); border-color: rgb
 html.dark .hero-float-title { color: #E2E8F0; }
 html.dark .hero-badge { background: rgba(37,99,235,0.1); border-color: rgba(37,99,235,0.15); }
 html.dark .footer-brand-name { color: #E2E8F0; }
+
+/* ═══════════════════════ CURATOR DESIGN SYSTEM (Stitch Refined) ═══════════════════════ */
+.curator-page { background: #fffcf9; color: #1c1b1b; font-family: 'Inter', sans-serif; }
+
+/* ───── Navigation ───── */
+.curator-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,252,249,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.curator-nav-inner {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1920px; margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+}
+.curator-logo {
+  font-family: 'Noto Serif', serif; font-size: 1.5rem; font-weight: 700;
+  letter-spacing: -0.03em; color: #1c1b1b; text-decoration: none;
+}
+.curator-nav-links { display: flex; gap: 2.5rem; align-items: center; }
+.curator-nav-link {
+  font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  color: #5a5a5a; text-decoration: none; transition: color 0.2s;
+}
+.curator-nav-link:hover, .curator-nav-link.active { color: #1c1b1b; }
+.curator-nav-link.active { border-bottom: 1px solid #1c1b1b; padding-bottom: 2px; }
+.curator-btn-primary {
+  display: inline-block; padding: 0.625rem 1.5rem;
+  background: #1c1b1b; color: #fff; text-decoration: none;
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  border: none; cursor: pointer; transition: background 0.3s;
+}
+.curator-btn-primary:hover { background: #a67c52; }
+
+/* ───── Hero ───── */
+.curator-hero {
+  position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden;
+}
+.curator-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.curator-hero-img {
+  width: 100%; height: 100%; object-fit: cover;
+  animation: curator-zoom 20s infinite alternate;
+}
+@keyframes curator-zoom { from { transform: scale(1.05); } to { transform: scale(1.15); } }
+.curator-hero-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);
+}
+.curator-hero-content {
+  position: relative; z-index: 10; padding: 0 1.5rem;
+  max-width: 1920px; margin: 0 auto; width: 100%;
+}
+.curator-hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.375rem 1rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+  color: #fff; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  border-radius: 9999px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 2rem;
+}
+.curator-badge-dot { width: 6px; height: 6px; background: #f5e6d3; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.curator-hero-title {
+  font-family: 'Noto Serif', serif; color: #fff;
+  font-size: clamp(2.5rem, 8vw, 7rem); font-weight: 700;
+  letter-spacing: -0.02em; line-height: 0.9; margin-bottom: 2.5rem;
+}
+.curator-hero-title em { font-style: italic; font-weight: 400; }
+.curator-hero-subtitle {
+  color: rgba(255,255,255,0.9); font-size: clamp(0.9375rem, 2vw, 1.25rem);
+  max-width: 540px; line-height: 1.7; font-weight: 300; margin-bottom: 3rem;
+}
+.curator-hero-ctas { display: flex; flex-wrap: wrap; gap: 1rem; }
+.curator-btn-white {
+  display: inline-block; padding: 1.125rem 2.5rem;
+  background: #fff; color: #1c1b1b; text-decoration: none;
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  transition: background 0.3s;
+}
+.curator-btn-white:hover { background: #f5e6d3; }
+.curator-btn-ghost {
+  display: inline-block; padding: 1.125rem 2.5rem;
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+  color: #fff; border: 1px solid rgba(255,255,255,0.3); text-decoration: none;
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  transition: background 0.3s;
+}
+.curator-btn-ghost:hover { background: rgba(255,255,255,0.1); }
+.curator-scroll-indicator {
+  position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.6); display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+}
+.curator-scroll-indicator span { font-size: 0.5625rem; letter-spacing: 0.25em; text-transform: uppercase; }
+.curator-scroll-line { width: 1px; height: 3rem; background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent); }
+
+/* ───── Sections ───── */
+.curator-section { padding: 5rem 1.5rem; max-width: 1920px; margin: 0 auto; }
+.curator-section-header {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+.curator-heading {
+  font-family: 'Noto Serif', serif; font-size: clamp(1.75rem, 4vw, 3.5rem);
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1rem;
+}
+.curator-subheading {
+  font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: #5a5a5a;
+  line-height: 1.6; font-weight: 300;
+}
+.curator-view-all {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: #a67c52; font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+  transition: gap 0.3s;
+}
+.curator-view-all:hover { gap: 0.75rem; }
+
+/* ───── Property Grid ───── */
+.curator-property-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+.curator-card { text-decoration: none; color: inherit; display: block; cursor: pointer; }
+.curator-card-offset { }
+.curator-card-image {
+  position: relative; overflow: hidden; margin-bottom: 1.5rem;
+  aspect-ratio: 4/5; border-radius: 8px;
+}
+.curator-card-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 1s ease;
+}
+.curator-card:hover .curator-card-img { transform: scale(1.08); }
+.curator-card-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.05);
+  transition: background 0.3s;
+}
+.curator-card:hover .curator-card-overlay { background: transparent; }
+.curator-card-badge {
+  position: absolute; top: 1rem; left: 1rem;
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(4px);
+  padding: 0.375rem 0.875rem; font-size: 0.5625rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; border-radius: 9999px;
+}
+.curator-card-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  background: #f4f1ee; color: #8e8e8e;
+}
+.curator-card-placeholder .material-icons-outlined { font-size: 48px; }
+.curator-card-info { display: flex; justify-content: space-between; align-items: flex-end; }
+.curator-card-title {
+  font-family: 'Noto Serif', serif; font-size: 1.25rem; font-weight: 700;
+  margin-bottom: 0.25rem; transition: color 0.3s;
+}
+.curator-card:hover .curator-card-title { color: #a67c52; }
+.curator-card-location {
+  display: flex; align-items: center; gap: 0.25rem;
+  font-size: 0.8125rem; color: #5a5a5a; margin-bottom: 1rem;
+}
+.curator-card-stats { display: flex; gap: 2rem; }
+.curator-stat-label {
+  display: block; font-size: 0.5625rem; color: #5a5a5a;
+  text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.25rem;
+}
+.curator-stat-value { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; }
+.curator-stat-accent { color: #a67c52; }
+.curator-card-arrow {
+  width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #e2e2e2; border-radius: 50%; flex-shrink: 0;
+  transition: all 0.3s;
+}
+.curator-card:hover .curator-card-arrow { background: #1c1b1b; border-color: #1c1b1b; color: #fff; }
+.curator-card-arrow .material-icons-outlined { font-size: 18px; }
+.curator-empty {
+  grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;
+  color: #5a5a5a;
+}
+
+/* ───── Philosophy ───── */
+.curator-philosophy { padding: 5rem 0; background: rgba(244,241,238,0.5); }
+.curator-philosophy-inner {
+  max-width: 1920px; margin: 0 auto; padding: 0 1.5rem;
+  display: grid; grid-template-columns: 1fr; gap: 3rem;
+}
+.curator-philosophy-image-wrap { position: relative; }
+.curator-philosophy-blur {
+  position: absolute; top: -2rem; left: -1.5rem;
+  width: 12rem; height: 12rem; background: rgba(245,230,211,0.3);
+  border-radius: 50%; filter: blur(40px); z-index: -1;
+}
+.curator-philosophy-img-container { position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.curator-philosophy-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+.curator-philosophy-quote {
+  padding: 1.5rem; background: #1c1b1b; color: #fff;
+  margin-top: -2rem; margin-left: 1rem; margin-right: 1rem;
+  position: relative; z-index: 5;
+}
+.curator-quote-text { font-family: 'Noto Serif', serif; font-style: italic; font-size: 1.125rem; line-height: 1.5; }
+.curator-quote-author {
+  display: block; margin-top: 0.75rem;
+  font-size: 0.625rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5);
+}
+.curator-philosophy-content { }
+.curator-accent { color: #a67c52; font-style: italic; font-weight: 400; }
+.curator-pillars {
+  display: grid; grid-template-columns: 1fr; gap: 2rem;
+  margin-top: 2.5rem;
+}
+.curator-pillar { }
+.curator-pillar-num { font-family: 'Noto Serif', serif; font-size: 2rem; color: #a67c52; opacity: 0.4; display: block; margin-bottom: 0.5rem; }
+.curator-pillar-title { font-family: 'Noto Serif', serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+.curator-pillar-desc { font-size: 0.8125rem; color: #5a5a5a; line-height: 1.6; }
+
+/* ───── Newsletter ───── */
+.curator-newsletter { padding: 5rem 1.5rem; max-width: 1920px; margin: 0 auto; text-align: center; }
+.curator-newsletter-form {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  max-width: 540px; margin: 2rem auto 0;
+}
+.curator-newsletter-input {
+  width: 100%; padding: 1rem 1.5rem;
+  background: #f5f2f0; border: none; font-size: 0.875rem;
+  font-family: 'Inter', sans-serif; color: #1c1b1b;
+  outline: none; transition: box-shadow 0.3s;
+}
+.curator-newsletter-input:focus { box-shadow: 0 0 0 1px #a67c52; }
+.curator-newsletter-input::placeholder { color: #999; }
+.curator-newsletter-terms {
+  font-size: 0.5625rem; color: #999; text-transform: uppercase;
+  letter-spacing: 0.15em; margin-top: 1rem;
+}
+
+/* ───── Footer ───── */
+.curator-footer { padding: 4rem 1.5rem 2rem; background: #fff; border-top: 1px solid rgba(0,0,0,0.05); }
+.curator-footer-grid {
+  display: grid; grid-template-columns: 1fr; gap: 2rem;
+  max-width: 1920px; margin: 0 auto;
+}
+.curator-footer-brand { }
+.curator-footer-tagline {
+  font-size: 0.6875rem; font-weight: 500; color: #5a5a5a;
+  text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.6; margin-top: 0.75rem;
+}
+.curator-footer-col { }
+.curator-footer-heading {
+  font-size: 0.625rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.15em; color: #1c1b1b; margin-bottom: 1rem;
+}
+.curator-footer-links { list-style: none; padding: 0; margin: 0; }
+.curator-footer-links li { margin-bottom: 0.75rem; }
+.curator-footer-links a {
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: #5a5a5a; text-decoration: none; font-weight: 500; transition: color 0.2s;
+}
+.curator-footer-links a:hover { color: #a67c52; }
+.curator-footer-quote { font-size: 0.6875rem; color: #999; font-style: italic; }
+.curator-footer-bottom {
+  margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05);
+  text-align: center; max-width: 1920px; margin-left: auto; margin-right: auto;
+}
+.curator-footer-bottom p {
+  font-size: 0.5625rem; text-transform: uppercase; letter-spacing: 0.15em;
+  color: #999; font-weight: 500;
+}
+
+/* ═══════════════════════ CURATOR RESPONSIVE: TABLET+ ═══════════════════════ */
+@media (min-width: 768px) {
+  .curator-nav-inner { padding: 1.25rem 3rem; }
+  .curator-hero-content { padding: 0 6rem; }
+  .curator-section { padding: 8rem 3rem; }
+  .curator-section-header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+  .curator-property-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+  .curator-philosophy-inner { padding: 0 3rem; }
+  .curator-newsletter { padding: 8rem 3rem; }
+  .curator-newsletter-form { flex-direction: row; }
+  .curator-footer { padding: 4rem 3rem 2rem; }
+  .curator-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+  .curator-philosophy-quote {
+    position: absolute; bottom: -2rem; right: -2rem;
+    max-width: 320px; padding: 2rem; margin: 0;
+  }
+}
+
+/* ═══════════════════════ CURATOR RESPONSIVE: DESKTOP ═══════════════════════ */
+@media (min-width: 1024px) {
+  .curator-property-grid { grid-template-columns: repeat(3, 1fr); gap: 3.5rem; }
+  .curator-card-offset { transform: translateY(4rem); }
+  .curator-philosophy-inner { grid-template-columns: 5fr 7fr; gap: 5rem; align-items: center; }
+  .curator-pillars { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+  .curator-section { padding: 8rem 3rem; }
+  .curator-philosophy { padding: 8rem 0; }
+  .curator-newsletter { padding: 10rem 3rem; }
+  .curator-footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+}
+
+/* ═══════════════════════ CURATOR MOBILE OVERRIDE ═══════════════════════ */
+@media (max-width: 767px) {
+  .curator-nav-links { display: none; }
+  .curator-hero { min-height: 85vh; }
+  .curator-hero-gradient {
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+  }
+  .curator-hero-content { padding: 0 1.25rem; }
+  .curator-hero-ctas { flex-direction: column; width: 100%; }
+  .curator-btn-white, .curator-btn-ghost { text-align: center; width: 100%; padding: 1rem 1.5rem; }
+  .curator-scroll-indicator { display: none; }
+  .curator-property-grid { gap: 2rem; }
+  .curator-card-image { aspect-ratio: 3/4; }
+  .curator-card-stats { gap: 1.5rem; }
+  .curator-philosophy-quote {
+    margin-top: -1.5rem; margin-left: 0.5rem; margin-right: 0.5rem;
+    padding: 1.25rem; position: relative;
+  }
+  .curator-quote-text { font-size: 1rem; }
+  .curator-pillars { gap: 1.5rem; }
+  .curator-newsletter-form { flex-direction: column; }
+  .curator-newsletter-form .curator-btn-primary { width: 100%; text-align: center; padding: 1rem; }
+  .curator-footer-grid { gap: 1.5rem; }
+}
