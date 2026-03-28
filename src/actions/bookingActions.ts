@@ -92,6 +92,21 @@ export async function deleteBooking(id: string) {
   revalidatePath('/admin')
 }
 
+export async function updateBooking(id: string, data: Record<string, any>) {
+  const updateData: Record<string, any> = {}
+  if (data.customerName !== undefined) updateData.customerName = data.customerName
+  if (data.customerPhone !== undefined) updateData.customerPhone = data.customerPhone
+  if (data.source !== undefined) updateData.source = data.source
+  if (data.totalAmount !== undefined) updateData.totalAmount = parseFloat(data.totalAmount)
+  if (data.notes !== undefined) updateData.notes = data.notes || null
+  if (data.checkInDate !== undefined) updateData.checkInDate = new Date(data.checkInDate)
+  if (data.checkOutDate !== undefined) updateData.checkOutDate = new Date(data.checkOutDate)
+
+  await prisma.booking.update({ where: { id }, data: updateData })
+  revalidatePath('/admin/bookings')
+  revalidatePath('/admin')
+}
+
 // ===== ANALYTICS HELPERS =====
 
 export async function getDashboardData() {

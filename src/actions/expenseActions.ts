@@ -31,3 +31,15 @@ export async function deleteExpense(id: string) {
   revalidatePath('/admin/expenses')
   revalidatePath('/admin')
 }
+
+export async function updateExpense(id: string, data: Record<string, any>) {
+  const updateData: Record<string, any> = {}
+  if (data.description !== undefined) updateData.description = data.description
+  if (data.amount !== undefined) updateData.amount = parseFloat(data.amount)
+  if (data.category !== undefined) updateData.category = data.category
+  if (data.date !== undefined) updateData.date = new Date(data.date)
+
+  await prisma.expense.update({ where: { id }, data: updateData })
+  revalidatePath('/admin/expenses')
+  revalidatePath('/admin')
+}

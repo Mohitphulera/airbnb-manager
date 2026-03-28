@@ -41,3 +41,18 @@ export async function deleteProperty(id: string) {
   revalidatePath('/admin/properties')
   revalidatePath('/')
 }
+
+export async function updateProperty(id: string, data: Record<string, any>) {
+  const updateData: Record<string, any> = {}
+  if (data.name !== undefined) updateData.name = data.name
+  if (data.description !== undefined) updateData.description = data.description
+  if (data.location !== undefined) updateData.location = data.location
+  if (data.type !== undefined) updateData.type = data.type
+  if (data.pricePerNight !== undefined) updateData.pricePerNight = parseFloat(data.pricePerNight)
+  if (data.whatsappNumber !== undefined) updateData.whatsappNumber = data.whatsappNumber
+  if (data.commissionRate !== undefined) updateData.commissionRate = data.commissionRate ? parseFloat(data.commissionRate) : null
+
+  await prisma.property.update({ where: { id }, data: updateData })
+  revalidatePath('/admin/properties')
+  revalidatePath('/')
+}

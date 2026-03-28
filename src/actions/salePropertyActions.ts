@@ -58,3 +58,22 @@ export async function deleteSaleProperty(id: string) {
   revalidatePath('/admin/sale-properties')
   revalidatePath('/properties-for-sale')
 }
+
+export async function updateSaleProperty(id: string, data: Record<string, any>) {
+  const updateData: Record<string, any> = {}
+  if (data.title !== undefined) updateData.title = data.title
+  if (data.description !== undefined) updateData.description = data.description
+  if (data.location !== undefined) updateData.location = data.location
+  if (data.price !== undefined) updateData.price = parseFloat(data.price)
+  if (data.area !== undefined) updateData.area = data.area ? parseFloat(data.area) : null
+  if (data.bedrooms !== undefined) updateData.bedrooms = data.bedrooms ? parseInt(data.bedrooms) : null
+  if (data.bathrooms !== undefined) updateData.bathrooms = data.bathrooms ? parseInt(data.bathrooms) : null
+  if (data.propertyType !== undefined) updateData.propertyType = data.propertyType
+  if (data.status !== undefined) updateData.status = data.status
+  if (data.whatsappNumber !== undefined) updateData.whatsappNumber = data.whatsappNumber
+  if (data.monthlyRentalEstimate !== undefined) updateData.monthlyRentalEstimate = data.monthlyRentalEstimate ? parseFloat(data.monthlyRentalEstimate) : null
+
+  await prisma.saleProperty.update({ where: { id }, data: updateData })
+  revalidatePath('/admin/sale-properties')
+  revalidatePath('/properties-for-sale')
+}

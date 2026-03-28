@@ -1,15 +1,14 @@
-import { getExpenses, deleteExpense } from '@/actions/expenseActions'
+import { getExpenses } from '@/actions/expenseActions'
 import { getProperties } from '@/actions/propertyActions'
 import { getBookings } from '@/actions/bookingActions'
 import ExpenseForm from '@/components/ExpenseForm'
+import ExpenseTable from '@/components/ExpenseTable'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ExpensesPage() {
   const [expenses, properties, bookings] = await Promise.all([getExpenses(), getProperties(), getBookings()])
   const total = expenses.reduce((sum: number, e: any) => sum + e.amount, 0)
-
-  const catColor: Record<string, string> = { CLEANING: 'badge-blue', REPAIR: 'badge-yellow', UTILITY: 'badge-green', OTHER: 'badge-gray' }
 
   // Category breakdown
   const categories: Record<string, number> = {}
@@ -27,11 +26,13 @@ export default async function ExpensesPage() {
     propExpenses[e.propertyId].amount += e.amount
   })
 
+  const catColor: Record<string, string> = { CLEANING: 'badge-blue', REPAIR: 'badge-yellow', UTILITY: 'badge-green', OTHER: 'badge-gray' }
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Earnings & Expenses</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Earnings &amp; Expenses</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{expenses.length} expenses logged · Track every rupee</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -107,37 +108,7 @@ export default async function ExpensesPage() {
 
         <div className="admin-main-card">
           <h3 style={{ marginBottom: '1rem' }}>All Expenses</h3>
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Property</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {expenses.map((e: any) => (
-                  <tr key={e.id}>
-                    <td style={{ fontWeight: 600 }}>{e.property.name}</td>
-                    <td style={{ color: 'var(--text-muted)' }}>{e.description}</td>
-                    <td><span className={`badge ${catColor[e.category] || 'badge-gray'}`}>{e.category}</span></td>
-                    <td style={{ fontWeight: 700, color: '#B45309' }}>₹{e.amount.toLocaleString('en-IN')}</td>
-                    <td style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(e.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-                    <td>
-                      <form action={async () => { 'use server'; await deleteExpense(e.id) }}>
-                        <button type="submit" className="btn btn-danger">Remove</button>
-                      </form>
-                    </td>
-                  </tr>
-                ))}
-                {expenses.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No expenses recorded</td></tr>}
-              </tbody>
-            </table>
-          </div>
+          <ExpenseTable expenses={JSON.parse(JSON.stringify(expenses))} />
         </div>
       </div>
     </div>
