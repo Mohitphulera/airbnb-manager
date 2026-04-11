@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import MobileNav from '@/components/MobileNav'
+import PropertyImage from '@/components/PropertyImage'
 
 export const dynamic = 'force-dynamic'
 
@@ -81,7 +82,7 @@ export default async function Home() {
               <Link href={`/property/${p.id}`} key={p.id} className="st-card">
                 <div className="st-card-image">
                   {images.length > 0 ? (
-                    <img src={images[0]} alt={p.name} className="st-card-img" />
+                    <PropertyImage src={images[0]} alt={p.name} className="st-card-img" />
                   ) : (
                     <div className="st-card-placeholder">
                       <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>apartment</span>

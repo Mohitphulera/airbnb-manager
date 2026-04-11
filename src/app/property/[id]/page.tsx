@@ -3,7 +3,7 @@ import { getReviewsForProperty, getPropertyAverageRating } from '@/actions/revie
 import Link from 'next/link'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 import ReviewSection from '@/components/ReviewSection'
-import DarkModeToggle from '@/components/DarkModeToggle'
+import MobileNav from '@/components/MobileNav'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -43,54 +43,73 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   }))
 
   return (
-    <>
-      {/* Sticky Nav */}
-      <nav className="public-nav">
-        <div className="container public-nav-inner">
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="logo-img" style={{ width: '38px', height: '38px' }} />
-            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: 'var(--cozy-dark)' }}>Cozy B&B</span>
+    <div className="st-page">
+      {/* Navigation */}
+      <nav className="st-nav">
+        <div className="st-nav-inner">
+          <Link href="/" className="st-nav-brand">
+            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
+            <span className="st-nav-name">Cozy B&B</span>
           </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <DarkModeToggle />
-            <Link href="/" className="btn btn-primary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              Stays
-            </Link>
-            <Link href="/properties-for-sale" className="btn btn-outline" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              Sale Buy
-            </Link>
-            <Link href="/login" className="btn btn-secondary" style={{ borderRadius: '24px', padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}>
-              Host Login
-            </Link>
+          <div className="st-nav-links">
+            <Link href="/" className="st-nav-link">Airbnb Listings</Link>
+            <Link href="/properties-for-sale" className="st-nav-link">Properties for Sale</Link>
+            <Link href="/login" className="st-nav-link">Admin Login</Link>
           </div>
+          <div className="st-nav-actions">
+            <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
+          </div>
+          <MobileNav />
         </div>
       </nav>
 
-      <PropertyDetailClient
-        property={serializedProperty}
-        avgRating={ratingData.avg}
-        reviewCount={ratingData.count}
-      />
-
-      {/* Reviews Section */}
-      <div className="container" style={{ paddingBottom: '2rem' }}>
-        <ReviewSection
-          propertyId={id}
-          reviews={serializedReviews}
+      <div style={{ paddingTop: '5rem' }}>
+        <PropertyDetailClient
+          property={serializedProperty}
           avgRating={ratingData.avg}
           reviewCount={ratingData.count}
         />
+
+        {/* Reviews Section */}
+        <div className="container" style={{ paddingBottom: '2rem' }}>
+          <ReviewSection
+            propertyId={id}
+            reviews={serializedReviews}
+            avgRating={ratingData.avg}
+            reviewCount={ratingData.count}
+          />
+        </div>
       </div>
 
-      <footer className="site-footer">
-        <div className="container">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="logo-img" style={{ width: '28px', height: '28px' }} />
-            <span style={{ fontWeight: 700, color: 'var(--cozy-dark)' }}>Cozy B&B</span>
+      {/* Footer */}
+      <footer className="st-footer">
+        <div className="st-footer-inner">
+          <div className="st-footer-top">
+            <div className="st-footer-brand">
+              <Link href="/" className="st-nav-brand">
+                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'grayscale(1) brightness(0.5)' }} />
+                <span className="st-nav-name">Cozy B&B</span>
+              </Link>
+              <p className="st-footer-tagline">Premium stays and investment properties, curated for you.</p>
+            </div>
+            <div className="st-footer-cols">
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Company</span>
+                <Link href="/">Discover</Link>
+                <Link href="/properties-for-sale">Investments</Link>
+              </div>
+              <div className="st-footer-col">
+                <span className="st-footer-heading">Legal</span>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+              </div>
+            </div>
           </div>
-          © {new Date().getFullYear()} Cozy B&B · All rights reserved
+          <div className="st-footer-bottom">
+            <p>&copy; {new Date().getFullYear()} Cozy B&B. All rights reserved.</p>
+          </div>
         </div>
       </footer>
-    </>
+    </div>
   )
 }

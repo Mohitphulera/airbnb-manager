@@ -9,9 +9,9 @@ import GuestBookingForm from './GuestBookingForm'
 import ShareProperty from './ShareProperty'
 
 const AMENITY_ICONS: Record<string, string> = {
-  'WiFi': '📶', 'Pool': '🏊', 'AC': '❄️', 'Kitchen': '🍳',
-  'Parking': '🅿️', 'TV': '📺', 'Washer': '👕', 'Pet-Friendly': '🐾',
-  'Gym': '💪', 'Balcony': '🌅',
+  'WiFi': 'wifi', 'Pool': 'pool', 'AC': 'ac_unit', 'Kitchen': 'countertops',
+  'Parking': 'local_parking', 'TV': 'tv', 'Washer': 'local_laundry_service', 'Pet-Friendly': 'pets',
+  'Gym': 'fitness_center', 'Balcony': 'balcony',
 }
 
 export default function PropertyDetailClient({ property, avgRating, reviewCount }: { property: any; avgRating: number; reviewCount: number }) {
@@ -175,8 +175,8 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                 {property.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem', margin: 0 }}>
-                  📍 {property.location}
+                <p style={{ color: '#6b7280', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem', margin: 0 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>location_on</span> {property.location}
                 </p>
                 {reviewCount > 0 && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem' }}>
@@ -221,7 +221,7 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                         border: '1px solid var(--border)', background: '#fff',
                         fontSize: '0.875rem',
                       }}>
-                        <span style={{ fontSize: '1.125rem' }}>{AMENITY_ICONS[a] || '✦'}</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#6b7280' }}>{AMENITY_ICONS[a] || 'check_circle'}</span>
                         <span style={{ fontWeight: 500 }}>{a}</span>
                       </div>
                     ))}
@@ -316,8 +316,14 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                 <>
                   <button
                     onClick={() => setShowBookingForm(true)}
-                    className="btn btn-primary"
-                    style={{ width: '100%', borderRadius: '12px', padding: '0.75rem', fontSize: '0.9375rem' }}
+                    style={{
+                      width: '100%', borderRadius: '9999px', padding: '0.875rem',
+                      fontSize: '0.6875rem', fontFamily: "'Manrope', sans-serif", fontWeight: 700,
+                      letterSpacing: '0.15em', textTransform: 'uppercase' as const,
+                      background: (!selectedRange.from || !selectedRange.to) ? '#d1d5db' : '#1a1a1a',
+                      color: '#fff', border: 'none', cursor: (!selectedRange.from || !selectedRange.to) ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s',
+                    }}
                     disabled={!selectedRange.from || !selectedRange.to}
                   >
                     {selectedRange.from && selectedRange.to
@@ -329,10 +335,15 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                   {selectedRange.from && selectedRange.to && (
                     <button
                       onClick={handleWhatsApp}
-                      className="btn btn-secondary"
-                      style={{ width: '100%', borderRadius: '12px', padding: '0.625rem', fontSize: '0.8125rem', marginTop: '0.5rem' }}
+                      style={{
+                        width: '100%', borderRadius: '9999px', padding: '0.75rem',
+                        fontSize: '0.6875rem', fontFamily: "'Manrope', sans-serif", fontWeight: 700,
+                        letterSpacing: '0.1em', textTransform: 'uppercase' as const,
+                        background: 'transparent', color: '#1a1a1a', border: '1px solid #d1d5db',
+                        cursor: 'pointer', marginTop: '0.5rem', transition: 'all 0.3s',
+                      }}
                     >
-                      💬 Or message on WhatsApp
+                      Or message on WhatsApp
                     </button>
                   )}
 
