@@ -1,9 +1,12 @@
 import { getPropertyById } from '@/actions/propertyDetailActions'
 import { getReviewsForProperty, getPropertyAverageRating } from '@/actions/reviewActions'
+import { getPropertyRevenueSummary } from '@/actions/propertyRevenueActions'
 import Link from 'next/link'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 import ReviewSection from '@/components/ReviewSection'
+import PropertyRevenueWidget from '@/components/PropertyRevenueWidget'
 import MobileNav from '@/components/MobileNav'
+import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -64,6 +67,18 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
       </nav>
 
       <div style={{ paddingTop: '5rem' }}>
+        {/* Admin Revenue Widget — only shown when logged in */}
+        {await (async () => {
+          const cookieStore = await cookies()
+          const isAdmin = cookieStore.get('admin_token')?.value === 'authenticated'
+          if (!isAdmin) return null
+          const revenue = await getPropertyRevenueSummary(id)
+          return (
+            <div className="container" style={{ paddingTop: '1.5rem' }}>
+              <PropertyRevenueWidget revenue={revenue} />
+            </div>
+          )
+        })()}
         <PropertyDetailClient
           property={serializedProperty}
           avgRating={ratingData.avg}
