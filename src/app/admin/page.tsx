@@ -59,7 +59,7 @@ export default async function AdminDashboard() {
         {/* KPI Side Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {/* Occupancy */}
-          <div className="metric-card" style={{ padding: '1.25rem' }}>
+          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>Occupancy</span>
               <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: avgOccupancy > 60 ? '#D1FAE5' : '#FEF3C7', color: avgOccupancy > 60 ? '#059669' : '#D97706' }}>
@@ -73,7 +73,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* ADR */}
-          <div className="metric-card" style={{ padding: '1.25rem' }}>
+          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>ADR</span>
               <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: '#D1FAE5', color: '#059669' }}>Optimal</span>
@@ -83,7 +83,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* RevPAR */}
-          <div className="metric-card" style={{ padding: '1.25rem' }}>
+          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>RevPAR</span>
               <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: totals.profit >= 0 ? '#D1FAE5' : '#FEE2E2', color: totals.profit >= 0 ? '#059669' : '#DC2626' }}>

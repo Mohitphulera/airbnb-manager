@@ -2,6 +2,7 @@ import { getAvailableSaleProperties } from '@/actions/salePropertyActions'
 import Link from 'next/link'
 import SalePropertyBrowser from '@/components/SalePropertyBrowser'
 import MobileNav from '@/components/MobileNav'
+import ScrollReveal from '@/components/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,9 +18,9 @@ export default async function PropertiesForSalePage() {
   })
 
   return (
-    <div className="st-page">
-      {/* Navigation */}
-      <nav className="st-nav">
+    <div className="st-page" style={{ background: '#0a0a0f' }}>
+      {/* Cinematic Navigation */}
+      <nav className="cinema-nav st-nav">
         <div className="st-nav-inner">
           <Link href="/" className="st-nav-brand">
             <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
@@ -37,37 +38,40 @@ export default async function PropertiesForSalePage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="st-hero">
-        <div className="st-hero-inner" style={{ paddingBottom: '4rem' }}>
-          <div className="st-hero-row" style={{ marginBottom: '0' }}>
-            <div className="st-hero-text">
-              <span className="st-label">Investment-Grade Assets</span>
-              <h1 className="st-hero-title">
-                Investment<br /><em>Catalog</em>
-              </h1>
-            </div>
-            <div className="st-hero-desc">
-              <p className="st-hero-subtitle">
-                Curated opportunities in architectural excellence and high-yield real&nbsp;estate.
-              </p>
-            </div>
-          </div>
+      {/* Cinematic Hero */}
+      <section className="cinema-hero" style={{ minHeight: '60vh' }}>
+        <div className="cinema-orb cinema-orb-1" />
+        <div className="cinema-orb cinema-orb-2" />
+
+        <div className="cinema-hero-inner" style={{ paddingBottom: '4rem' }}>
+          <ScrollReveal>
+            <span className="cinema-label">Investment-Grade Assets</span>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <h1 className="cinema-hero-title" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
+              Investment<br /><em>Catalog</em>
+            </h1>
+          </ScrollReveal>
+          <ScrollReveal delay={0.2}>
+            <p className="cinema-hero-subtitle">
+              Curated opportunities in architectural excellence and high-yield real&nbsp;estate.
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Property Browser */}
-      <section className="st-grid-section" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
+      <section className="cinema-section cinema-card-section" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
         <SalePropertyBrowser properties={JSON.parse(JSON.stringify(serialized))} />
       </section>
 
-      {/* Footer */}
-      <footer className="st-footer">
-        <div className="st-footer-inner">
+      {/* Cinematic Footer */}
+      <footer className="cinema-footer">
+        <div className="cinema-footer-inner">
           <div className="st-footer-top">
             <div className="st-footer-brand">
               <div className="st-nav-brand">
-                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'grayscale(1) brightness(0.5)' }} />
+                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'brightness(0.8)' }} />
                 <span className="st-nav-name">Cozy B&B</span>
               </div>
               <p className="st-footer-tagline">
