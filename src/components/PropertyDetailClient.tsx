@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { format, isWithinInterval, startOfDay, differenceInDays } from 'date-fns'
@@ -49,85 +50,109 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
 
   return (
     <>
-      {/* Lightbox */}
-      {lightbox && images.length > 0 && (
-        <div onClick={() => setLightbox(false)} style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)', zIndex: 9999,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out',
-        }}>
-          <img
-            src={images[currentImg]}
-            alt="Property"
-            style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: '12px', objectFit: 'contain' }}
-            onClick={(e) => e.stopPropagation()}
-          />
-          {images.length > 1 && (
-            <>
-              <button onClick={(e) => { e.stopPropagation(); setCurrentImg(i => (i - 1 + images.length) % images.length) }}
-                style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', fontSize: '18px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
-                ‹
-              </button>
-              <button onClick={(e) => { e.stopPropagation(); setCurrentImg(i => (i + 1) % images.length) }}
-                style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', fontSize: '18px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
-                ›
-              </button>
-            </>
-          )}
-          <button onClick={() => setLightbox(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', fontSize: '18px', cursor: 'pointer' }}></button>
-          <div style={{ position: 'absolute', bottom: '20px', color: '#fff', fontSize: '0.875rem', fontWeight: 600 }}>
-            {currentImg + 1} / {images.length}
-          </div>
-        </div>
-      )}
+      {/* ═══ Cinematic Lightbox ═══ */}
+      <AnimatePresence>
+        {lightbox && images.length > 0 && (
+          <motion.div
+            className="cinema-lightbox"
+            onClick={() => setLightbox(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.img
+              src={images[currentImg]}
+              alt="Property"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ cursor: 'default' }}
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  className="cinema-lightbox-btn"
+                  style={{ left: '20px' }}
+                  onClick={(e) => { e.stopPropagation(); setCurrentImg(i => (i - 1 + images.length) % images.length) }}
+                >
+                  <span className="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button
+                  className="cinema-lightbox-btn"
+                  style={{ right: '20px' }}
+                  onClick={(e) => { e.stopPropagation(); setCurrentImg(i => (i + 1) % images.length) }}
+                >
+                  <span className="material-symbols-outlined">chevron_right</span>
+                </button>
+              </>
+            )}
+            <button className="cinema-lightbox-close" onClick={() => setLightbox(false)}>
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+            </button>
+            <div className="cinema-lightbox-counter">
+              {currentImg + 1} of {images.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '3rem' }}>
-        {/* Breadcrumb */}
-        <div className="fade-up" style={{ marginBottom: '1.25rem' }}>
-          <Link href="/" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.8125rem' }}>← Back to all stays</Link>
-        </div>
+        {/* ═══ Breadcrumb ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{ marginBottom: '1.5rem' }}
+        >
+          <Link href="/" className="cinema-breadcrumb">
+            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_back</span>
+            Back to all stays
+          </Link>
+        </motion.div>
 
-        {/* Image Gallery */}
-        <div className="fade-up fade-up-1" style={{ marginBottom: '2rem' }}>
+        {/* ═══ Image Gallery ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
           {images.length > 0 ? (
-            <div className="detail-gallery" style={{
-              display: 'grid',
-              gridTemplateColumns: images.length === 1 ? '1fr' : '2fr 1fr',
-              gap: '0.5rem',
-              borderRadius: 'var(--radius-xl)',
-              overflow: 'hidden',
-              maxHeight: '460px',
-            }}>
-              <div onClick={() => setLightbox(true)} style={{
-                cursor: 'zoom-in',
-                backgroundImage: `url(${images[currentImg]})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                minHeight: '260px',
-                borderRadius: images.length === 1 ? 'var(--radius-xl)' : '0',
-              }} />
+            <div
+              className="cinema-gallery"
+              style={{ gridTemplateColumns: images.length === 1 ? '1fr' : '2fr 1fr' }}
+            >
+              <div
+                className="cinema-gallery-main"
+                onClick={() => setLightbox(true)}
+                style={{
+                  backgroundImage: `url(${images[currentImg]})`,
+                  borderRadius: images.length === 1 ? '16px' : '0',
+                }}
+              />
               {images.length > 1 && (
-                <div style={{
+                <div className="cinema-gallery-side" style={{
                   display: 'grid',
                   gridTemplateRows: `repeat(${Math.min(images.length - 1, 3)}, 1fr)`,
-                  gap: '0.5rem',
-                  maxHeight: '460px',
-                  overflow: 'hidden',
+                  gap: '6px', maxHeight: '520px', overflow: 'hidden',
                 }}>
                   {images.slice(0, 4).map((url, i) => (
                     i > 0 && (
-                      <div key={i} onClick={() => { setCurrentImg(i); setLightbox(true) }} style={{
-                        cursor: 'zoom-in',
-                        backgroundImage: `url(${url})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        position: 'relative',
-                      }}>
+                      <div
+                        key={i}
+                        className="cinema-gallery-thumb"
+                        onClick={() => { setCurrentImg(i); setLightbox(true) }}
+                        style={{ backgroundImage: `url(${url})` }}
+                      >
                         {i === 3 && images.length > 4 && (
                           <div style={{
                             position: 'absolute', inset: 0,
-                            background: 'rgba(0,0,0,0.45)',
+                            background: 'rgba(10,10,15,0.6)', backdropFilter: 'blur(2px)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: '#fff', fontWeight: 700, fontSize: '1.125rem',
+                            color: '#fff', fontWeight: 700, fontSize: '1rem',
+                            fontFamily: "'Manrope', sans-serif",
                           }}>
                             +{images.length - 4} more
                           </div>
@@ -140,69 +165,75 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
             </div>
           ) : (
             <div style={{
-              height: '240px', background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '1rem'
+              height: '260px', background: 'rgba(0,0,0,0.03)', borderRadius: '16px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '0.9375rem',
             }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '40px', marginRight: '0.75rem', opacity: 0.4 }}>image</span>
               No photos available
             </div>
           )}
 
           {/* Thumbnail strip */}
           {images.length > 1 && (
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+            <div className="cinema-thumbstrip">
               {images.map((url, i) => (
-                <div key={i} onClick={() => setCurrentImg(i)} style={{
-                  width: '64px', height: '48px', borderRadius: '8px', overflow: 'hidden',
-                  border: i === currentImg ? '2.5px solid var(--primary)' : '2px solid transparent',
-                  cursor: 'pointer', flexShrink: 0, transition: 'border-color 0.2s',
-                  backgroundImage: `url(${url})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                  opacity: i === currentImg ? 1 : 0.6,
-                }} />
+                <div
+                  key={i}
+                  onClick={() => setCurrentImg(i)}
+                  className={`cinema-thumb ${i === currentImg ? 'cinema-thumb-active' : ''}`}
+                  style={{ backgroundImage: `url(${url})` }}
+                />
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        {/* Content Grid — stacks on mobile */}
-        <div className="fade-up fade-up-2 detail-content-grid">
-          {/* Left Column — Details */}
+        {/* ═══ Content Grid ═══ */}
+        <motion.div
+          className="detail-content-grid"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+        >
+          {/* Left Column */}
           <div>
             {/* Title + Location */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                <h1 style={{ fontSize: 'clamp(1.25rem, 4vw, 1.75rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: 0 }}>{property.name}</h1>
-                {property.type === 'OWNED' && <span className="badge badge-blue">✓ Verified</span>}
-                {property.type === 'COMMISSION' && <span className="badge badge-yellow">Partner</span>}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                <h1 className="cinema-detail-title">{property.name}</h1>
+                {property.type === 'OWNED' && <span className="cinema-detail-badge cinema-detail-badge-verified">Verified</span>}
+                {property.type === 'COMMISSION' && <span className="cinema-detail-badge cinema-detail-badge-partner">Partner</span>}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <p style={{ color: '#6b7280', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '0.375rem', margin: 0 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>location_on</span> {property.location}
-                </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                <span className="cinema-detail-location">
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>
+                  {property.location}
+                </span>
                 {reviewCount > 0 && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem' }}>
-                    <span style={{ color: '#F59E0B' }}>★</span>
+                  <span className="cinema-rating">
+                    <span className="cinema-rating-star">★</span>
                     <span style={{ fontWeight: 700 }}>{avgRating}</span>
-                    <span style={{ color: 'var(--text-muted)' }}>({reviewCount})</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.8125rem' }}>({reviewCount})</span>
                   </span>
                 )}
                 <ShareProperty property={property} />
               </div>
             </div>
 
-            {/* Mobile Price Bar — only shows on small screens */}
-            <div className="mobile-price-bar">
+            {/* Mobile Price Bar */}
+            <div className="cinema-mobile-price">
               <div>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800 }}>₹{property.pricePerNight.toLocaleString('en-IN')}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}> / night</span>
+                <span className="cinema-booking-price" style={{ fontSize: '1.375rem' }}>₹{property.pricePerNight.toLocaleString('en-IN')}</span>
+                <span className="cinema-booking-price-unit">/ night</span>
               </div>
             </div>
 
-            <div style={{ height: '1px', background: 'var(--border)', margin: '1.25rem 0' }} />
+            <div className="cinema-divider" />
 
             {/* Description */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, marginBottom: '0.75rem' }}>About this place</h3>
-              <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: '0.9rem' }}>
+              <h3 className="cinema-detail-section-title">About this place</h3>
+              <p style={{ color: '#6b7280', lineHeight: 1.8, fontSize: '0.9rem' }}>
                 {property.description}
               </p>
             </div>
@@ -210,24 +241,28 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
             {/* Amenities */}
             {amenities.length > 0 && (
               <>
-                <div style={{ height: '1px', background: 'var(--border)', margin: '1.25rem 0' }} />
+                <div className="cinema-divider" />
                 <div style={{ marginBottom: '1.25rem' }}>
-                  <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, marginBottom: '1rem' }}>What this place offers</h3>
+                  <h3 className="cinema-detail-section-title">What this place offers</h3>
                   <div className="amenity-detail-grid">
                     {(showAllAmenities ? amenities : amenities.slice(0, 6)).map((a: string) => (
-                      <div key={a} style={{
-                        display: 'flex', alignItems: 'center', gap: '0.75rem',
-                        padding: '0.625rem 0.875rem', borderRadius: '12px',
-                        border: '1px solid var(--border)', background: '#fff',
-                        fontSize: '0.875rem',
-                      }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#6b7280' }}>{AMENITY_ICONS[a] || 'check_circle'}</span>
+                      <div key={a} className="cinema-amenity">
+                        <span className="material-symbols-outlined">{AMENITY_ICONS[a] || 'check_circle'}</span>
                         <span style={{ fontWeight: 500 }}>{a}</span>
                       </div>
                     ))}
                   </div>
                   {amenities.length > 6 && !showAllAmenities && (
-                    <button onClick={() => setShowAllAmenities(true)} className="btn btn-outline" style={{ marginTop: '1rem', borderRadius: '8px', width: '100%' }}>
+                    <button
+                      onClick={() => setShowAllAmenities(true)}
+                      style={{
+                        marginTop: '1rem', width: '100%', padding: '0.75rem', borderRadius: '8px',
+                        border: '1px solid rgba(201,168,76,0.2)', background: 'transparent',
+                        color: 'var(--cinema-gold)', fontFamily: "'Manrope', sans-serif",
+                        fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.15em',
+                        textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s',
+                      }}
+                    >
                       Show all {amenities.length} amenities
                     </button>
                   )}
@@ -236,50 +271,48 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
             )}
 
             {/* Policies */}
-            <div style={{ height: '1px', background: 'var(--border)', margin: '1.25rem 0' }} />
+            <div className="cinema-divider" />
             <div>
-              <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, marginBottom: '1rem' }}>Things to know</h3>
+              <h3 className="cinema-detail-section-title">Things to know</h3>
               <div className="policies-grid">
-                <div>
-                  <h4 style={{ fontSize: '0.8125rem', fontWeight: 700, marginBottom: '0.5rem' }}>Check-in</h4>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>After 2:00 PM</p>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>Self check-in with lockbox</p>
+                <div className="cinema-policy-card">
+                  <h4>Check-in</h4>
+                  <p>After 2:00 PM</p>
+                  <p>Self check-in with lockbox</p>
                 </div>
-                <div>
-                  <h4 style={{ fontSize: '0.8125rem', fontWeight: 700, marginBottom: '0.5rem' }}>Check-out</h4>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>Before 11:00 AM</p>
+                <div className="cinema-policy-card">
+                  <h4>Check-out</h4>
+                  <p>Before 11:00 AM</p>
                 </div>
-                <div>
-                  <h4 style={{ fontSize: '0.8125rem', fontWeight: 700, marginBottom: '0.5rem' }}>House Rules</h4>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>No smoking</p>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>No parties or events</p>
+                <div className="cinema-policy-card">
+                  <h4>House Rules</h4>
+                  <p>No smoking</p>
+                  <p>No parties or events</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column — Booking Card */}
+          {/* ═══ Right Column — Booking Card ═══ */}
           <div className="booking-card-wrap">
-            <div className="booking-card">
+            <div className="cinema-booking-card">
               {/* Price */}
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.375rem', marginBottom: '1.25rem' }}>
-                <span style={{ fontSize: '1.375rem', fontWeight: 800 }}>₹{property.pricePerNight.toLocaleString('en-IN')}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>/ night</span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginBottom: '1.5rem' }}>
+                <span className="cinema-booking-price">₹{property.pricePerNight.toLocaleString('en-IN')}</span>
+                <span className="cinema-booking-price-unit">/ night</span>
               </div>
 
               {/* Calendar */}
-              <div style={{ borderRadius: '12px', border: '1px solid var(--border)', padding: '0.5rem', marginBottom: '1rem', overflow: 'hidden' }}>
-                <p style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.5rem', padding: '0 0.25rem' }}>
-                  Select your dates
-                </p>
+              <div className="cinema-calendar-wrap">
+                <p className="cinema-calendar-label">Select your dates</p>
 
                 <style dangerouslySetInnerHTML={{__html: `
-                  .rdp { --rdp-cell-size: 34px; --rdp-accent-color: var(--primary); font-size: 0.75rem; margin: 0; width: 100%; }
+                  .rdp { --rdp-cell-size: 34px; --rdp-accent-color: #c9a84c; font-size: 0.75rem; margin: 0; width: 100%; }
                   .rdp-month { width: 100%; }
                   .rdp-table { width: 100%; }
-                  .rdp-day_selected { background-color: var(--primary) !important; color: #fff !important; }
+                  .rdp-day_selected { background-color: #c9a84c !important; color: #0a0a0f !important; }
                   .rdp-day_disabled { opacity: 0.2; text-decoration: line-through; }
-                  .rdp-day_range_start, .rdp-day_range_end { background: var(--primary) !important; color: #fff !important; border-radius: 50% !important; }
+                  .rdp-day_range_start, .rdp-day_range_end { background: #c9a84c !important; color: #0a0a0f !important; border-radius: 50% !important; }
                 `}} />
 
                 <div style={{ display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
@@ -288,19 +321,27 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
               </div>
 
               {/* Price Breakdown */}
-              {nights > 0 && (
-                <div style={{ marginBottom: '1rem', padding: '0.75rem', borderRadius: '10px', background: 'var(--cozy-blue-light)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', marginBottom: '0.375rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>₹{property.pricePerNight.toLocaleString('en-IN')} × {nights} night{nights > 1 ? 's' : ''}</span>
-                    <span style={{ fontWeight: 600 }}>₹{totalPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div style={{ height: '1px', background: 'rgba(43,108,176,0.15)', margin: '0.5rem 0' }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9375rem', fontWeight: 700 }}>
-                    <span>Total</span>
-                    <span>₹{totalPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                </div>
-              )}
+              <AnimatePresence>
+                {nights > 0 && (
+                  <motion.div
+                    className="cinema-price-breakdown"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', marginBottom: '0.5rem' }}>
+                      <span style={{ color: '#6b7280' }}>₹{property.pricePerNight.toLocaleString('en-IN')} × {nights} night{nights > 1 ? 's' : ''}</span>
+                      <span style={{ fontWeight: 600 }}>₹{totalPrice.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style={{ height: '1px', background: 'rgba(201,168,76,0.15)', margin: '0.5rem 0' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 700 }}>
+                      <span>Total</span>
+                      <span style={{ color: 'var(--cinema-gold)' }}>₹{totalPrice.toLocaleString('en-IN')}</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* CTA Buttons */}
               {showBookingForm && selectedRange.from && selectedRange.to ? (
@@ -316,14 +357,7 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                 <>
                   <button
                     onClick={() => setShowBookingForm(true)}
-                    style={{
-                      width: '100%', borderRadius: '9999px', padding: '0.875rem',
-                      fontSize: '0.6875rem', fontFamily: "'Manrope', sans-serif", fontWeight: 700,
-                      letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-                      background: (!selectedRange.from || !selectedRange.to) ? '#d1d5db' : '#1a1a1a',
-                      color: '#fff', border: 'none', cursor: (!selectedRange.from || !selectedRange.to) ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s',
-                    }}
+                    className={`cinema-book-btn ${selectedRange.from && selectedRange.to ? 'cinema-book-btn-gold' : ''}`}
                     disabled={!selectedRange.from || !selectedRange.to}
                   >
                     {selectedRange.from && selectedRange.to
@@ -333,22 +367,13 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                   </button>
 
                   {selectedRange.from && selectedRange.to && (
-                    <button
-                      onClick={handleWhatsApp}
-                      style={{
-                        width: '100%', borderRadius: '9999px', padding: '0.75rem',
-                        fontSize: '0.6875rem', fontFamily: "'Manrope', sans-serif", fontWeight: 700,
-                        letterSpacing: '0.1em', textTransform: 'uppercase' as const,
-                        background: 'transparent', color: '#1a1a1a', border: '1px solid #d1d5db',
-                        cursor: 'pointer', marginTop: '0.5rem', transition: 'all 0.3s',
-                      }}
-                    >
+                    <button onClick={handleWhatsApp} className="cinema-whatsapp-btn">
                       Or message on WhatsApp
                     </button>
                   )}
 
                   {selectedRange.from && selectedRange.to && (
-                    <p style={{ textAlign: 'center', fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                    <p style={{ textAlign: 'center', fontSize: '0.625rem', color: '#9ca3af', marginTop: '0.625rem', fontFamily: "'Manrope', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                       No payment needed now
                     </p>
                   )}
@@ -356,7 +381,7 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
   )

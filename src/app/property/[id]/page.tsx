@@ -46,23 +46,23 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   }))
 
   return (
-    <div className="st-page">
-      {/* Navigation */}
-      <nav className="st-nav">
+    <div className="st-page cinema-detail-page">
+      {/* ═══ Cinematic Navigation ═══ */}
+      <nav className="cinema-nav st-nav">
         <div className="st-nav-inner">
           <Link href="/" className="st-nav-brand">
             <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
             <span className="st-nav-name">Cozy B&B</span>
           </Link>
           <div className="st-nav-links">
-            <Link href="/" className="st-nav-link">Airbnb Listings</Link>
+            <Link href="/" className="st-nav-link st-nav-link-active">Airbnb Listings</Link>
             <Link href="/properties-for-sale" className="st-nav-link">Properties for Sale</Link>
             <Link href="/login" className="st-nav-link">Admin Login</Link>
           </div>
           <div className="st-nav-actions">
             <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
           </div>
-          <MobileNav />
+          <MobileNav activePage="home" />
         </div>
       </nav>
 
@@ -96,22 +96,25 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="st-footer">
-        <div className="st-footer-inner">
+      {/* ═══ Cinematic Footer ═══ */}
+      <footer className="cinema-footer">
+        <div className="cinema-footer-inner">
           <div className="st-footer-top">
             <div className="st-footer-brand">
               <Link href="/" className="st-nav-brand">
-                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'grayscale(1) brightness(0.5)' }} />
+                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'brightness(0.8)' }} />
                 <span className="st-nav-name">Cozy B&B</span>
               </Link>
-              <p className="st-footer-tagline">Premium stays and investment properties, curated for you.</p>
+              <p className="st-footer-tagline">
+                Defining the future of luxury hospitality through meticulous curation and architectural excellence.
+              </p>
             </div>
             <div className="st-footer-cols">
               <div className="st-footer-col">
                 <span className="st-footer-heading">Company</span>
                 <Link href="/">Discover</Link>
                 <Link href="/properties-for-sale">Investments</Link>
+                <Link href="/login">Host Portal</Link>
               </div>
               <div className="st-footer-col">
                 <span className="st-footer-heading">Legal</span>
