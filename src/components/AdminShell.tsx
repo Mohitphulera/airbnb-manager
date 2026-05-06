@@ -20,6 +20,7 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
     { href: '/admin/properties', label: 'Listings', icon: 'home_work' },
     { href: '/admin/bookings', label: 'Bookings', icon: 'assignment' },
     { href: '/admin/expenses', label: 'Earnings', icon: 'payments' },
+    { href: '/admin/bills', label: 'Bills', icon: 'receipt_long' },
     { href: '/admin/requests', label: 'Requests', icon: 'inbox', badge: stats.pendingRequests },
   ]
 
