@@ -9,7 +9,7 @@ interface BillData {
   propertyName: string; propertyLocation: string
   checkIn: string; checkOut: string
   pricePerNight: number; extraCharges: { label: string; amount: number }[]
-  discount: number; notes: string; paymentMethod: string
+  discount: number; advancePaid: number; notes: string; paymentMethod: string
 }
 
 const empty: BillData = {
@@ -19,7 +19,7 @@ const empty: BillData = {
   propertyName: '', propertyLocation: '',
   checkIn: '', checkOut: '',
   pricePerNight: 0, extraCharges: [],
-  discount: 0, notes: '', paymentMethod: 'Cash',
+  discount: 0, advancePaid: 0, notes: '', paymentMethod: 'Cash',
 }
 
 export default function BillGenerator() {
@@ -36,6 +36,7 @@ export default function BillGenerator() {
   const subtotal = roomTotal + extrasTotal
   const discountAmt = bill.discount
   const grandTotal = subtotal - discountAmt
+  const remaining = Math.max(grandTotal - bill.advancePaid, 0)
 
   const addCharge = () => set('extraCharges', [...bill.extraCharges, { label: '', amount: 0 }])
   const removeCharge = (i: number) => set('extraCharges', bill.extraCharges.filter((_, idx) => idx !== i))
@@ -55,7 +56,10 @@ export default function BillGenerator() {
       w.document.write(`<!DOCTYPE html><html><head><title>Invoice ${bill.invoiceNo}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;color:#1a1a1a;background:#fff;padding:40px;max-width:800px;margin:0 auto}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:#1a1a1a;background:#fff;padding:40px;max-width:800px;margin:0 auto;position:relative}
+.inv-watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.04;pointer-events:none;z-index:0;width:340px;height:340px}
+.inv-watermark img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.inv-content{position:relative;z-index:1}
 .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #c9a84c}
 .inv-brand{font-size:24px;font-weight:800;letter-spacing:-0.02em}
 .inv-brand small{display:block;font-size:10px;font-weight:600;color:#9ca3af;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px}
@@ -71,15 +75,25 @@ th{background:#0a0a0f;color:#f0ece4;font-size:9px;font-weight:700;letter-spacing
 th:last-child{text-align:right}
 td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f1f1f1}
 td:last-child{text-align:right;font-weight:600}
-.inv-totals{display:flex;justify-content:flex-end;margin-bottom:32px}
-.inv-totals-box{width:280px}
+.inv-totals{display:flex;justify-content:flex-end;margin-bottom:24px}
+.inv-totals-box{width:300px}
 .inv-total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#6b7280}
 .inv-total-row.grand{border-top:2px solid #c9a84c;margin-top:8px;padding-top:12px;font-size:18px;font-weight:800;color:#1a1a1a}
-.inv-notes{background:#fffbeb;border:1px solid #fef3c7;border-radius:8px;padding:14px;font-size:12px;color:#92400e;line-height:1.7;margin-bottom:32px}
+.inv-total-row.advance{color:#2563eb;font-weight:600}
+.inv-total-row.remaining{color:#d97706;font-weight:700;font-size:14px}
+.inv-payment{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:14px;font-size:12px;color:#0369a1;line-height:1.7;margin-bottom:24px}
+.inv-notes{background:#fffbeb;border:1px solid #fef3c7;border-radius:8px;padding:14px;font-size:12px;color:#92400e;line-height:1.7;margin-bottom:24px}
+.inv-rules{border:1px solid #e5e7eb;border-radius:8px;padding:18px;margin-bottom:24px}
+.inv-rules-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#c9a84c;margin-bottom:10px}
+.inv-rules ul{list-style:none;padding:0}
+.inv-rules ul li{font-size:11px;color:#4b5563;line-height:1.9;padding-left:16px;position:relative}
+.inv-rules ul li::before{content:'•';position:absolute;left:0;color:#c9a84c;font-weight:bold}
+.inv-refund{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;font-size:11px;color:#166534;line-height:1.6;margin-bottom:24px;font-weight:500}
 .inv-footer{text-align:center;padding-top:24px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af}
 .inv-footer strong{color:#c9a84c}
-@media print{body{padding:20px}button{display:none!important}}
+@media print{body{padding:20px}button{display:none!important}.inv-watermark{position:fixed}}
 </style></head><body>
+<div class="inv-watermark"><img src="/logo-cozybnb.jpg" alt="" /></div>
 ${content.innerHTML}
 </body></html>`)
       w.document.close()
@@ -227,6 +241,18 @@ ${content.innerHTML}
                 </select>
               </div>
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div>
+                <label style={labelStyle}>Advance Paid (₹)</label>
+                <input type="number" style={inputStyle} placeholder="0" value={bill.advancePaid || ''} onChange={e => set('advancePaid', Number(e.target.value))} />
+              </div>
+              <div>
+                <label style={labelStyle}>Remaining at Check-in</label>
+                <div style={{ ...inputStyle, background: remaining > 0 ? '#fef3c7' : '#d1fae5', display: 'flex', alignItems: 'center', fontWeight: 700, color: remaining > 0 ? '#92400e' : '#059669', border: `1px solid ${remaining > 0 ? '#fde68a' : '#a7f3d0'}` }}>
+                  ₹{remaining.toLocaleString('en-IN')}
+                </div>
+              </div>
+            </div>
             <div>
               <label style={labelStyle}>Notes (optional)</label>
               <textarea style={{ ...inputStyle, resize: 'vertical', minHeight: '70px' }} placeholder="Thank you for your stay..." value={bill.notes} onChange={e => set('notes', e.target.value)} />
@@ -254,6 +280,17 @@ ${content.innerHTML}
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 800 }}>
                 <span>Grand Total</span><span>₹{grandTotal.toLocaleString('en-IN')}</span>
               </div>
+              {bill.advancePaid > 0 && (
+                <>
+                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0.5rem 0' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#60a5fa', fontSize: '0.8125rem' }}>
+                    <span>Advance Paid</span><span>₹{bill.advancePaid.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fbbf24', fontWeight: 700 }}>
+                    <span>Due at Check-in</span><span>₹{remaining.toLocaleString('en-IN')}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -280,6 +317,7 @@ ${content.innerHTML}
       {/* ═══ HIDDEN PRINT TEMPLATE ═══ */}
       <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
         <div ref={printRef}>
+          <div className="inv-content">
           <div className="inv-header">
             <div>
               <div className="inv-brand">Cozy B&B<small>Premium Hospitality</small></div>
@@ -331,17 +369,49 @@ ${content.innerHTML}
               <div className="inv-total-row"><span>Subtotal</span><span>₹{subtotal.toLocaleString('en-IN')}</span></div>
               {discountAmt > 0 && <div className="inv-total-row"><span>Discount</span><span>-₹{discountAmt.toLocaleString('en-IN')}</span></div>}
               <div className="inv-total-row grand"><span>Grand Total</span><span>₹{grandTotal.toLocaleString('en-IN')}</span></div>
+              {bill.advancePaid > 0 && (
+                <>
+                  <div className="inv-total-row advance"><span>Advance Paid</span><span>₹{bill.advancePaid.toLocaleString('en-IN')}</span></div>
+                  <div className="inv-total-row remaining"><span>Balance Due at Check-in</span><span>₹{remaining.toLocaleString('en-IN')}</span></div>
+                </>
+              )}
             </div>
           </div>
 
-          <div className="inv-total-row" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '16px' }}>
-            <span>Payment Method: <strong style={{ color: '#1a1a1a' }}>{bill.paymentMethod}</strong></span>
+          {bill.advancePaid > 0 && (
+            <div className="inv-payment">
+              <strong>Payment Summary:</strong> An advance of ₹{bill.advancePaid.toLocaleString('en-IN')} has been received via {bill.paymentMethod}. The remaining balance of ₹{remaining.toLocaleString('en-IN')} is to be paid at the time of check-in.
+            </div>
+          )}
+
+          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '16px' }}>
+            Payment Method: <strong style={{ color: '#1a1a1a' }}>{bill.paymentMethod}</strong>
           </div>
 
           {bill.notes && <div className="inv-notes">{bill.notes}</div>}
 
+          <div className="inv-rules">
+            <div className="inv-rules-title">House Rules & Policies</div>
+            <ul>
+              <li>Check-in time is after 2:00 PM and check-out time is before 11:00 AM.</li>
+              <li>Please carry a valid government-issued photo ID at the time of check-in.</li>
+              <li>Smoking is strictly prohibited inside the property.</li>
+              <li>No parties, events, or loud music after 10:00 PM.</li>
+              <li>Pets are not allowed unless explicitly approved in advance.</li>
+              <li>Guests are liable for any damage to the property or its furnishings during their stay.</li>
+              <li>Additional guests beyond the booked occupancy may incur extra charges.</li>
+              <li>The management reserves the right to cancel a booking in case of violation of house rules.</li>
+            </ul>
+          </div>
+
+          <div className="inv-refund">
+            <strong>Refund Policy:</strong> The advance amount paid is fully refundable if the booking is cancelled at least 48 hours before the scheduled check-in date. Cancellations made within 48 hours of check-in are non-refundable.
+          </div>
+
           <div className="inv-footer">
-            Thank you for choosing <strong>Cozy B&B</strong>. We hope you enjoyed your stay!
+            Thank you for choosing <strong>Cozy B&B</strong>. We hope you enjoy your stay!<br />
+            For queries, reach us on WhatsApp or email.
+          </div>
           </div>
         </div>
       </div>

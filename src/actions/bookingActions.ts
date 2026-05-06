@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { addGuestFromBooking } from './guestActions'
 
 export async function getBookings() {
   return await prisma.booking.findMany({
@@ -63,8 +64,21 @@ export async function addBooking(formData: FormData) {
     }
   })
 
+  // Auto-sync guest CRM
+  try {
+    await addGuestFromBooking({
+      customerName,
+      customerPhone,
+      checkInDate,
+      checkOutDate,
+      totalAmount,
+      propertyName: property.name,
+    })
+  } catch (e) { /* guest sync is best-effort */ }
+
   revalidatePath('/admin/bookings')
   revalidatePath('/admin')
+  revalidatePath('/admin/guests')
   return { success: true }
 }
 
