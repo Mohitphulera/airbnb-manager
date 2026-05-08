@@ -7,17 +7,35 @@ import { showToast } from '@/components/Toast'
 export default function ExpenseForm({ properties }: { properties: any[] }) {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [receiptUrl, setReceiptUrl] = useState('')
+  const [uploading, setUploading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.url) setReceiptUrl(data.url)
+    } catch { showToast('Upload failed', 'error') }
+    setUploading(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setSubmitting(true)
     const formData = new FormData(e.currentTarget)
+    formData.set('receiptUrl', receiptUrl)
     const result = await addExpense(formData)
     if (result && result.success) {
       showToast('Expense logged successfully!', 'success')
       formRef.current?.reset()
+      setReceiptUrl('')
     } else {
       showToast('Failed to log expense', 'error')
     }
@@ -62,7 +80,19 @@ export default function ExpenseForm({ properties }: { properties: any[] }) {
         <input type="date" name="date" className="form-input" required />
       </div>
 
-      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%' }} disabled={submitting}>
+      <div className="form-group">
+        <label className="form-label">Receipt (optional)</label>
+        <input type="file" accept="image/*" onChange={handleUpload} style={{ fontSize: '0.8125rem' }} />
+        {uploading && <p style={{ fontSize: '0.6875rem', color: 'var(--primary)', marginTop: '0.25rem' }}>Uploading...</p>}
+        {receiptUrl && (
+          <div style={{ marginTop: '0.375rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <img src={receiptUrl} alt="Receipt" style={{ width: 48, height: 48, borderRadius: '6px', objectFit: 'cover', border: '1px solid var(--border)' }} />
+            <span style={{ fontSize: '0.6875rem', color: '#16a34a', fontWeight: 600 }}>Uploaded ✓</span>
+          </div>
+        )}
+      </div>
+
+      <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%' }} disabled={submitting || uploading}>
         {submitting ? 'Logging Expense...' : 'Log Expense'}
       </button>
     </form>

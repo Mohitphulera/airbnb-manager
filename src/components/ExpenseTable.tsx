@@ -12,6 +12,7 @@ interface Expense {
   amount: number
   category: string
   date: string
+  receiptUrl: string | null
   property: { name: string }
 }
 
@@ -65,6 +66,7 @@ export default function ExpenseTable({ expenses }: { expenses: Expense[] }) {
             <th>Category</th>
             <th>Amount</th>
             <th>Date</th>
+            <th>Receipt</th>
             <th style={{ minWidth: '120px' }}>Actions</th>
           </tr>
         </thead>
@@ -114,6 +116,7 @@ export default function ExpenseTable({ expenses }: { expenses: Expense[] }) {
                 <td><span className={`badge ${catColor[e.category] || 'badge-gray'}`}>{e.category}</span></td>
                 <td style={{ fontWeight: 700, color: '#B45309' }}>₹{e.amount.toLocaleString('en-IN')}</td>
                 <td style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(e.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                <td>{e.receiptUrl ? <a href={e.receiptUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block' }}><img src={e.receiptUrl} alt="Receipt" style={{ width: 32, height: 32, borderRadius: '4px', objectFit: 'cover', border: '1px solid var(--border)' }} /></a> : <span style={{ color: '#ccc' }}>—</span>}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.25rem' }}>
                     <button onClick={() => startEdit(e)} className="btn btn-outline" style={{ fontSize: '0.6875rem', padding: '0.25rem 0.5rem' }}>
@@ -127,7 +130,7 @@ export default function ExpenseTable({ expenses }: { expenses: Expense[] }) {
               </tr>
             )
           })}
-          {expenses.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No expenses recorded</td></tr>}
+          {expenses.length === 0 && <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No expenses recorded</td></tr>}
         </tbody>
       </table>
     </div>

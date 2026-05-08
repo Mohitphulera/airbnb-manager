@@ -51,6 +51,7 @@ model Expense {
   amount          Float
   category        String   // "CLEANING","REPAIR","UTILITY","OTHER"
   date            DateTime
+  receiptUrl      String?
   createdAt       DateTime @default(now())
 }
 

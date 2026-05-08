@@ -16,9 +16,10 @@ export async function addExpense(formData: FormData) {
   const amount = parseFloat(formData.get('amount') as string)
   const category = formData.get('category') as string
   const date = new Date(formData.get('date') as string)
+  const receiptUrl = (formData.get('receiptUrl') as string) || null
 
   await prisma.expense.create({
-    data: { propertyId, description, amount, category, date }
+    data: { propertyId, description, amount, category, date, receiptUrl }
   })
 
   revalidatePath('/admin/expenses')

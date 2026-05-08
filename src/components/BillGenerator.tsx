@@ -57,7 +57,7 @@ export default function BillGenerator() {
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;color:#1a1a1a;background:#fff;padding:40px;max-width:800px;margin:0 auto;position:relative}
-.inv-watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.04;pointer-events:none;z-index:0;width:340px;height:340px}
+.inv-watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.08;pointer-events:none;z-index:0;width:360px;height:360px}
 .inv-watermark img{width:100%;height:100%;object-fit:contain;border-radius:50%}
 .inv-content{position:relative;z-index:1}
 .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #c9a84c}
@@ -241,6 +241,23 @@ ${content.innerHTML}
                 </select>
               </div>
             </div>
+            {/* Total + Advance + Remaining */}
+            {grandTotal > 0 && (
+              <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: '10px', padding: '0.875rem 1rem', marginBottom: '0.75rem', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '0.25rem' }}>Total Amount</div>
+                  <div style={{ fontSize: '1.125rem', fontWeight: 800, color: '#fff' }}>₹{grandTotal.toLocaleString('en-IN')}</div>
+                </div>
+                <div style={{ textAlign: 'center', borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#60a5fa', marginBottom: '0.25rem' }}>Advance Paid</div>
+                  <div style={{ fontSize: '1.125rem', fontWeight: 800, color: '#60a5fa' }}>₹{bill.advancePaid.toLocaleString('en-IN')}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: remaining > 0 ? '#fbbf24' : '#4ade80', marginBottom: '0.25rem' }}>Remaining</div>
+                  <div style={{ fontSize: '1.125rem', fontWeight: 800, color: remaining > 0 ? '#fbbf24' : '#4ade80' }}>₹{remaining.toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div>
                 <label style={labelStyle}>Advance Paid (₹)</label>
