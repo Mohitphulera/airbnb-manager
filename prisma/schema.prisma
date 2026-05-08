@@ -17,6 +17,11 @@ model Property {
   commissionRate  Float?
   pricePerNight   Float
   whatsappNumber  String?
+  wifiName        String?
+  wifiPassword    String?
+  houseRules      String?   // JSON array
+  localGuide      String?   // JSON array of {name,type,distance}
+  emergencyPhone  String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -118,5 +123,35 @@ model Guest {
   loyaltyTier   String    @default("NEW") // "NEW","BRONZE","SILVER","GOLD","PLATINUM"
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  property    String?
+  assignedTo  String?
+  priority    String    @default("MEDIUM")
+  status      String    @default("TODO")
+  dueDate     DateTime?
+  category    String    @default("CLEANING")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Feedback {
+  id            String   @id @default(cuid())
+  bookingId     String?
+  guestName     String
+  guestPhone    String?
+  propertyName  String
+  rating        Int
+  cleanliness   Int?
+  comfort       Int?
+  location      Int?
+  valueForMoney Int?
+  comment       String?
+  wouldReturn   Boolean?
+  createdAt     DateTime @default(now())
 }
 

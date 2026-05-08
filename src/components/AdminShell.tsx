@@ -23,6 +23,9 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
     { href: '/admin/bills', label: 'Bills', icon: 'receipt_long' },
     { href: '/admin/guests', label: 'Guests', icon: 'group' },
     { href: '/admin/pricing', label: 'Pricing', icon: 'trending_up' },
+    { href: '/admin/occupancy', label: 'Occupancy', icon: 'grid_view' },
+    { href: '/admin/tasks', label: 'Tasks', icon: 'task_alt' },
+    { href: '/admin/feedback', label: 'Feedback', icon: 'rate_review' },
     { href: '/admin/requests', label: 'Requests', icon: 'inbox', badge: stats.pendingRequests },
   ]
 
