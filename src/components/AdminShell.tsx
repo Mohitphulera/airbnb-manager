@@ -26,6 +26,9 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
     { href: '/admin/occupancy', label: 'Occupancy', icon: 'grid_view' },
     { href: '/admin/tasks', label: 'Tasks', icon: 'task_alt' },
     { href: '/admin/feedback', label: 'Feedback', icon: 'rate_review' },
+    { href: '/admin/forecast', label: 'Forecast', icon: 'insights' },
+    { href: '/admin/inventory', label: 'Inventory', icon: 'inventory_2' },
+    { href: '/admin/referrals', label: 'Referrals', icon: 'loyalty' },
     { href: '/admin/requests', label: 'Requests', icon: 'inbox', badge: stats.pendingRequests },
   ]
 
