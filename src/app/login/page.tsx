@@ -8,81 +8,133 @@ import Link from 'next/link'
 export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPass, setShowPass] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const formData = new FormData(e.currentTarget)
+
+    const form = e.currentTarget
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value
+
     const result = await signIn('credentials', {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
+      email,
+      password,
       redirect: false,
     })
-    if (result?.error) {
-      setError('Invalid email or password')
+
+    if (result?.error || !result?.ok) {
+      setError('Invalid email or password. Please try again.')
       setLoading(false)
     } else {
       router.push('/admin')
+      router.refresh()
     }
   }
 
   return (
-    <div className="cinema-login">
-      <div className="cinema-orb cinema-orb-1" />
-      <div className="cinema-orb cinema-orb-2" />
+    <div className="auth-page">
+      {/* Background */}
+      <div className="auth-bg">
+        <div className="auth-bg-orb auth-bg-orb-1" />
+        <div className="auth-bg-orb auth-bg-orb-2" />
+        <div className="auth-bg-grid" />
+      </div>
 
-      <div className="cinema-login-card" style={{ animation: 'fadeInUp 0.6s ease both' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'inline-flex', marginBottom: '1.5rem' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(37,99,235,0.3)' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '28px', color: '#fff' }}>apartment</span>
-            </div>
+      {/* Card */}
+      <div className="auth-card">
+        {/* Logo */}
+        <div className="auth-logo-wrap">
+          <div className="auth-logo-icon">
+            <span className="material-symbols-outlined">apartment</span>
           </div>
-          <h1 style={{ marginBottom: '0.25rem' }}>Welcome back</h1>
-          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
-            Sign in to your property dashboard
-          </p>
+          <div>
+            <div className="auth-logo-name">StayDesk</div>
+            <div className="auth-logo-tag">Property Management</div>
+          </div>
+        </div>
+
+        <div className="auth-header">
+          <h1 className="auth-title">Welcome back</h1>
+          <p className="auth-subtitle">Sign in to your dashboard</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(220,38,38,0.1)', color: '#f87171', padding: '0.75rem 1rem', borderRadius: '10px', marginBottom: '1.25rem', fontSize: '0.8125rem', textAlign: 'center', border: '1px solid rgba(220,38,38,0.15)' }}>
+          <div className="auth-error" role="alert">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>error</span>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div>
-            <label style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Email
-            </label>
-            <input type="email" name="email" placeholder="you@example.com" required />
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="email">Email Address</label>
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon material-symbols-outlined">mail</span>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+                className="auth-input"
+              />
+            </div>
           </div>
-          <div>
-            <label style={{ fontFamily: "'Manrope', sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Password
-            </label>
-            <input type="password" name="password" placeholder="Your password" required />
+
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="password">Password</label>
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon material-symbols-outlined">lock</span>
+              <input
+                id="password"
+                type={showPass ? 'text' : 'password'}
+                name="password"
+                placeholder="Your password"
+                required
+                autoComplete="current-password"
+                className="auth-input"
+              />
+              <button
+                type="button"
+                className="auth-eye-btn"
+                onClick={() => setShowPass(v => !v)}
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                <span className="material-symbols-outlined">{showPass ? 'visibility_off' : 'visibility'}</span>
+              </button>
+            </div>
           </div>
-          <button type="submit" disabled={loading} className="cinema-login-btn">
-            {loading ? 'Signing in...' : 'Sign In'}
+
+          <button type="submit" disabled={loading} className="auth-submit-btn">
+            {loading ? (
+              <>
+                <span className="auth-spinner" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                Sign In
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+              </>
+            )}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)' }}>
-            New here?{' '}
-            <Link href="/signup" style={{ color: '#60a5fa', fontWeight: 600, textDecoration: 'none' }}>
-              Create your free account
-            </Link>
-          </p>
+        <div className="auth-divider">
+          <span>or</span>
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <Link href="/" style={{ fontSize: '0.6875rem', fontFamily: "'Manrope', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none', color: 'rgba(255,255,255,0.3)' }}>
-            ← Back to platform
-          </Link>
+        <div className="auth-footer-links">
+          <p>
+            Don't have an account?{' '}
+            <Link href="/signup" className="auth-link">Create one free →</Link>
+          </p>
+          <Link href="/" className="auth-back-link">← Back to platform</Link>
         </div>
       </div>
     </div>

@@ -1,31 +1,24 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { registerAction, checkSlugAvailability } from '@/actions/authActions'
 
 export default function SignupPage() {
-  const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPass, setShowPass] = useState(false)
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
   const [formData, setFormData] = useState({ businessName: '', email: '', password: '', slug: '' })
   const slugTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const router = useRouter()
 
-  // Auto-generate slug from businessName
   const generateSlug = (name: string) =>
     name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30)
 
-  const handleBusinessNameChange = (val: string) => {
-    const slug = generateSlug(val)
-    setFormData(p => ({ ...p, businessName: val, slug }))
-    checkSlug(slug)
-  }
-
-  const checkSlug = (slug: string) => {
+  const checkSlugLive = (slug: string) => {
     if (slugTimer.current) clearTimeout(slugTimer.current)
     if (slug.length < 3) { setSlugStatus('idle'); return }
     setSlugStatus('checking')
@@ -35,16 +28,28 @@ export default function SignupPage() {
     }, 500)
   }
 
-  const handleSlugChange = (val: string) => {
+  const handleBusinessName = (val: string) => {
+    const slug = generateSlug(val)
+    setFormData(p => ({ ...p, businessName: val, slug }))
+    checkSlugLive(slug)
+  }
+
+  const handleSlug = (val: string) => {
     const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '')
     setFormData(p => ({ ...p, slug: clean }))
-    checkSlug(clean)
+    checkSlugLive(clean)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    if (slugStatus === 'taken') {
+      setError('Please choose a different URL slug')
+      setLoading(false)
+      return
+    }
 
     const fd = new FormData()
     fd.append('businessName', formData.businessName)
@@ -66,125 +71,170 @@ export default function SignupPage() {
       redirect: false,
     })
 
-    if (loginResult?.error) {
-      router.push('/login')
+    if (loginResult?.error || !loginResult?.ok) {
+      // Registration worked but auto-login failed — send to login page
+      router.push('/login?registered=1')
     } else {
       router.push('/admin')
+      router.refresh()
     }
   }
 
-  const slugColor = slugStatus === 'available' ? '#22c55e' : slugStatus === 'taken' ? '#ef4444' : '#94a3b8'
-  const slugIcon = slugStatus === 'available' ? 'check_circle' : slugStatus === 'taken' ? 'cancel' : slugStatus === 'checking' ? 'sync' : 'link'
+  const slugStatusIcon = slugStatus === 'available' ? 'check_circle' : slugStatus === 'taken' ? 'cancel' : slugStatus === 'checking' ? 'progress_activity' : 'link'
+  const slugStatusColor = slugStatus === 'available' ? '#22c55e' : slugStatus === 'taken' ? '#ef4444' : '#94a3b8'
+  const canSubmit = !loading && slugStatus !== 'taken' && slugStatus !== 'checking' && formData.businessName && formData.email && formData.password
 
   return (
-    <div className="cinema-login" style={{ minHeight: '100vh', paddingBlock: '2rem' }}>
-      <div className="cinema-orb cinema-orb-1" />
-      <div className="cinema-orb cinema-orb-2" />
+    <div className="auth-page">
+      <div className="auth-bg">
+        <div className="auth-bg-orb auth-bg-orb-1" />
+        <div className="auth-bg-orb auth-bg-orb-2" />
+        <div className="auth-bg-grid" />
+      </div>
 
-      <div className="cinema-login-card" style={{ maxWidth: '480px', width: '100%', margin: '0 auto', animation: 'fadeInUp 0.6s ease both' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', marginBottom: '1.25rem' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(37,99,235,0.3)' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '26px', color: '#fff' }}>apartment</span>
-            </div>
+      <div className="auth-card" style={{ maxWidth: '500px' }}>
+        {/* Logo */}
+        <div className="auth-logo-wrap">
+          <div className="auth-logo-icon">
+            <span className="material-symbols-outlined">apartment</span>
           </div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>Create your account</h1>
-          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.5)' }}>
-            Start managing your properties for free
-          </p>
+          <div>
+            <div className="auth-logo-name">StayDesk</div>
+            <div className="auth-logo-tag">Property Management</div>
+          </div>
+        </div>
+
+        <div className="auth-header">
+          <h1 className="auth-title">Create your account</h1>
+          <p className="auth-subtitle">Start managing properties for free — no credit card needed</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(220,38,38,0.1)', color: '#f87171', padding: '0.75rem 1rem', borderRadius: '10px', marginBottom: '1.25rem', fontSize: '0.8125rem', textAlign: 'center', border: '1px solid rgba(220,38,38,0.15)' }}>
+          <div className="auth-error" role="alert">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>error</span>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {/* Business Name */}
-          <div>
-            <label style={{ fontFamily: "'Manrope',sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Business / Brand Name
-            </label>
-            <input
-              type="text" placeholder="e.g. Mohit Stays, Sunset Villas..."
-              value={formData.businessName}
-              onChange={e => handleBusinessNameChange(e.target.value)}
-              required minLength={2}
-            />
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="businessName">Business / Brand Name</label>
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon material-symbols-outlined">storefront</span>
+              <input
+                id="businessName"
+                type="text"
+                placeholder="e.g. Sunset Villas, Mohit Stays..."
+                value={formData.businessName}
+                onChange={e => handleBusinessName(e.target.value)}
+                required
+                minLength={2}
+                className="auth-input"
+                autoComplete="organization"
+              />
+            </div>
           </div>
 
-          {/* Slug */}
-          <div>
-            <label style={{ fontFamily: "'Manrope',sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Your Public URL
-            </label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', overflow: 'hidden' }}>
-              <span style={{ padding: '0 0.75rem', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.35)', flexShrink: 0, borderRight: '1px solid rgba(255,255,255,0.08)', whiteSpace: 'nowrap' }}>
-                yoursite.com/
-              </span>
+          {/* URL Slug */}
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="slug">Your Public URL</label>
+            <div className="auth-input-wrap auth-slug-wrap">
+              <span className="auth-slug-prefix">staydesk.app/</span>
               <input
-                type="text" placeholder="your-brand-name"
+                id="slug"
+                type="text"
+                placeholder="your-brand"
                 value={formData.slug}
-                onChange={e => handleSlugChange(e.target.value)}
-                required minLength={3}
-                style={{ background: 'transparent', border: 'none', borderRadius: 0, flex: 1, paddingLeft: '0.75rem' }}
+                onChange={e => handleSlug(e.target.value)}
+                required
+                minLength={3}
+                className="auth-input auth-slug-input"
               />
-              <span className="material-symbols-outlined" style={{ fontSize: '18px', color: slugColor, padding: '0 0.75rem', flexShrink: 0, animation: slugStatus === 'checking' ? 'spin 1s linear infinite' : 'none' }}>
-                {slugIcon}
+              <span
+                className="material-symbols-outlined auth-slug-status"
+                style={{ color: slugStatusColor, animation: slugStatus === 'checking' ? 'spin 0.8s linear infinite' : 'none' }}
+              >
+                {slugStatusIcon}
               </span>
             </div>
             {slugStatus === 'available' && (
-              <p style={{ fontSize: '0.6875rem', color: '#22c55e', marginTop: '0.375rem' }}>✓ This URL is available!</p>
+              <p className="auth-hint auth-hint-green">✓ This URL is available!</p>
             )}
             {slugStatus === 'taken' && (
-              <p style={{ fontSize: '0.6875rem', color: '#ef4444', marginTop: '0.375rem' }}>✗ This URL is taken — try another</p>
+              <p className="auth-hint auth-hint-red">✗ Already taken — try another</p>
+            )}
+            {slugStatus === 'idle' && formData.slug.length > 0 && formData.slug.length < 3 && (
+              <p className="auth-hint">Minimum 3 characters</p>
             )}
           </div>
 
           {/* Email */}
-          <div>
-            <label style={{ fontFamily: "'Manrope',sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Email
-            </label>
-            <input
-              type="email" placeholder="you@example.com"
-              value={formData.email}
-              onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-              required
-            />
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="signup-email">Email Address</label>
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon material-symbols-outlined">mail</span>
+              <input
+                id="signup-email"
+                type="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                required
+                autoComplete="email"
+                className="auth-input"
+              />
+            </div>
           </div>
 
           {/* Password */}
-          <div>
-            <label style={{ fontFamily: "'Manrope',sans-serif", fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '0.5rem' }}>
-              Password
-            </label>
-            <input
-              type="password" placeholder="At least 6 characters"
-              value={formData.password}
-              onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
-              required minLength={6}
-            />
+          <div className="auth-field">
+            <label className="auth-label" htmlFor="signup-password">Password</label>
+            <div className="auth-input-wrap">
+              <span className="auth-input-icon material-symbols-outlined">lock</span>
+              <input
+                id="signup-password"
+                type={showPass ? 'text' : 'password'}
+                placeholder="At least 6 characters"
+                value={formData.password}
+                onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                className="auth-input"
+              />
+              <button
+                type="button"
+                className="auth-eye-btn"
+                onClick={() => setShowPass(v => !v)}
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                <span className="material-symbols-outlined">{showPass ? 'visibility_off' : 'visibility'}</span>
+              </button>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading || slugStatus === 'taken' || slugStatus === 'checking'}
-            className="cinema-login-btn"
-            style={{ marginTop: '0.5rem', opacity: (loading || slugStatus === 'taken') ? 0.6 : 1 }}
-          >
-            {loading ? 'Creating account...' : 'Create Free Account'}
+          <button type="submit" disabled={!canSubmit} className="auth-submit-btn" style={{ marginTop: '0.5rem' }}>
+            {loading ? (
+              <>
+                <span className="auth-spinner" />
+                Creating account...
+              </>
+            ) : (
+              <>
+                Create Free Account
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>rocket_launch</span>
+              </>
+            )}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)' }}>
+        <div className="auth-divider"><span>or</span></div>
+
+        <div className="auth-footer-links">
+          <p>
             Already have an account?{' '}
-            <Link href="/login" style={{ color: '#60a5fa', fontWeight: 600, textDecoration: 'none' }}>
-              Sign in
-            </Link>
+            <Link href="/login" className="auth-link">Sign in →</Link>
           </p>
         </div>
       </div>

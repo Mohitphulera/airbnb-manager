@@ -1801,18 +1801,25 @@ html.dark .footer-brand-name { color: #E2E8F0; }
   font-weight: 400; color: var(--cinema-text); letter-spacing: -0.02em;
 }
 .cinema-login-card p { color: var(--cinema-text-muted); }
-.cinema-login-card label { color: var(--cinema-gold); }
-.cinema-login-card input[type="password"] {
+.cinema-login-card label { color: var(--cinema-gold); font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; font-family: 'Manrope', sans-serif; }
+.cinema-login-card input[type="password"],
+.cinema-login-card input[type="email"],
+.cinema-login-card input[type="text"] {
   width: 100%; padding: 0.875rem 1rem; border-radius: 10px;
-  border: 1px solid var(--cinema-glass-border); background: var(--cinema-glass);
+  border: 1px solid var(--cinema-glass-border); background: rgba(255,255,255,0.06);
   color: var(--cinema-text); font-family: 'Inter', sans-serif; font-size: 0.9375rem;
   outline: none; transition: all 0.3s; box-sizing: border-box;
 }
-.cinema-login-card input[type="password"]:focus {
-  border-color: var(--cinema-gold);
-  box-shadow: 0 0 20px rgba(201,168,76,0.1);
+.cinema-login-card input[type="password"]:focus,
+.cinema-login-card input[type="email"]:focus,
+.cinema-login-card input[type="text"]:focus {
+  border-color: rgba(201,168,76,0.5);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
 }
-.cinema-login-card input[type="password"]::placeholder { color: var(--cinema-text-muted); }
+.cinema-login-card input[type="password"]::placeholder,
+.cinema-login-card input[type="email"]::placeholder,
+.cinema-login-card input[type="text"]::placeholder { color: rgba(240,236,228,0.25); }
 .cinema-login-btn {
   width: 100%; padding: 0.875rem; border-radius: 9999px;
   background: var(--cinema-gradient-gold); color: var(--cinema-dark); border: none;
