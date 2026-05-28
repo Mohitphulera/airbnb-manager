@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { CredentialsSignin } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
@@ -12,24 +12,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
+        try {
+          if (!credentials?.email || !credentials?.password) return null
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        })
-        if (!user) return null
+          const user = await prisma.user.findUnique({
+            where: { email: (credentials.email as string).toLowerCase().trim() },
+          })
+          if (!user || !user.passwordHash) return null
 
-        const valid = await bcrypt.compare(credentials.password as string, user.passwordHash)
-        if (!valid) return null
+          const valid = await bcrypt.compare(credentials.password as string, user.passwordHash)
+          if (!valid) return null
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.businessName,
-          slug: user.slug,
-          businessName: user.businessName,
-          logoUrl: user.logoUrl ?? undefined,
-          plan: user.plan,
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.businessName,
+            slug: user.slug,
+            businessName: user.businessName,
+            logoUrl: user.logoUrl ?? undefined,
+            plan: user.plan,
+          }
+        } catch (err) {
+          console.error('[auth] authorize error:', err)
+          return null
         }
       },
     }),
@@ -58,7 +63,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   session: { strategy: 'jwt' },
   secret: process.env.AUTH_SECRET ?? 'fallback-dev-secret-change-in-prod',
+  trustHost: true,
+  debug: process.env.NODE_ENV === 'development',
 })
