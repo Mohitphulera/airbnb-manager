@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeonHttp } from '@prisma/adapter-neon'
+import { neon } from '@neondatabase/serverless'
 
 /**
- * Standard PrismaClient singleton.
- * Works on Vercel (Node.js serverless) + Neon PostgreSQL without any custom adapter.
- * Neon accepts standard PostgreSQL connections over TCP/TLS.
+ * PrismaNeonHttp uses Neon's HTTP API — no WebSockets, no persistent TCP,
+ * works perfectly in Vercel serverless (Node.js) and edge functions.
  */
-const prismaClientSingleton = () => new PrismaClient()
+const prismaClientSingleton = () => {
+  const sql = neon(process.env.DATABASE_URL!)
+  const adapter = new PrismaNeonHttp(sql)
+  return new PrismaClient({ adapter })
+}
 
 declare const globalThis: {
   prismaGlobal: ReturnType<typeof prismaClientSingleton>
