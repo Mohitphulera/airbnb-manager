@@ -1,30 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaNeon } from '@prisma/adapter-neon'
-import { neonConfig, Pool } from '@neondatabase/serverless'
 
-// Use WebSockets for Neon connections in serverless environments
-// This avoids the TCP connection timeout issue with Vercel serverless functions
-if (typeof WebSocket === 'undefined') {
-  // Node.js environment (local dev) — use ws package if available
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const ws = require('ws')
-    neonConfig.webSocketConstructor = ws
-  } catch {
-    // ws not available, will use HTTP fallback
-  }
-} else {
-  // Browser / Edge environment — use native WebSocket
-  neonConfig.webSocketConstructor = WebSocket
-}
-
-const connectionString = process.env.DATABASE_URL!
-
-const prismaClientSingleton = () => {
-  const pool = new Pool({ connectionString })
-  const adapter = new PrismaNeon(pool)
-  return new PrismaClient({ adapter })
-}
+/**
+ * Standard PrismaClient singleton.
+ * Works on Vercel (Node.js serverless) + Neon PostgreSQL without any custom adapter.
+ * Neon accepts standard PostgreSQL connections over TCP/TLS.
+ */
+const prismaClientSingleton = () => new PrismaClient()
 
 declare const globalThis: {
   prismaGlobal: ReturnType<typeof prismaClientSingleton>
