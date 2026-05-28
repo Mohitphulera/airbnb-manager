@@ -1,14 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaNeonHttp } from '@prisma/adapter-neon'
-import { neon } from '@neondatabase/serverless'
 
 /**
  * PrismaNeonHttp uses Neon's HTTP API — no WebSockets, no persistent TCP,
  * works perfectly in Vercel serverless (Node.js) and edge functions.
+ *
+ * Constructor signature: PrismaNeonHttp(connectionString: string, options: HTTPQueryOptions)
  */
 const prismaClientSingleton = () => {
-  const sql = neon(process.env.DATABASE_URL!)
-  const adapter = new PrismaNeonHttp(sql)
+  const adapter = new PrismaNeonHttp(process.env.DATABASE_URL!, {
+    arrayMode: false,
+    fullResults: false,
+  })
   return new PrismaClient({ adapter })
 }
 
