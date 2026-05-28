@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react'
 import { submitFeedback } from '@/actions/feedbackActions'
 
-export default function FeedbackForm({ propertyName, bookingId, guestName }: { propertyName: string; bookingId?: string; guestName?: string }) {
+export default function FeedbackForm({ propertyName, bookingId, guestName, userId }: { propertyName: string; bookingId?: string; guestName?: string; userId: string }) {
   const [form, setForm] = useState({ guestName: guestName || '', rating: 0, cleanliness: 0, comfort: 0, location: 0, valueForMoney: 0, comment: '', wouldReturn: null as boolean | null })
   const [submitted, setSubmitted] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -19,7 +19,7 @@ export default function FeedbackForm({ propertyName, bookingId, guestName }: { p
   const handleSubmit = () => {
     if (!form.guestName || form.rating === 0) return
     startTransition(async () => {
-      await submitFeedback({ bookingId, guestName: form.guestName, propertyName, rating: form.rating, cleanliness: form.cleanliness || undefined, comfort: form.comfort || undefined, location: form.location || undefined, valueForMoney: form.valueForMoney || undefined, comment: form.comment || undefined, wouldReturn: form.wouldReturn ?? undefined })
+      await submitFeedback({ userId, bookingId, guestName: form.guestName, propertyName, rating: form.rating, cleanliness: form.cleanliness || undefined, comfort: form.comfort || undefined, location: form.location || undefined, valueForMoney: form.valueForMoney || undefined, comment: form.comment || undefined, wouldReturn: form.wouldReturn ?? undefined })
       setSubmitted(true)
     })
   }

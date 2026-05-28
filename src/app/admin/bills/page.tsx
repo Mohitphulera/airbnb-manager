@@ -1,8 +1,17 @@
 import BillGenerator from '@/components/BillGenerator'
+import { getBookings } from '@/actions/bookingActions'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default function BillsPage() {
+export default async function BillsPage({ searchParams }: { searchParams: Promise<{ bookingId?: string }> }) {
+  const [bookings, params] = await Promise.all([
+    getBookings(),
+    searchParams,
+  ])
+
+  const initialBookingId = params.bookingId ?? null
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
@@ -14,8 +23,16 @@ export default function BillsPage() {
             Create professional booking invoices for your guests
           </p>
         </div>
+        <Link
+          href="/admin/bookings"
+          className="btn btn-secondary"
+          style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+        >
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+          Back to Bookings
+        </Link>
       </div>
-      <BillGenerator />
+      <BillGenerator bookings={JSON.parse(JSON.stringify(bookings))} initialBookingId={initialBookingId} />
     </div>
   )
 }

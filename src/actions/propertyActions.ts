@@ -2,12 +2,18 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { requireUser } from '@/lib/session'
 
 export async function getProperties() {
-  return await prisma.property.findMany({ orderBy: { createdAt: 'desc' } })
+  const user = await requireUser()
+  return await prisma.property.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: 'desc' },
+  })
 }
 
 export async function addProperty(formData: FormData) {
+  const user = await requireUser()
   const name = formData.get('name') as string
   const description = formData.get('description') as string
   const location = formData.get('location') as string
@@ -27,22 +33,31 @@ export async function addProperty(formData: FormData) {
   const amenities = amenitiesString ? JSON.stringify(amenitiesString.split(',').filter(Boolean)) : null
 
   await prisma.property.create({
-    data: { name, description, location, type, pricePerNight, commissionRate, whatsappNumber, imageUrls, amenities }
+    data: { userId: user.id, name, description, location, type, pricePerNight, commissionRate, whatsappNumber, imageUrls, amenities }
   })
 
   revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath(`/${user.slug}`)
 }
 
 export async function deleteProperty(id: string) {
+  const user = await requireUser()
+  // Ensure property belongs to this user
+  const prop = await prisma.property.findFirst({ where: { id, userId: user.id } })
+  if (!prop) throw new Error('Not found')
+
   await prisma.booking.deleteMany({ where: { propertyId: id } })
   await prisma.expense.deleteMany({ where: { propertyId: id } })
   await prisma.property.delete({ where: { id } })
   revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath(`/${user.slug}`)
 }
 
 export async function updateProperty(id: string, data: Record<string, any>) {
+  const user = await requireUser()
+  const prop = await prisma.property.findFirst({ where: { id, userId: user.id } })
+  if (!prop) throw new Error('Not found')
+
   const updateData: Record<string, any> = {}
   if (data.name !== undefined) updateData.name = data.name
   if (data.description !== undefined) updateData.description = data.description
@@ -54,5 +69,5 @@ export async function updateProperty(id: string, data: Record<string, any>) {
 
   await prisma.property.update({ where: { id }, data: updateData })
   revalidatePath('/admin/properties')
-  revalidatePath('/')
+  revalidatePath(`/${user.slug}`)
 }

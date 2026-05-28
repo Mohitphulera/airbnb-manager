@@ -23,7 +23,11 @@ export default async function BookingsPage() {
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Reservations</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{bookings.length} bookings recorded</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <a href="/admin/bills" className="btn btn-secondary" style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#7c3aed', borderColor: '#ede9fe' }}>
+            <span className="material-icons-outlined" style={{ fontSize: '16px' }}>receipt_long</span>
+            Quick Bill
+          </a>
           <a href="/api/export-expenses" className="btn btn-secondary" download style={{ fontSize: '0.8125rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '16px' }}>download</span>
             Export CSV

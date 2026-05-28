@@ -2,19 +2,23 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { requireUser } from '@/lib/session'
 
 export async function getSaleProperties() {
-  return await prisma.saleProperty.findMany({ orderBy: { createdAt: 'desc' } })
+  const user = await requireUser()
+  return await prisma.saleProperty.findMany({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } })
 }
 
 export async function getAvailableSaleProperties() {
+  const user = await requireUser()
   return await prisma.saleProperty.findMany({
-    where: { status: { not: 'SOLD' } },
-    orderBy: { createdAt: 'desc' }
+    where: { userId: user.id, status: { not: 'SOLD' } },
+    orderBy: { createdAt: 'desc' },
   })
 }
 
 export async function addSaleProperty(formData: FormData) {
+  const user = await requireUser()
   const title = formData.get('title') as string
   const description = formData.get('description') as string
   const location = formData.get('location') as string
@@ -29,37 +33,34 @@ export async function addSaleProperty(formData: FormData) {
   const whatsappNumber = formData.get('whatsappNumber') as string
   const rentalStr = formData.get('monthlyRentalEstimate') as string
   const monthlyRentalEstimate = rentalStr ? parseFloat(rentalStr) : null
-
   const imageUrlsString = formData.get('imageUrls') as string
   const imageUrls = imageUrlsString ? JSON.stringify(imageUrlsString.split(',').map(s => s.trim()).filter(Boolean)) : null
-
   const featuresString = formData.get('features') as string
   const features = featuresString ? JSON.stringify(featuresString.split(',').filter(Boolean)) : null
 
   await prisma.saleProperty.create({
-    data: { title, description, location, price, area, bedrooms, bathrooms, propertyType, whatsappNumber, imageUrls, features, monthlyRentalEstimate }
+    data: { userId: user.id, title, description, location, price, area, bedrooms, bathrooms, propertyType, whatsappNumber, imageUrls, features, monthlyRentalEstimate }
   })
-
   revalidatePath('/admin/sale-properties')
-  revalidatePath('/properties-for-sale')
+  revalidatePath(`/${user.slug}`)
 }
 
 export async function updateSalePropertyStatus(id: string, status: string) {
-  await prisma.saleProperty.update({
-    where: { id },
-    data: { status }
-  })
+  const user = await requireUser()
+  await prisma.saleProperty.updateMany({ where: { id, userId: user.id }, data: { status } })
   revalidatePath('/admin/sale-properties')
-  revalidatePath('/properties-for-sale')
 }
 
 export async function deleteSaleProperty(id: string) {
-  await prisma.saleProperty.delete({ where: { id } })
+  const user = await requireUser()
+  await prisma.saleProperty.deleteMany({ where: { id, userId: user.id } })
   revalidatePath('/admin/sale-properties')
-  revalidatePath('/properties-for-sale')
 }
 
 export async function updateSaleProperty(id: string, data: Record<string, any>) {
+  const user = await requireUser()
+  const prop = await prisma.saleProperty.findFirst({ where: { id, userId: user.id } })
+  if (!prop) throw new Error('Not found')
   const updateData: Record<string, any> = {}
   if (data.title !== undefined) updateData.title = data.title
   if (data.description !== undefined) updateData.description = data.description
@@ -75,5 +76,4 @@ export async function updateSaleProperty(id: string, data: Record<string, any>) 
 
   await prisma.saleProperty.update({ where: { id }, data: updateData })
   revalidatePath('/admin/sale-properties')
-  revalidatePath('/properties-for-sale')
 }

@@ -1,14 +1,17 @@
 'use server'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { requireUser } from '@/lib/session'
 
 export async function getReferrals() {
-  return prisma.referral.findMany({ orderBy: { createdAt: 'desc' } })
+  const user = await requireUser()
+  return prisma.referral.findMany({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } })
 }
 
 export async function createReferral(data: { referrerName: string; referrerPhone: string; discountPct?: number }) {
-  const code = `COZY${data.referrerName.replace(/\s/g, '').slice(0, 4).toUpperCase()}${Math.random().toString(36).slice(2, 5).toUpperCase()}`
-  await prisma.referral.create({ data: { referrerName: data.referrerName, referrerPhone: data.referrerPhone, code, discountPct: data.discountPct || 10 } })
+  const user = await requireUser()
+  const code = `${data.referrerName.replace(/\s/g, '').slice(0, 4).toUpperCase()}${Math.random().toString(36).slice(2, 5).toUpperCase()}`
+  await prisma.referral.create({ data: { userId: user.id, referrerName: data.referrerName, referrerPhone: data.referrerPhone, code, discountPct: data.discountPct || 10 } })
   revalidatePath('/admin/referrals')
 }
 
@@ -20,11 +23,13 @@ export async function useReferralCode(code: string) {
 }
 
 export async function toggleReferral(id: string, isActive: boolean) {
-  await prisma.referral.update({ where: { id }, data: { isActive } })
+  const user = await requireUser()
+  await prisma.referral.updateMany({ where: { id, userId: user.id }, data: { isActive } })
   revalidatePath('/admin/referrals')
 }
 
 export async function deleteReferral(id: string) {
-  await prisma.referral.delete({ where: { id } })
+  const user = await requireUser()
+  await prisma.referral.deleteMany({ where: { id, userId: user.id } })
   revalidatePath('/admin/referrals')
 }

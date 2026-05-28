@@ -6,7 +6,7 @@ import PropertyDetailClient from '@/components/PropertyDetailClient'
 import ReviewSection from '@/components/ReviewSection'
 import PropertyRevenueWidget from '@/components/PropertyRevenueWidget'
 import MobileNav from '@/components/MobileNav'
-import { cookies } from 'next/headers'
+import { auth } from '@/lib/auth'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -51,16 +51,17 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
       <nav className="cinema-nav st-nav">
         <div className="st-nav-inner">
           <Link href="/" className="st-nav-brand">
-            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
-            <span className="st-nav-name">Cozy B&B</span>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#fff' }}>apartment</span>
+            </div>
+            <span className="st-nav-name">StayDesk</span>
           </Link>
           <div className="st-nav-links">
-            <Link href="/" className="st-nav-link st-nav-link-active">Airbnb Listings</Link>
-            <Link href="/properties-for-sale" className="st-nav-link">Properties for Sale</Link>
-            <Link href="/login" className="st-nav-link">Admin Login</Link>
+            <Link href="/" className="st-nav-link">Home</Link>
+            <Link href="/login" className="st-nav-link">Host Login</Link>
           </div>
           <div className="st-nav-actions">
-            <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
+            <Link href="/signup" className="st-btn-outline">List Your Property</Link>
           </div>
           <MobileNav activePage="home" />
         </div>
@@ -69,8 +70,8 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
       <div style={{ paddingTop: '5rem' }}>
         {/* Admin Revenue Widget — only shown when logged in */}
         {await (async () => {
-          const cookieStore = await cookies()
-          const isAdmin = cookieStore.get('admin_token')?.value === 'authenticated'
+          const session = await auth()
+          const isAdmin = !!session?.user
           if (!isAdmin) return null
           const revenue = await getPropertyRevenueSummary(id)
           return (

@@ -1,6 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { requireUser } from '@/lib/session'
 
 export type SearchResult = {
   properties: { id: string; name: string; location: string; type: string }[]
@@ -12,12 +13,13 @@ export async function globalSearch(query: string): Promise<SearchResult> {
   if (!query || query.trim().length < 2) {
     return { properties: [], bookings: [], saleProperties: [] }
   }
-
+  const user = await requireUser()
   const q = query.trim()
 
   const [properties, bookings, saleProperties] = await Promise.all([
     prisma.property.findMany({
       where: {
+        userId: user.id,
         OR: [
           { name: { contains: q, mode: 'insensitive' } },
           { location: { contains: q, mode: 'insensitive' } },
@@ -28,6 +30,7 @@ export async function globalSearch(query: string): Promise<SearchResult> {
     }),
     prisma.booking.findMany({
       where: {
+        property: { userId: user.id },
         OR: [
           { customerName: { contains: q, mode: 'insensitive' } },
           { customerPhone: { contains: q, mode: 'insensitive' } },
@@ -39,6 +42,7 @@ export async function globalSearch(query: string): Promise<SearchResult> {
     }),
     prisma.saleProperty.findMany({
       where: {
+        userId: user.id,
         OR: [
           { title: { contains: q, mode: 'insensitive' } },
           { location: { contains: q, mode: 'insensitive' } },

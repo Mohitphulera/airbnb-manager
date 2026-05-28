@@ -1,6 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { requireUser } from '@/lib/session'
 
 export type QuickStats = {
   monthRevenue: number
@@ -11,6 +12,7 @@ export type QuickStats = {
 }
 
 export async function getQuickStats(): Promise<QuickStats> {
+  const user = await requireUser()
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -19,13 +21,13 @@ export async function getQuickStats(): Promise<QuickStats> {
 
   const [monthBookings, pendingRequests, todayCheckIns, todayCheckOuts, totalProperties] = await Promise.all([
     prisma.booking.findMany({
-      where: { checkInDate: { gte: monthStart } },
+      where: { property: { userId: user.id }, checkInDate: { gte: monthStart } },
       select: { totalAmount: true },
     }),
-    prisma.bookingRequest.count({ where: { status: 'PENDING' } }),
-    prisma.booking.count({ where: { checkInDate: { gte: todayStart, lt: todayEnd } } }),
-    prisma.booking.count({ where: { checkOutDate: { gte: todayStart, lt: todayEnd } } }),
-    prisma.property.count(),
+    prisma.bookingRequest.count({ where: { property: { userId: user.id }, status: 'PENDING' } }),
+    prisma.booking.count({ where: { property: { userId: user.id }, checkInDate: { gte: todayStart, lt: todayEnd } } }),
+    prisma.booking.count({ where: { property: { userId: user.id }, checkOutDate: { gte: todayStart, lt: todayEnd } } }),
+    prisma.property.count({ where: { userId: user.id } }),
   ])
 
   return {

@@ -1,20 +1,21 @@
+import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const session = await auth()
   const path = request.nextUrl.pathname
 
-  const isPublicPath = path === '/login' || path === '/'
-
-  const token = request.cookies.get('admin_token')?.value || ''
-
-  // If trying to access admin without token
-  if (path.startsWith('/admin') && token !== 'authenticated') {
-    return NextResponse.redirect(new URL('/login', request.nextUrl))
+  // Protect all /admin/* routes
+  if (path.startsWith('/admin')) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL('/login', request.nextUrl))
+    }
+    return NextResponse.next()
   }
 
-  // If trying to access login page while authenticated
-  if (path === '/login' && token === 'authenticated') {
+  // If already logged in, skip the login page
+  if (path === '/login' && session?.user) {
     return NextResponse.redirect(new URL('/admin', request.nextUrl))
   }
 
@@ -22,8 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/admin/:path*',
-    '/login'
-  ]
+  matcher: ['/admin/:path*', '/login'],
 }

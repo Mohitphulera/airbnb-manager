@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { deleteBooking, updateBooking } from '@/actions/bookingActions'
 import CleaningStatusToggle from '@/components/CleaningStatusToggle'
 import { showToast } from '@/components/Toast'
@@ -129,6 +130,9 @@ export default function BookingTable({ bookings }: { bookings: Booking[] }) {
                 </td>
                 <td style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                   {new Date(b.checkInDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} → {new Date(b.checkOutDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  <div style={{ fontSize: '0.6875rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.125rem' }}>
+                    {Math.ceil((new Date(b.checkOutDate).getTime() - new Date(b.checkInDate).getTime()) / (1000 * 60 * 60 * 24))} nights
+                  </div>
                 </td>
                 <td>
                   <span className={`badge ${b.source === 'DIRECT' ? 'badge-green' : b.source === 'AIRBNB' ? 'badge-pink' : 'badge-gray'}`}>{b.source}</span>
@@ -141,8 +145,16 @@ export default function BookingTable({ bookings }: { bookings: Booking[] }) {
                 </td>
                 <td><CleaningStatusToggle bookingId={b.id} currentStatus={b.cleaningStatus} /></td>
                 <td>
-                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                  <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                     <WhatsAppMenu name={b.customerName} phone={b.customerPhone} property={b.property.name} checkIn={b.checkInDate} checkOut={b.checkOutDate} />
+                    <Link
+                      href={`/admin/bills?bookingId=${b.id}`}
+                      className="btn btn-outline"
+                      title="Generate Bill"
+                      style={{ fontSize: '0.6875rem', padding: '0.25rem 0.5rem', color: '#7c3aed', borderColor: '#ede9fe', display: 'flex', alignItems: 'center' }}
+                    >
+                      <span className="material-icons-outlined" style={{ fontSize: '14px' }}>receipt_long</span>
+                    </Link>
                     <button onClick={() => startEdit(b)} className="btn btn-outline" style={{ fontSize: '0.6875rem', padding: '0.25rem 0.5rem' }}>
                       <span className="material-icons-outlined" style={{ fontSize: '14px' }}>edit</span>
                     </button>

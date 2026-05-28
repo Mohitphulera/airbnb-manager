@@ -9,7 +9,13 @@ import AdminSearch from '@/components/AdminSearch'
 import NotificationDropdown from '@/components/NotificationDropdown'
 import type { QuickStats } from '@/actions/quickStatsActions'
 
-export default function AdminShell({ children, stats }: { children: React.ReactNode; stats: QuickStats }) {
+interface AdminShellProps {
+  children: React.ReactNode
+  stats: QuickStats
+  user?: { businessName: string; slug: string; logoUrl?: string }
+}
+
+export default function AdminShell({ children, stats, user }: AdminShellProps) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -30,6 +36,7 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
     { href: '/admin/inventory', label: 'Inventory', icon: 'inventory_2' },
     { href: '/admin/referrals', label: 'Referrals', icon: 'loyalty' },
     { href: '/admin/requests', label: 'Requests', icon: 'inbox', badge: stats.pendingRequests },
+    { href: '/admin/settings', label: 'Settings', icon: 'settings' },
   ]
 
   const saleItems = [
@@ -65,10 +72,16 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
       <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
         {/* Logo / Brand */}
         <div className="sidebar-logo">
-          <Image src="/logo-cozybnb.jpg" alt="Cozy BnB" width={36} height={36} className="logo-img-sidebar" />
+          {user?.logoUrl ? (
+            <img src={user.logoUrl} alt={user.businessName} width={36} height={36} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#fff' }}>apartment</span>
+            </div>
+          )}
           <div>
-            <div style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#0F172A', lineHeight: 1.2 }}>The Architect</div>
-            <div style={{ fontSize: '0.5625rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>Superhost Status</div>
+            <div style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#0F172A', lineHeight: 1.2 }}>{user?.businessName ?? 'My Business'}</div>
+            <div style={{ fontSize: '0.5625rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>Property Manager</div>
           </div>
         </div>
 
@@ -150,11 +163,11 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
 
           <div style={{ flex: 1 }} />
 
-          <Link href="/" className="nav-link" style={{ color: '#94A3B8' }}>
+          <Link href={user?.slug ? `/${user.slug}` : '/'} className="nav-link" style={{ color: '#94A3B8' }} target="_blank">
             <span className="nav-link-icon">
-              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>language</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>open_in_new</span>
             </span>
-            View Website
+            View My Site
           </Link>
           <form action={logoutAction}>
             <button type="submit" className="nav-link nav-link-logout">
@@ -173,11 +186,15 @@ export default function AdminShell({ children, stats }: { children: React.ReactN
           <span className="admin-topbar-title">Portfolio Manager</span>
           <AdminSearch />
           <div className="admin-topbar-actions">
-            <Link href="/" className="topbar-icon-btn" aria-label="View Website" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>language</span>
-            </Link>
+            {user?.slug && (
+              <Link href={`/${user.slug}`} className="topbar-icon-btn" aria-label="View My Site" style={{ textDecoration: 'none', color: 'inherit' }} target="_blank">
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>open_in_new</span>
+              </Link>
+            )}
             <NotificationDropdown />
-            <div className="topbar-avatar">CB</div>
+            <div className="topbar-avatar" title={user?.businessName}>
+              {user?.businessName?.slice(0, 2).toUpperCase() ?? 'U'}
+            </div>
           </div>
         </div>
         <main className="admin-main">

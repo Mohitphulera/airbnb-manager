@@ -6,8 +6,34 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─────────────────────────────────────────
+// MULTI-TENANT: Owner / User
+// ─────────────────────────────────────────
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  businessName    String
+  slug            String    @unique  // URL-safe identifier e.g. "mohit-stays"
+  logoUrl         String?
+  whatsappNumber  String?
+  plan            String    @default("FREE") // "FREE" | "PRO"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  properties      Property[]
+  tasks           Task[]
+  guests          Guest[]
+  referrals       Referral[]
+  inventoryItems  InventoryItem[]
+  saleProperties  SaleProperty[]
+  feedbacks       Feedback[]
+}
+
 model Property {
   id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name            String
   description     String
   location        String
@@ -62,6 +88,8 @@ model Expense {
 
 model SaleProperty {
   id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title           String
   description     String
   location        String
@@ -108,8 +136,10 @@ model BookingRequest {
 
 model Guest {
   id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String
-  phone         String    @unique
+  phone         String
   email         String?
   totalStays    Int       @default(0)
   totalSpent    Float     @default(0)
@@ -123,10 +153,14 @@ model Guest {
   loyaltyTier   String    @default("NEW") // "NEW","BRONZE","SILVER","GOLD","PLATINUM"
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, phone])
 }
 
 model Task {
   id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String?
   property    String?
@@ -141,6 +175,8 @@ model Task {
 
 model Feedback {
   id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookingId     String?
   guestName     String
   guestPhone    String?
@@ -157,6 +193,8 @@ model Feedback {
 
 model InventoryItem {
   id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String
   property    String
   category    String   @default("TOILETRIES") // TOILETRIES, LINEN, KITCHEN, CLEANING, OTHER
@@ -170,6 +208,8 @@ model InventoryItem {
 
 model Referral {
   id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   referrerName  String
   referrerPhone String
   code          String   @unique
@@ -178,4 +218,3 @@ model Referral {
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
 }
-
