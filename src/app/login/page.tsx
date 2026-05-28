@@ -17,36 +17,42 @@ export default function LoginPage() {
     setError('')
 
     const form = e.currentTarget
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim()
     const password = (form.elements.namedItem('password') as HTMLInputElement).value
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      // NextAuth v5 beta throws on failure — must use try/catch, not result.error
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
 
-    if (result?.error || !result?.ok) {
-      setError('Invalid email or password. Please try again.')
-      setLoading(false)
-    } else {
+      // result is undefined on success in some v5 beta versions
+      if (!result || result.error) {
+        setError('Invalid email or password. Please try again.')
+        setLoading(false)
+        return
+      }
+
       router.push('/admin')
       router.refresh()
+    } catch {
+      // NextAuth v5 beta throws CredentialsSignin on bad credentials
+      setError('Invalid email or password. Please try again.')
+      setLoading(false)
     }
   }
 
   return (
     <div className="auth-page">
-      {/* Background */}
       <div className="auth-bg">
         <div className="auth-bg-orb auth-bg-orb-1" />
         <div className="auth-bg-orb auth-bg-orb-2" />
         <div className="auth-bg-grid" />
       </div>
 
-      {/* Card */}
       <div className="auth-card">
-        {/* Logo */}
         <div className="auth-logo-wrap">
           <div className="auth-logo-icon">
             <span className="material-symbols-outlined">apartment</span>
@@ -59,7 +65,7 @@ export default function LoginPage() {
 
         <div className="auth-header">
           <h1 className="auth-title">Welcome back</h1>
-          <p className="auth-subtitle">Sign in to your dashboard</p>
+          <p className="auth-subtitle">Sign in to your property dashboard</p>
         </div>
 
         {error && (
@@ -71,11 +77,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <div className="auth-field">
-            <label className="auth-label" htmlFor="email">Email Address</label>
+            <label className="auth-label" htmlFor="login-email">Email Address</label>
             <div className="auth-input-wrap">
               <span className="auth-input-icon material-symbols-outlined">mail</span>
               <input
-                id="email"
+                id="login-email"
                 type="email"
                 name="email"
                 placeholder="you@example.com"
@@ -87,11 +93,11 @@ export default function LoginPage() {
           </div>
 
           <div className="auth-field">
-            <label className="auth-label" htmlFor="password">Password</label>
+            <label className="auth-label" htmlFor="login-password">Password</label>
             <div className="auth-input-wrap">
               <span className="auth-input-icon material-symbols-outlined">lock</span>
               <input
-                id="password"
+                id="login-password"
                 type={showPass ? 'text' : 'password'}
                 name="password"
                 placeholder="Your password"
@@ -105,33 +111,27 @@ export default function LoginPage() {
                 onClick={() => setShowPass(v => !v)}
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
-                <span className="material-symbols-outlined">{showPass ? 'visibility_off' : 'visibility'}</span>
+                <span className="material-symbols-outlined">
+                  {showPass ? 'visibility_off' : 'visibility'}
+                </span>
               </button>
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="auth-submit-btn">
+          <button type="submit" disabled={loading} className="auth-submit-btn" style={{ marginTop: '0.5rem' }}>
             {loading ? (
-              <>
-                <span className="auth-spinner" />
-                Signing in...
-              </>
+              <><span className="auth-spinner" />Signing in...</>
             ) : (
-              <>
-                Sign In
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
-              </>
+              <>Sign In<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span></>
             )}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>or</span>
-        </div>
+        <div className="auth-divider"><span>or</span></div>
 
         <div className="auth-footer-links">
           <p>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="auth-link">Create one free →</Link>
           </p>
           <Link href="/" className="auth-back-link">← Back to platform</Link>

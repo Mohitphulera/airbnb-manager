@@ -64,25 +64,34 @@ export default function SignupPage() {
       return
     }
 
-    // Auto-login after registration
-    const loginResult = await signIn('credentials', {
-      email: formData.email,
-      password: formData.password,
-      redirect: false,
-    })
-
-    if (loginResult?.error || !loginResult?.ok) {
-      // Registration worked but auto-login failed — send to login page
-      router.push('/login?registered=1')
-    } else {
+    // Auto-login after registration — use try/catch (NextAuth v5 beta throws on error)
+    try {
+      const loginResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      })
+      if (!loginResult || loginResult.error) {
+        router.push('/login?registered=1')
+        return
+      }
       router.push('/admin')
       router.refresh()
+    } catch {
+      // Registration succeeded, auto-login failed — just send to login
+      router.push('/login?registered=1')
     }
   }
 
-  const slugStatusIcon = slugStatus === 'available' ? 'check_circle' : slugStatus === 'taken' ? 'cancel' : slugStatus === 'checking' ? 'progress_activity' : 'link'
-  const slugStatusColor = slugStatus === 'available' ? '#22c55e' : slugStatus === 'taken' ? '#ef4444' : '#94a3b8'
-  const canSubmit = !loading && slugStatus !== 'taken' && slugStatus !== 'checking' && formData.businessName && formData.email && formData.password
+  const slugStatusIcon = slugStatus === 'available' ? 'check_circle'
+    : slugStatus === 'taken' ? 'cancel'
+    : slugStatus === 'checking' ? 'progress_activity'
+    : 'link'
+  const slugStatusColor = slugStatus === 'available' ? '#4ade80'
+    : slugStatus === 'taken' ? '#f87171'
+    : 'rgba(255,255,255,0.28)'
+  const canSubmit = !loading && slugStatus !== 'taken' && slugStatus !== 'checking'
+    && formData.businessName.length >= 2 && formData.email && formData.password.length >= 6
 
   return (
     <div className="auth-page">
@@ -93,7 +102,6 @@ export default function SignupPage() {
       </div>
 
       <div className="auth-card" style={{ maxWidth: '500px' }}>
-        {/* Logo */}
         <div className="auth-logo-wrap">
           <div className="auth-logo-icon">
             <span className="material-symbols-outlined">apartment</span>
@@ -117,59 +125,45 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
-          {/* Business Name */}
           <div className="auth-field">
-            <label className="auth-label" htmlFor="businessName">Business / Brand Name</label>
+            <label className="auth-label" htmlFor="biz-name">Business / Brand Name</label>
             <div className="auth-input-wrap">
               <span className="auth-input-icon material-symbols-outlined">storefront</span>
               <input
-                id="businessName"
+                id="biz-name"
                 type="text"
                 placeholder="e.g. Sunset Villas, Mohit Stays..."
                 value={formData.businessName}
                 onChange={e => handleBusinessName(e.target.value)}
-                required
-                minLength={2}
+                required minLength={2}
                 className="auth-input"
                 autoComplete="organization"
               />
             </div>
           </div>
 
-          {/* URL Slug */}
           <div className="auth-field">
-            <label className="auth-label" htmlFor="slug">Your Public URL</label>
-            <div className="auth-input-wrap auth-slug-wrap">
+            <label className="auth-label" htmlFor="slug-input">Your Public URL</label>
+            <div className="auth-input-wrap">
               <span className="auth-slug-prefix">staydesk.app/</span>
               <input
-                id="slug"
+                id="slug-input"
                 type="text"
                 placeholder="your-brand"
                 value={formData.slug}
                 onChange={e => handleSlug(e.target.value)}
-                required
-                minLength={3}
+                required minLength={3}
                 className="auth-input auth-slug-input"
               />
               <span
                 className="material-symbols-outlined auth-slug-status"
                 style={{ color: slugStatusColor, animation: slugStatus === 'checking' ? 'spin 0.8s linear infinite' : 'none' }}
-              >
-                {slugStatusIcon}
-              </span>
+              >{slugStatusIcon}</span>
             </div>
-            {slugStatus === 'available' && (
-              <p className="auth-hint auth-hint-green">✓ This URL is available!</p>
-            )}
-            {slugStatus === 'taken' && (
-              <p className="auth-hint auth-hint-red">✗ Already taken — try another</p>
-            )}
-            {slugStatus === 'idle' && formData.slug.length > 0 && formData.slug.length < 3 && (
-              <p className="auth-hint">Minimum 3 characters</p>
-            )}
+            {slugStatus === 'available' && <p className="auth-hint auth-hint-green">✓ Available!</p>}
+            {slugStatus === 'taken' && <p className="auth-hint auth-hint-red">✗ Taken — try another</p>}
           </div>
 
-          {/* Email */}
           <div className="auth-field">
             <label className="auth-label" htmlFor="signup-email">Email Address</label>
             <div className="auth-input-wrap">
@@ -180,14 +174,12 @@ export default function SignupPage() {
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                required
-                autoComplete="email"
+                required autoComplete="email"
                 className="auth-input"
               />
             </div>
           </div>
 
-          {/* Password */}
           <div className="auth-field">
             <label className="auth-label" htmlFor="signup-password">Password</label>
             <div className="auth-input-wrap">
@@ -198,17 +190,10 @@ export default function SignupPage() {
                 placeholder="At least 6 characters"
                 value={formData.password}
                 onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
-                required
-                minLength={6}
-                autoComplete="new-password"
+                required minLength={6} autoComplete="new-password"
                 className="auth-input"
               />
-              <button
-                type="button"
-                className="auth-eye-btn"
-                onClick={() => setShowPass(v => !v)}
-                aria-label={showPass ? 'Hide password' : 'Show password'}
-              >
+              <button type="button" className="auth-eye-btn" onClick={() => setShowPass(v => !v)} aria-label="Toggle password">
                 <span className="material-symbols-outlined">{showPass ? 'visibility_off' : 'visibility'}</span>
               </button>
             </div>
@@ -216,26 +201,16 @@ export default function SignupPage() {
 
           <button type="submit" disabled={!canSubmit} className="auth-submit-btn" style={{ marginTop: '0.5rem' }}>
             {loading ? (
-              <>
-                <span className="auth-spinner" />
-                Creating account...
-              </>
+              <><span className="auth-spinner" />Creating account...</>
             ) : (
-              <>
-                Create Free Account
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>rocket_launch</span>
-              </>
+              <>Create Free Account <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>rocket_launch</span></>
             )}
           </button>
         </form>
 
         <div className="auth-divider"><span>or</span></div>
-
         <div className="auth-footer-links">
-          <p>
-            Already have an account?{' '}
-            <Link href="/login" className="auth-link">Sign in →</Link>
-          </p>
+          <p>Already have an account?{' '}<Link href="/login" className="auth-link">Sign in →</Link></p>
         </div>
       </div>
     </div>

@@ -1,30 +1,36 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { signIn, signOut } from '@/lib/auth'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-// ─── Login ────────────────────────────────────────────────────────────────────
+// ─── Login (server action — used by API if needed) ────────────────────────────
+// NOTE: The login page uses signIn from 'next-auth/react' directly (client-side).
+// This server action is kept as a fallback / API route usage.
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string
+  const email = (formData.get('email') as string)?.trim().toLowerCase()
   const password = formData.get('password') as string
-
   try {
+    // NextAuth v5 beta throws CredentialsSignin on bad credentials
     await signIn('credentials', { email, password, redirect: false })
     return { success: true }
-  } catch {
-    return { error: 'Invalid email or password' }
+  } catch (err: any) {
+    // CredentialsSignin is the expected error for wrong password
+    const msg = err?.type === 'CredentialsSignin' || err?.name === 'CredentialsSignin'
+      ? 'Invalid email or password'
+      : 'Sign in failed — please try again'
+    return { error: msg }
   }
 }
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export async function logoutAction() {
-  await signOut({ redirect: false })
-  const cookieStore = await cookies()
-  cookieStore.delete('authjs.session-token')
-  cookieStore.delete('__Secure-authjs.session-token')
+  try {
+    await signOut({ redirect: false })
+  } catch {
+    // ignore
+  }
 }
 
 // ─── Register ─────────────────────────────────────────────────────────────────
