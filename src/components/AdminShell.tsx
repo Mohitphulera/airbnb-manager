@@ -24,6 +24,7 @@ export default function AdminShell({ children, stats, user }: AdminShellProps) {
     { href: '/admin/analytics', label: 'Analytics', icon: 'insights' },
     { href: '/admin/calendar', label: 'Calendar', icon: 'calendar_today' },
     { href: '/admin/properties', label: 'Listings', icon: 'home_work' },
+    { href: '/admin/all-properties', label: 'All Listings', icon: 'grid_view' },
     { href: '/admin/bookings', label: 'Bookings', icon: 'assignment' },
     { href: '/admin/expenses', label: 'Earnings', icon: 'payments' },
     { href: '/admin/bills', label: 'Bills', icon: 'receipt_long' },

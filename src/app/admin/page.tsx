@@ -16,6 +16,26 @@ export default async function AdminDashboard() {
 
   return (
     <div>
+      {/* Quick Actions */}
+      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <Link href="/admin/properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', color: '#fff', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none', boxShadow: '0 2px 8px rgba(37,99,235,0.3)' }}>
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>add_home</span>
+          Add Airbnb / Property
+        </Link>
+        <Link href="/admin/sale-properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, #059669, #047857)', color: '#fff', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none', boxShadow: '0 2px 8px rgba(5,150,105,0.3)' }}>
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>sell</span>
+          List Property for Sale
+        </Link>
+        <Link href="/admin/bookings" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#0F172A', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none' }}>
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>event</span>
+          New Booking
+        </Link>
+        <Link href="/admin/all-properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#0F172A', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none' }}>
+          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>grid_view</span>
+          All Listings
+        </Link>
+      </div>
+
       {/* ===== PORTFOLIO OVERVIEW HEADER ===== */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
         <div>
