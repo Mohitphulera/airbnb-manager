@@ -76,36 +76,37 @@ export default function AdminShell({ children, stats, user }: AdminShellProps) {
           {user?.logoUrl ? (
             <img src={user.logoUrl} alt={user.businessName} width={36} height={36} style={{ borderRadius: '10px', objectFit: 'cover' }} />
           ) : (
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #4338CA, #6366F1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#fff' }}>apartment</span>
             </div>
           )}
           <div>
-            <div style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#0F172A', lineHeight: 1.2 }}>{user?.businessName ?? 'My Business'}</div>
-            <div style={{ fontSize: '0.5625rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>Property Manager</div>
+            <div style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#fff', lineHeight: 1.2, fontFamily: 'Manrope, sans-serif', letterSpacing: '-0.02em' }}>{user?.businessName ?? 'My Business'}</div>
+            <div style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase' as const }}>Property Manager</div>
           </div>
         </div>
 
         {/* Quick Stats */}
         <div style={{ padding: '0 0.75rem', marginBottom: '0.5rem' }}>
           <div style={{
-            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-            borderRadius: '10px', padding: '0.75rem', color: '#fff',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '12px', padding: '0.875rem', color: '#fff',
           }}>
-            <div style={{ fontSize: '0.5rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+            <div style={{ fontSize: '0.45rem', fontWeight: 800, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '0.5rem' }}>
               This Month
             </div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.25rem', fontFamily: 'Manrope, sans-serif' }}>
               ₹{stats.monthRevenue.toLocaleString('en-IN')}
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.5rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Properties</div>
-                <div style={{ fontSize: '0.875rem', fontWeight: 700 }}>{stats.totalProperties}</div>
+                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Properties</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'rgba(255,255,255,0.85)' }}>{stats.totalProperties}</div>
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.5rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Today</div>
-                <div style={{ fontSize: '0.875rem', fontWeight: 700 }}>
+                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Today</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'rgba(255,255,255,0.85)' }}>
                   {stats.todayCheckIns + stats.todayCheckOuts > 0
                     ? `${stats.todayCheckIns}↓ ${stats.todayCheckOuts}↑`
                     : '—'
@@ -164,7 +165,7 @@ export default function AdminShell({ children, stats, user }: AdminShellProps) {
 
           <div style={{ flex: 1 }} />
 
-          <Link href={user?.slug ? `/${user.slug}` : '/'} className="nav-link" style={{ color: '#94A3B8' }} target="_blank">
+          <Link href={user?.slug ? `/${user.slug}` : '/'} className="nav-link" style={{ color: 'rgba(255,255,255,0.4)' }} target="_blank">
             <span className="nav-link-icon">
               <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>open_in_new</span>
             </span>
