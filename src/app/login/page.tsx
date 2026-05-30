@@ -1,48 +1,25 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
+import { loginAction } from '@/actions/authActions'
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return (
+    <button type="submit" disabled={pending} className="auth-submit-btn" style={{ marginTop: '0.5rem' }}>
+      {pending ? (
+        <><span className="auth-spinner" />Signing in...</>
+      ) : (
+        <>Sign In <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span></>
+      )}
+    </button>
+  )
+}
 
 export default function LoginPage() {
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPass, setShowPass] = useState(false)
-  const router = useRouter()
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    const form = e.currentTarget
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim()
-    const password = (form.elements.namedItem('password') as HTMLInputElement).value
-
-    try {
-      // NextAuth v5 beta throws on failure — must use try/catch, not result.error
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
-
-      // result is undefined on success in some v5 beta versions
-      if (!result || result.error) {
-        setError('Invalid email or password. Please try again.')
-        setLoading(false)
-        return
-      }
-
-      router.push('/admin')
-      router.refresh()
-    } catch {
-      // NextAuth v5 beta throws CredentialsSignin on bad credentials
-      setError('Invalid email or password. Please try again.')
-      setLoading(false)
-    }
-  }
+  const [state, action] = useActionState(loginAction, null)
 
   return (
     <div className="auth-page">
@@ -68,14 +45,14 @@ export default function LoginPage() {
           <p className="auth-subtitle">Sign in to your property dashboard</p>
         </div>
 
-        {error && (
+        {state?.error && (
           <div className="auth-error" role="alert">
             <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>error</span>
-            {error}
+            {state.error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form" noValidate>
+        <form action={action} className="auth-form" noValidate>
           <div className="auth-field">
             <label className="auth-label" htmlFor="login-email">Email Address</label>
             <div className="auth-input-wrap">
@@ -98,33 +75,17 @@ export default function LoginPage() {
               <span className="auth-input-icon material-symbols-outlined">lock</span>
               <input
                 id="login-password"
-                type={showPass ? 'text' : 'password'}
+                type="password"
                 name="password"
                 placeholder="Your password"
                 required
                 autoComplete="current-password"
                 className="auth-input"
               />
-              <button
-                type="button"
-                className="auth-eye-btn"
-                onClick={() => setShowPass(v => !v)}
-                aria-label={showPass ? 'Hide password' : 'Show password'}
-              >
-                <span className="material-symbols-outlined">
-                  {showPass ? 'visibility_off' : 'visibility'}
-                </span>
-              </button>
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="auth-submit-btn" style={{ marginTop: '0.5rem' }}>
-            {loading ? (
-              <><span className="auth-spinner" />Signing in...</>
-            ) : (
-              <>Sign In<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span></>
-            )}
-          </button>
+          <SubmitButton />
         </form>
 
         <div className="auth-divider"><span>or</span></div>

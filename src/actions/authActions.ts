@@ -1,35 +1,34 @@
 'use server'
 
 import { signIn, signOut } from '@/lib/auth'
+import { AuthError } from 'next-auth'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-// ─── Login (server action — used by API if needed) ────────────────────────────
-// NOTE: The login page uses signIn from 'next-auth/react' directly (client-side).
-// This server action is kept as a fallback / API route usage.
-export async function loginAction(formData: FormData) {
+// ─── Login (server action) ────────────────────────────────────────────────────
+// Uses server-side signIn with redirectTo — the recommended NextAuth v5 pattern.
+// On success: Next.js throws a NEXT_REDIRECT internally (must be re-thrown).
+// On wrong password: returns { error } for the UI to display.
+export async function loginAction(prevState: any, formData: FormData) {
   const email = (formData.get('email') as string)?.trim().toLowerCase()
   const password = formData.get('password') as string
   try {
-    // NextAuth v5 beta throws CredentialsSignin on bad credentials
-    await signIn('credentials', { email, password, redirect: false })
-    return { success: true }
-  } catch (err: any) {
-    // CredentialsSignin is the expected error for wrong password
-    const msg = err?.type === 'CredentialsSignin' || err?.name === 'CredentialsSignin'
-      ? 'Invalid email or password'
-      : 'Sign in failed — please try again'
-    return { error: msg }
+    await signIn('credentials', { email, password, redirectTo: '/admin' })
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return { error: 'Invalid email or password. Please try again.' }
+    }
+    throw err // Re-throw NEXT_REDIRECT and other internal errors
   }
 }
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export async function logoutAction() {
   try {
-    await signOut({ redirect: false })
-  } catch {
-    // ignore
+    await signOut({ redirectTo: '/login' })
+  } catch (err) {
+    throw err // Re-throw NEXT_REDIRECT
   }
 }
 

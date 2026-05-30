@@ -2,17 +2,16 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
-/**
- * Lightweight proxy (Next.js 16 convention, replaces middleware.ts).
- * Only verifies the JWT cookie — does NOT import Prisma or bcryptjs,
- * keeping the bundle well under the 1 MB edge function size limit.
- */
 export async function proxy(request: NextRequest) {
   const secret = process.env.AUTH_SECRET ?? 'fallback-dev-secret-change-in-prod'
-  const token = await getToken({ req: request, secret })
   const path = request.nextUrl.pathname
 
-  // Protect all /admin/* routes
+  // IMPORTANT: On Vercel (HTTPS), NextAuth v5 sets __Secure-authjs.session-token
+  // We must pass secureCookie: true so getToken looks for the right cookie name
+  const isSecure = request.nextUrl.protocol === 'https:'
+
+  const token = await getToken({ req: request, secret, secureCookie: isSecure })
+
   if (path.startsWith('/admin')) {
     if (!token) {
       const loginUrl = new URL('/login', request.nextUrl)
@@ -22,7 +21,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Redirect already-logged-in users away from /login and /signup
   if ((path === '/login' || path === '/signup') && token) {
     return NextResponse.redirect(new URL('/admin', request.nextUrl))
   }
