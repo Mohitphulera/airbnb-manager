@@ -40,8 +40,8 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
   return (
     <div className="card" style={{ padding: '1.5rem' }}>
       {/* Header */}
-      <div className="calendar-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <div className="calendar-header" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button onClick={() => setCurrentDate(subMonths(currentDate, 1))} className="btn btn-outline" style={{ padding: '0.375rem 0.75rem' }}>←</button>
           <h2 style={{ margin: 0, minWidth: '140px', textAlign: 'center', fontSize: 'clamp(1rem, 3vw, 1.5rem)' }}>{format(currentDate, 'MMMM yyyy')}</h2>
           <button onClick={() => setCurrentDate(addMonths(currentDate, 1))} className="btn btn-outline" style={{ padding: '0.375rem 0.75rem' }}>→</button>
@@ -53,7 +53,7 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
       </div>
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '0.375rem 1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         {properties.map((p: any, i: number) => (
           <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem' }}>
             <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: colors[i % colors.length] }} />
@@ -63,8 +63,8 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
       </div>
 
       {/* Calendar Grid */}
-      <div className="calendar-scroll-wrap">
-        <div className="calendar-grid-outer">
+      <div className="calendar-scroll-wrap" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}>
+        <div className="calendar-grid-outer" style={{ minWidth: '480px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid var(--border)' }}>
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
               <div key={d} style={{ padding: '0.5rem', textAlign: 'center', fontWeight: 600, fontSize: '0.6875rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', background: '#FAFAFA' }}>{d}</div>
@@ -84,7 +84,7 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
                   onClick={() => setSelectedDate(isSelected ? null : date)}
                   className="calendar-cell"
                   style={{
-                    minHeight: '72px', padding: '0.375rem',
+                    minHeight: 'clamp(48px, 10vw, 80px)', padding: '0.375rem',
                     borderRight: (i + 1) % 7 !== 0 ? '1px solid var(--border)' : 'none',
                     borderBottom: i < calendarDays.length - 7 ? '1px solid var(--border)' : 'none',
                     background: isSelected ? 'var(--cozy-blue-light)' : isToday ? '#FFF5F6' : '#fff',
@@ -103,7 +103,7 @@ export default function AdminCalendar({ bookings, properties }: { bookings: any[
                     {daysBookings.slice(0, 3).map((b: any) => (
                       <div key={b.id} style={{
                         background: getColor(b.propertyId), color: '#fff',
-                        fontSize: '0.5625rem', padding: '1px 4px', borderRadius: '3px',
+                        fontSize: 'clamp(0.4375rem, 1.5vw, 0.5625rem)', padding: '1px 4px', borderRadius: '3px',
                         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                       }} title={`${b.property.name} — ${b.customerName}`}>
                         {b.customerName}

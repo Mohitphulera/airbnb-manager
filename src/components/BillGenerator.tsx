@@ -41,9 +41,11 @@ const makeEmpty = (): BillData => ({
 interface BillGeneratorProps {
   bookings?: BookingItem[]
   initialBookingId?: string | null
+  logoUrl?: string
+  businessName?: string
 }
 
-export default function BillGenerator({ bookings = [], initialBookingId }: BillGeneratorProps) {
+export default function BillGenerator({ bookings = [], initialBookingId, logoUrl = '', businessName }: BillGeneratorProps) {
   const [bill, setBill] = useState<BillData>(makeEmpty())
   const [preview, setPreview] = useState(false)
   const [linkedBooking, setLinkedBooking] = useState<BookingItem | null>(null)
@@ -119,6 +121,10 @@ export default function BillGenerator({ bookings = [], initialBookingId }: BillG
       if (!content) return
       const w = window.open('', '_blank', 'width=800,height=1000')
       if (!w) return
+      const brandName = businessName || 'Cozy B&B'
+      const watermarkHtml = logoUrl
+        ? `<div class="inv-watermark"><img src="${logoUrl}" alt="" /></div>`
+        : ''
       w.document.write(`<!DOCTYPE html><html><head><title>Invoice ${bill.invoiceNo}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -159,7 +165,7 @@ td:last-child{text-align:right;font-weight:600}
 .inv-footer strong{color:#c9a84c}
 @media print{body{padding:20px}button{display:none!important}.inv-watermark{position:fixed}}
 </style></head><body>
-<div class="inv-watermark"><img src="/logo-cozybnb.jpg" alt="" /></div>
+${watermarkHtml}
 ${content.innerHTML}
 </body></html>`)
       w.document.close()
@@ -577,7 +583,7 @@ ${content.innerHTML}
           <div className="inv-content">
           <div className="inv-header">
             <div>
-              <div className="inv-brand">Cozy B&B<small>Premium Hospitality</small></div>
+              <div className="inv-brand">{businessName || 'Cozy B&B'}<small>Premium Hospitality</small></div>
             </div>
             <div className="inv-meta">
               <strong>INVOICE</strong><br />
@@ -666,7 +672,7 @@ ${content.innerHTML}
           </div>
 
           <div className="inv-footer">
-            Thank you for choosing <strong>Cozy B&B</strong>. We hope you enjoy your stay!<br />
+            Thank you for choosing <strong>{businessName || 'Cozy B&B'}</strong>. We hope you enjoy your stay!<br />
             For queries, reach us on WhatsApp or email.
           </div>
           </div>

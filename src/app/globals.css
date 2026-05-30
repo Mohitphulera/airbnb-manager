@@ -817,8 +817,8 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
 
 /* ═══════════════════════ CALENDAR ═══════════════════════ */
 .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
-.calendar-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 8px; }
-.calendar-grid-outer { min-width: 560px; }
+.calendar-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 12px; }
+.calendar-grid-outer { min-width: 480px; }
 .calendar-cell:hover { background: var(--cozy-blue-light) !important; }
 .calendar-detail-panel { background: var(--cozy-blue-light); border-radius: var(--radius); padding: 1.25rem; border: 1px solid rgba(37, 99, 235, 0.08); }
 .calendar-detail-grid { grid-template-columns: 1fr; }
@@ -975,7 +975,7 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   th { font-size: 0.5625rem; letter-spacing: 0.08em; }
   .metric-card { padding: 0.875rem; }
   .calendar-grid-outer { min-width: 480px; }
-  .calendar-cell { min-height: 60px !important; }
+  .calendar-cell { min-height: 52px !important; padding: 0.25rem !important; }
   .booking-detail-info { grid-template-columns: 1fr 1fr; }
 
   /* Admin sidebar form — more compact on mobile */
@@ -1049,6 +1049,13 @@ tbody tr:hover td { background-color: var(--cozy-blue-light); }
   /* iOS safe area insets */
   .admin-main { padding-bottom: env(safe-area-inset-bottom, 0.5rem) !important; }
   .admin-mobile-topbar { padding-top: max(0.75rem, env(safe-area-inset-top)) !important; }
+}
+
+/* ═══════════════════════ RESPONSIVE: SMALL PHONE (640px) ═══════════════════════ */
+@media (max-width: 640px) {
+  .calendar-detail-grid { grid-template-columns: 1fr !important; }
+  .booking-detail-info { grid-template-columns: 1fr 1fr !important; }
+  .calendar-cell { min-height: 52px !important; padding: 0.25rem !important; }
 }
 
 /* ═══════════════════════ RESPONSIVE: SMALL MOBILE ═══════════════════════ */

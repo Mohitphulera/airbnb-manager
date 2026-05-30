@@ -1,14 +1,22 @@
 import BillGenerator from '@/components/BillGenerator'
 import { getBookings } from '@/actions/bookingActions'
+import { requireUser } from '@/lib/session'
+import prisma from '@/lib/prisma'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
 export default async function BillsPage({ searchParams }: { searchParams: Promise<{ bookingId?: string }> }) {
-  const [bookings, params] = await Promise.all([
+  const [bookings, params, sessionUser] = await Promise.all([
     getBookings(),
     searchParams,
+    requireUser(),
   ])
+
+  const user = await prisma.user.findUnique({
+    where: { id: sessionUser.id },
+    select: { logoUrl: true, businessName: true },
+  })
 
   const initialBookingId = params.bookingId ?? null
 
@@ -32,7 +40,12 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
           Back to Bookings
         </Link>
       </div>
-      <BillGenerator bookings={JSON.parse(JSON.stringify(bookings))} initialBookingId={initialBookingId} />
+      <BillGenerator
+        bookings={JSON.parse(JSON.stringify(bookings))}
+        initialBookingId={initialBookingId}
+        logoUrl={user?.logoUrl ?? ''}
+        businessName={user?.businessName}
+      />
     </div>
   )
 }
