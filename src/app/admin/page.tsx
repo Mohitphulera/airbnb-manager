@@ -8,148 +8,104 @@ export default async function AdminDashboard() {
   const data = await getDashboardData()
   const { totals, todayCheckIns, todayCheckOuts, upcomingCheckIns, cleaningNeeded, emptyNights, propertyPnL, monthlyTrend, revenueBySource, pricingSuggestions, expenseByCategory, insights } = data
 
-  const occupancyData = propertyPnL.map(p => ({ name: p.name.length > 12 ? p.name.slice(0, 12) + '…' : p.name, occupancy: p.occupancyRate }))
+  const occupancyData = propertyPnL.map(p => ({ name: p.name.length > 14 ? p.name.slice(0, 14) + '…' : p.name, occupancy: p.occupancyRate }))
   const avgOccupancy = propertyPnL.length > 0 ? Math.round(propertyPnL.reduce((s, p) => s + p.occupancyRate, 0) / propertyPnL.length) : 0
   const avgRevPAR = propertyPnL.length > 0 ? Math.round(propertyPnL.reduce((s, p) => s + p.revPAR, 0) / propertyPnL.length) : 0
+  // ADR = revenue per booked night (not per booking)
+  const adr = totals.nights > 0 ? Math.round(totals.revenue / totals.nights) : 0
+  const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 
   const todayActions = todayCheckIns.length + todayCheckOuts.length + cleaningNeeded.length
+  const topProperties = [...propertyPnL].sort((x, y) => y.revenue - x.revenue).slice(0, 5)
 
   return (
     <div>
-      {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <Link href="/admin/properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', color: '#fff', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none', boxShadow: '0 2px 8px rgba(37,99,235,0.3)' }}>
-          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>add_home</span>
-          Add Airbnb / Property
-        </Link>
-        <Link href="/admin/sale-properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: 'linear-gradient(135deg, #059669, #047857)', color: '#fff', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none', boxShadow: '0 2px 8px rgba(5,150,105,0.3)' }}>
-          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>sell</span>
-          List Property for Sale
-        </Link>
-        <Link href="/admin/bookings" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#0F172A', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none' }}>
-          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>event</span>
-          New Booking
-        </Link>
-        <Link href="/admin/all-properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1rem', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#0F172A', fontWeight: 600, fontSize: '0.8125rem', textDecoration: 'none' }}>
-          <span className="material-icons-outlined" style={{ fontSize: '16px' }}>grid_view</span>
-          All Listings
-        </Link>
-      </div>
-
-      {/* ===== PORTFOLIO OVERVIEW HEADER ===== */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+      {/* ===== HEADER ===== */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem', fontWeight: 800, letterSpacing: '-0.03em' }}>
-            Portfolio Overview
+            Portfolio overview
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-            Monitoring {propertyPnL.length} properties
-            {todayActions > 0 && <span style={{ marginLeft: '0.5rem', color: 'var(--primary)', fontWeight: 600 }}>· {todayActions} actions today</span>}
+            {totals.properties} {totals.properties === 1 ? 'property' : 'properties'} · {totals.bookings} bookings
+            {todayActions > 0 && <span style={{ marginLeft: '0.375rem', color: 'var(--primary)', fontWeight: 600 }}>· {todayActions} {todayActions === 1 ? 'action' : 'actions'} today</span>}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>PORTFOLIO VALUE</div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 800, letterSpacing: '-0.02em' }}>₹{totals.revenue.toLocaleString('en-IN')}</div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.5625rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>AVG OCCUPANCY</div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{avgOccupancy}%</div>
-          </div>
+        <div className="quick-actions">
+          <Link href="/admin/bookings#new-booking" className="quick-action quick-action-primary">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden>event_available</span>
+            New booking
+          </Link>
+          <Link href="/admin/properties" className="quick-action">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden>add_home</span>
+            Add rental
+          </Link>
+          <Link href="/admin/expenses" className="quick-action">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden>receipt</span>
+            Log expense
+          </Link>
+          <Link href="/admin/sale-properties" className="quick-action">
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden>real_estate_agent</span>
+            List for sale
+          </Link>
         </div>
       </div>
 
-      {/* ===== EARNINGS + KPI SIDE PANEL ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
-        {/* Total Earnings Chart */}
+      {/* ===== KPI ROW ===== */}
+      <div className="kpi-row">
+        <div className="kpi-tile">
+          <div className="kpi-tile-label">Total revenue</div>
+          <div className="kpi-tile-value">{inr(totals.revenue)}</div>
+          <div className="kpi-tile-sub">{totals.nights} nights booked</div>
+        </div>
+        <div className="kpi-tile">
+          <div className="kpi-tile-label">Net profit</div>
+          <div className="kpi-tile-value" style={{ color: totals.profit < 0 ? 'var(--danger)' : undefined }}>{inr(totals.profit)}</div>
+          <div className="kpi-tile-sub">after {inr(totals.expenses)} expenses{totals.commission > 0 ? ` & ${inr(totals.commission)} commission` : ''}</div>
+        </div>
+        <div className="kpi-tile">
+          <div className="kpi-tile-label">Occupancy</div>
+          <div className="kpi-tile-value">{avgOccupancy}%</div>
+          <div style={{ height: '4px', background: '#F1F5F9', borderRadius: '2px', overflow: 'hidden', margin: '0.375rem 0 0.25rem' }}>
+            <div style={{ height: '100%', width: `${avgOccupancy}%`, background: 'var(--primary)', borderRadius: '2px' }} />
+          </div>
+          <div className="kpi-tile-sub">average, last 90 days</div>
+        </div>
+        <div className="kpi-tile">
+          <div className="kpi-tile-label">Avg. daily rate</div>
+          <div className="kpi-tile-value">{inr(adr)}</div>
+          <div className="kpi-tile-sub">RevPAR {inr(avgRevPAR)} · last 90 days</div>
+        </div>
+      </div>
+
+      {/* ===== EARNINGS + TODAY ===== */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)', gap: '1.25rem', marginBottom: '1.5rem' }}>
         <div className="metric-card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.125rem' }}>Total Earnings</h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Revenue & profit trend · Last 12 months</p>
-            </div>
-            <div style={{ display: 'flex', gap: '0.25rem' }}>
-              <span style={{ padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.6875rem', fontWeight: 600, background: '#0F172A', color: '#fff' }}>Monthly</span>
-              <span style={{ padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.6875rem', fontWeight: 500, color: '#94A3B8', cursor: 'pointer' }}>Quarterly</span>
-            </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.125rem' }}>Earnings</h3>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Revenue, profit and expenses by month · last 12 months</p>
           </div>
           <RevenueChart data={monthlyTrend} />
         </div>
 
-        {/* KPI Side Panel */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* Occupancy */}
-          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>Occupancy</span>
-              <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: avgOccupancy > 60 ? '#D1FAE5' : '#FEF3C7', color: avgOccupancy > 60 ? '#059669' : '#D97706' }}>
-                {avgOccupancy > 60 ? '+' : ''}{avgOccupancy > 60 ? '4.2' : '-2.1'}%
-              </span>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.25rem' }}>{avgOccupancy}%</div>
-            <div style={{ height: '3px', background: '#F1F5F9', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${avgOccupancy}%`, background: 'var(--gradient-primary)', borderRadius: '2px' }} />
-            </div>
-          </div>
-
-          {/* ADR */}
-          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>ADR</span>
-              <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: '#D1FAE5', color: '#059669' }}>Optimal</span>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em' }}>₹{avgRevPAR > 0 ? Math.round(totals.revenue / Math.max(totals.bookings, 1)).toLocaleString('en-IN') : '0'}</div>
-            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Average Daily Rate (Portfolio)</p>
-          </div>
-
-          {/* RevPAR */}
-          <div className="metric-card kpi-glow" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>RevPAR</span>
-              <span style={{ fontSize: '0.625rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: '4px', background: totals.profit >= 0 ? '#D1FAE5' : '#FEE2E2', color: totals.profit >= 0 ? '#059669' : '#DC2626' }}>
-                {totals.profit >= 0 ? '+3' : '-3'}%
-              </span>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em' }}>₹{avgRevPAR.toLocaleString('en-IN')}</div>
-            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Revenue Per Available Room</p>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== PRIORITY ACTIONS + TOP PROPERTIES ===== */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
-        {/* Priority Actions */}
         <div className="metric-card" style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem' }}>Priority Actions</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem' }}>Today</h3>
           <div className="priority-actions">
-            {todayCheckIns.length > 0 && todayCheckIns.slice(0, 2).map((b: any) => (
-              <div key={b.id} className="priority-action">
+            {todayCheckIns.slice(0, 3).map((b: any) => (
+              <div key={`ci-${b.id}`} className="priority-action">
                 <div className="priority-action-icon blue">
                   <span className="material-icons-outlined" style={{ fontSize: '20px' }}>key</span>
                 </div>
                 <div className="priority-action-content">
                   <div className="priority-action-title">Check-in: {b.customerName}</div>
-                  <div className="priority-action-desc">{b.property.name} · Today</div>
-                  {b.notes && <div className="priority-action-desc" style={{ fontStyle: 'italic', color: '#059669' }}>{b.notes}</div>}
+                  <div className="priority-action-desc">{b.property.name}</div>
+                  {b.notes && <div className="priority-action-desc" style={{ fontStyle: 'italic' }}>{b.notes}</div>}
                 </div>
               </div>
             ))}
 
-            {cleaningNeeded.length > 0 && cleaningNeeded.slice(0, 2).map((b: any) => (
-              <div key={b.id} className="priority-action">
-                <div className="priority-action-icon yellow">
-                  <span className="material-icons-outlined" style={{ fontSize: '20px' }}>cleaning_services</span>
-                </div>
-                <div className="priority-action-content">
-                  <div className="priority-action-title">Cleaning Inspection</div>
-                  <div className="priority-action-desc">Schedule walk-through for &apos;{b.property.name}&apos; after guest checkout.</div>
-                </div>
-                <span className="priority-action-time">Today</span>
-              </div>
-            ))}
-
-            {todayCheckOuts.length > 0 && todayCheckOuts.slice(0, 2).map((b: any) => (
-              <div key={b.id} className="priority-action">
+            {todayCheckOuts.slice(0, 3).map((b: any) => (
+              <div key={`co-${b.id}`} className="priority-action">
                 <div className="priority-action-icon red">
                   <span className="material-icons-outlined" style={{ fontSize: '20px' }}>logout</span>
                 </div>
@@ -160,45 +116,48 @@ export default async function AdminDashboard() {
               </div>
             ))}
 
-            {totals.profit > 0 && (
-              <div className="priority-action">
-                <div className="priority-action-icon green">
-                  <span className="material-icons-outlined" style={{ fontSize: '20px' }}>account_balance</span>
+            {cleaningNeeded.slice(0, 3).map((b: any) => (
+              <Link key={`cl-${b.id}`} href="/admin/bookings" className="priority-action" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="priority-action-icon yellow">
+                  <span className="material-icons-outlined" style={{ fontSize: '20px' }}>cleaning_services</span>
                 </div>
                 <div className="priority-action-content">
-                  <div className="priority-action-title">Net Profit</div>
-                  <div className="priority-action-desc">₹{totals.profit.toLocaleString('en-IN')} earned after expenses & commission.</div>
+                  <div className="priority-action-title">Turnover clean</div>
+                  <div className="priority-action-desc">{b.property.name} · after {b.customerName} checks out</div>
                 </div>
-                <span className="priority-action-time">This period</span>
-              </div>
-            )}
+                <span className="priority-action-time">{b.cleaningStatus === 'IN_PROGRESS' ? 'In progress' : 'Pending'}</span>
+              </Link>
+            ))}
 
-            {todayCheckIns.length === 0 && todayCheckOuts.length === 0 && cleaningNeeded.length === 0 && (
+            {todayActions === 0 && (
               <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
                 <span className="material-icons-outlined" style={{ fontSize: '2rem', display: 'block', marginBottom: '0.375rem', opacity: 0.4 }}>check_circle</span>
-                All caught up! No actions needed.
+                All caught up — no check-ins, check-outs or cleans today.
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Top Performing Properties */}
-        <div className="metric-card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>Top Performing Properties</h3>
-            <Link href="/admin/properties" style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>View All Listings</Link>
-          </div>
-          <table className="top-properties-table" style={{ borderCollapse: 'collapse' }}>
+      {/* ===== TOP PROPERTIES ===== */}
+      <div className="metric-card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>Property performance</h3>
+          <Link href="/admin/analytics" style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)' }}>Full report →</Link>
+        </div>
+        <div className="table-container" style={{ overflowX: 'auto' }}>
+          <table className="top-properties-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr>
                 <th style={{ textAlign: 'left' }}>Property</th>
-                <th style={{ textAlign: 'right' }}>Monthly Rev</th>
-                <th style={{ textAlign: 'right' }}>Occupancy</th>
-                <th style={{ textAlign: 'right' }}>Status</th>
+                <th style={{ textAlign: 'right' }}>Revenue</th>
+                <th style={{ textAlign: 'right' }}>Profit</th>
+                <th style={{ textAlign: 'right' }}>Nights</th>
+                <th style={{ textAlign: 'right' }}>Occupancy (90d)</th>
               </tr>
             </thead>
             <tbody>
-              {propertyPnL.slice(0, 5).map(p => (
+              {topProperties.map(p => (
                 <tr key={p.id}>
                   <td>
                     <div className="property-row-info">
@@ -207,34 +166,28 @@ export default async function AdminDashboard() {
                       </div>
                       <div>
                         <div className="property-row-name">{p.name}</div>
-                        <div className="property-row-location">{p.type === 'COMMISSION' ? 'Partner' : 'Owned'}</div>
+                        <div className="property-row-location">{p.type === 'COMMISSION' ? 'Partner' : 'Owned'} · {inr(p.pricePerNight)}/night</div>
                       </div>
                     </div>
                   </td>
-                  <td style={{ textAlign: 'right', fontWeight: 600 }}>₹{p.revenue.toLocaleString('en-IN')}</td>
-                  <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.occupancyRate}%</td>
+                  <td style={{ textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{inr(p.revenue)}</td>
+                  <td style={{ textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: p.profit < 0 ? 'var(--danger)' : undefined }}>{inr(p.profit)}</td>
+                  <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{p.totalNights}</td>
                   <td style={{ textAlign: 'right' }}>
-                    <span>
-                      <span className={`status-dot ${p.occupancyRate > 50 ? 'booked' : p.occupancyRate > 20 ? 'available' : 'maintenance'}`} />
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        {p.occupancyRate > 50 ? 'Booked' : p.occupancyRate > 20 ? 'Available' : 'Low'}
-                      </span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem', fontWeight: 600 }}>
+                      <span className={`status-dot ${p.occupancyRate > 60 ? 'booked' : p.occupancyRate > 30 ? 'available' : 'maintenance'}`} />
+                      {p.occupancyRate}%
                     </span>
                   </td>
                 </tr>
               ))}
               {propertyPnL.length === 0 && (
-                <tr><td colSpan={4} style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)' }}>Add properties to see performance</td></tr>
+                <tr><td colSpan={5} style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)' }}>
+                  <Link href="/admin/properties" style={{ color: 'var(--primary)', fontWeight: 600 }}>Add your first property</Link> to see performance
+                </td></tr>
               )}
             </tbody>
           </table>
-          {propertyPnL.length > 0 && (
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <Link href="/admin/analytics" style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>
-                VIEW FULL FINANCIAL REPORT
-              </Link>
-            </div>
-          )}
         </div>
       </div>
 

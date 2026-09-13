@@ -36,9 +36,13 @@ export default function PropertyTable({ properties }: { properties: Property[] }
   const handleSave = async (id: string) => {
     setSaving(true)
     try {
-      await updateProperty(id, editData)
-      showToast('Property updated', 'success')
-      setEditingId(null)
+      const result = await updateProperty(id, editData)
+      if ('error' in result) {
+        showToast(result.error ?? 'Failed to update', 'error')
+      } else {
+        showToast('Property updated', 'success')
+        setEditingId(null)
+      }
     } catch {
       showToast('Failed to update', 'error')
     }

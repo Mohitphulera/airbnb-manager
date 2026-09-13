@@ -6,9 +6,9 @@ import { showToast } from '@/components/Toast'
 
 const STATUS_STYLES: Record<string, { className: string; label: string }> = {
   PENDING: { className: 'badge-yellow', label: 'Pending' },
-  CONFIRMED: { className: 'badge-green', label: '✅ Confirmed' },
-  REJECTED: { className: 'badge-gray', label: '❌ Rejected' },
-  CANCELLED: { className: 'badge-gray', label: '🚫 Cancelled' },
+  CONFIRMED: { className: 'badge-green', label: 'Confirmed' },
+  REJECTED: { className: 'badge-gray', label: 'Rejected' },
+  CANCELLED: { className: 'badge-gray', label: 'Cancelled' },
 }
 
 export default function BookingRequestsPanel({ requests }: { requests: any[] }) {
@@ -17,8 +17,9 @@ export default function BookingRequestsPanel({ requests }: { requests: any[] }) 
   const handleConfirm = async (id: string) => {
     setLoading(id)
     try {
-      await confirmBookingRequest(id)
-      showToast('Booking confirmed! Guest notified via WhatsApp. ✅', 'success')
+      const result = await confirmBookingRequest(id)
+      if ('error' in result) showToast(result.error ?? 'Failed to confirm', 'error')
+      else showToast('Booking confirmed and added to your calendar. Send the guest a WhatsApp confirmation.', 'success')
     } catch {
       showToast('Failed to confirm', 'error')
     }
@@ -69,15 +70,15 @@ export default function BookingRequestsPanel({ requests }: { requests: any[] }) 
                 <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                   {req.property.name} · {new Date(req.checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} → {new Date(req.checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  <span>📞 {req.guestPhone}</span>
-                  {req.guestEmail && <span>📧 {req.guestEmail}</span>}
-                  <span>👥 {req.guests} guest{req.guests > 1 ? 's' : ''}</span>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <span className="inline-meta"><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>call</span>{req.guestPhone}</span>
+                  {req.guestEmail && <span className="inline-meta"><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>mail</span>{req.guestEmail}</span>}
+                  <span className="inline-meta"><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>group</span>{req.guests} guest{req.guests > 1 ? 's' : ''}</span>
                   <span style={{ fontWeight: 700, color: 'var(--cozy-success)' }}>₹{req.totalAmount.toLocaleString('en-IN')}</span>
                 </div>
                 {req.message && (
-                  <div style={{ marginTop: '0.375rem', fontSize: '0.75rem', fontStyle: 'italic', color: 'var(--primary)' }}>
-                    💬 "{req.message}"
+                  <div className="inline-meta" style={{ marginTop: '0.375rem', fontSize: '0.75rem', fontStyle: 'italic', color: 'var(--text-muted)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>chat_bubble</span>&ldquo;{req.message}&rdquo;
                   </div>
                 )}
               </div>
@@ -85,26 +86,26 @@ export default function BookingRequestsPanel({ requests }: { requests: any[] }) 
               {isPending && (
                 <div style={{ display: 'flex', gap: '0.375rem', flexShrink: 0 }}>
                   <button
-                    onClick={() => { handleConfirm(req.id); sendWhatsApp(req, 'confirm') }}
+                    onClick={() => handleConfirm(req.id)}
                     className={`btn btn-primary ${loading === req.id ? 'btn-loading' : ''}`}
                     disabled={loading === req.id}
-                    style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px' }}
-                  >✅ Confirm</button>
+                    style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  ><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>check</span>Confirm</button>
                   <button
-                    onClick={() => { handleReject(req.id); sendWhatsApp(req, 'reject') }}
-                    className="btn btn-danger"
+                    onClick={() => handleReject(req.id)}
+                    className="btn btn-outline"
                     disabled={loading === req.id}
-                    style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px' }}
-                  >❌ Reject</button>
+                    style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--danger)' }}
+                  ><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>close</span>Reject</button>
                 </div>
               )}
 
-              {isConfirmed && (
+              {!isPending && (req.status === 'CONFIRMED' || req.status === 'REJECTED') && (
                 <button
-                  onClick={() => sendWhatsApp(req, 'confirm')}
+                  onClick={() => sendWhatsApp(req, isConfirmed ? 'confirm' : 'reject')}
                   className="btn btn-secondary"
-                  style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px' }}
-                >💬 WhatsApp</button>
+                  style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#16a34a' }}
+                ><span className="material-symbols-outlined" style={{ fontSize: '14px' }} aria-hidden>chat</span>{isConfirmed ? 'Send confirmation' : 'Notify guest'}</button>
               )}
             </div>
           </div>

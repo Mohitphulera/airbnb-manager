@@ -5,8 +5,6 @@ import Link from 'next/link'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 import ReviewSection from '@/components/ReviewSection'
 import PropertyRevenueWidget from '@/components/PropertyRevenueWidget'
-import MobileNav from '@/components/MobileNav'
-import { auth } from '@/lib/auth'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -26,13 +24,16 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   let amenities: string[] = []
   try { if (property.amenities) amenities = JSON.parse(property.amenities) } catch {}
 
-  const bookings = property.bookings.map((b: any) => ({
+  const host = property.user
+  const bookings = property.bookings.map(b => ({
     checkIn: b.checkInDate.toISOString(),
     checkOut: b.checkOutDate.toISOString(),
   }))
 
   const serializedProperty = {
     ...property,
+    // Fall back to the host's business number when the listing has none
+    whatsappNumber: property.whatsappNumber || host.whatsappNumber,
     images,
     amenities,
     pBookings: bookings,
@@ -40,7 +41,7 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
     updatedAt: property.updatedAt.toISOString(),
   }
 
-  const serializedReviews = reviews.map((r: any) => ({
+  const serializedReviews = reviews.map(r => ({
     ...r,
     createdAt: r.createdAt.toISOString(),
   }))
@@ -50,30 +51,29 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
       {/* ═══ Cinematic Navigation ═══ */}
       <nav className="cinema-nav st-nav">
         <div className="st-nav-inner">
-          <Link href="/" className="st-nav-brand">
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#fff' }}>apartment</span>
-            </div>
-            <span className="st-nav-name">StayDesk</span>
+          <Link href={`/${host.slug}`} className="st-nav-brand">
+            {host.logoUrl ? (
+              <img src={host.logoUrl} alt={host.businessName} style={{ width: '32px', height: '32px', borderRadius: '8px', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#fff' }}>apartment</span>
+              </div>
+            )}
+            <span className="st-nav-name">{host.businessName}</span>
           </Link>
           <div className="st-nav-links">
-            <Link href="/" className="st-nav-link">Home</Link>
-            <Link href="/login" className="st-nav-link">Host Login</Link>
+            <Link href={`/${host.slug}`} className="st-nav-link">All stays</Link>
           </div>
-          <div className="st-nav-actions">
-            <Link href="/signup" className="st-btn-outline">List Your Property</Link>
-          </div>
-          <MobileNav activePage="home" />
+          <div className="st-nav-actions" />
         </div>
       </nav>
 
       <div style={{ paddingTop: '5rem' }}>
         {/* Admin Revenue Widget — only shown when logged in */}
         {await (async () => {
-          const session = await auth()
-          const isAdmin = !!session?.user
-          if (!isAdmin) return null
+          // Returns null unless the viewer owns this property
           const revenue = await getPropertyRevenueSummary(id)
+          if (!revenue) return null
           return (
             <div className="container" style={{ paddingTop: '1.5rem' }}>
               <PropertyRevenueWidget revenue={revenue} />
@@ -102,30 +102,22 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
         <div className="cinema-footer-inner">
           <div className="st-footer-top">
             <div className="st-footer-brand">
-              <Link href="/" className="st-nav-brand">
-                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'brightness(0.8)' }} />
-                <span className="st-nav-name">Cozy B&B</span>
+              <Link href={`/${host.slug}`} className="st-nav-brand">
+                <span className="st-nav-name">{host.businessName}</span>
               </Link>
               <p className="st-footer-tagline">
-                Defining the future of luxury hospitality through meticulous curation and architectural excellence.
+                Book directly with the host for the best rates.
               </p>
             </div>
             <div className="st-footer-cols">
               <div className="st-footer-col">
-                <span className="st-footer-heading">Company</span>
-                <Link href="/">Discover</Link>
-                <Link href="/properties-for-sale">Investments</Link>
-                <Link href="/login">Host Portal</Link>
-              </div>
-              <div className="st-footer-col">
-                <span className="st-footer-heading">Legal</span>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <span className="st-footer-heading">Explore</span>
+                <Link href={`/${host.slug}`}>All stays by {host.businessName}</Link>
               </div>
             </div>
           </div>
           <div className="st-footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Cozy B&B. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {host.businessName} · Powered by <Link href="/">StayDesk</Link></p>
           </div>
         </div>
       </footer>

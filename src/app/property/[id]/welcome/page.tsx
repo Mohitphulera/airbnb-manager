@@ -1,16 +1,38 @@
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
+import { getSessionUser } from '@/lib/session'
 
 export const dynamic = 'force-dynamic'
 
-export default async function WelcomePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const property = await prisma.property.findUnique({ where: { id } })
+// Malformed JSON in an optional field should never take the guest page down
+function parseJson<T>(value: string | null, fallback: T): T {
+  if (!value) return fallback
+  try { return JSON.parse(value) as T } catch { return fallback }
+}
+
+export default async function WelcomePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ b?: string }> }) {
+  const [{ id }, { b: bookingId }, viewer] = await Promise.all([params, searchParams, getSessionUser()])
+  const property = await prisma.property.findUnique({ where: { id }, include: { user: { select: { businessName: true } } } })
   if (!property) return notFound()
 
-  const images: string[] = property.imageUrls ? JSON.parse(property.imageUrls) : []
-  const rules: string[] = property.houseRules ? JSON.parse(property.houseRules) : ['Check-in after 2:00 PM', 'Check-out before 11:00 AM', 'No smoking inside the property', 'No parties or loud music after 10 PM', 'Please keep the property clean', 'Carry a valid photo ID']
-  const guide: { name: string; type: string; distance: string }[] = property.localGuide ? JSON.parse(property.localGuide) : []
+  // This page shows WiFi credentials and emergency contacts, and property ids are
+  // public. Only the owner, or a guest holding the link for a current or upcoming
+  // booking at this property, may see it.
+  const isOwner = viewer?.id === property.userId
+  let hasValidBooking = false
+  if (!isOwner && bookingId) {
+    const graceStart = new Date()
+    graceStart.setDate(graceStart.getDate() - 1)
+    hasValidBooking = !!(await prisma.booking.findFirst({
+      where: { id: bookingId, propertyId: id, checkOutDate: { gte: graceStart } },
+      select: { id: true },
+    }))
+  }
+  if (!isOwner && !hasValidBooking) return notFound()
+
+  const images = parseJson<string[]>(property.imageUrls, [])
+  const rules = parseJson<string[]>(property.houseRules, ['Check-in after 2:00 PM', 'Check-out before 11:00 AM', 'No smoking inside the property', 'No parties or loud music after 10 PM', 'Please keep the property clean', 'Carry a valid photo ID'])
+  const guide = parseJson<{ name: string; type: string; distance: string }[]>(property.localGuide, [])
 
   const S = {
     section: { background: '#fff', borderRadius: '16px', padding: '1.5rem', marginBottom: '1rem', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' } as React.CSSProperties,
@@ -108,7 +130,7 @@ export default async function WelcomePage({ params }: { params: Promise<{ id: st
 
         {/* Footer */}
         <div style={{ textAlign: 'center', padding: '1.5rem', color: 'rgba(255,255,255,0.4)', fontSize: '0.6875rem' }}>
-          Thank you for choosing <strong style={{ color: '#c9a84c' }}>Cozy B&B</strong>
+          Thank you for choosing <strong style={{ color: '#c9a84c' }}>{property.user.businessName}</strong>
         </div>
       </div>
     </div>

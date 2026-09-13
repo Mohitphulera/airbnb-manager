@@ -4,8 +4,8 @@ import ToastProvider from '@/components/Toast'
 import SmoothScroll from '@/components/SmoothScroll'
 
 export const metadata: Metadata = {
-  title: 'Cozy B&B — Premium Stays, Direct Bookings',
-  description: 'Discover handpicked bed & breakfast properties with the best prices. Book directly with hosts at Cozy B&B.',
+  title: { default: 'StayDesk — Property management for independent hosts', template: '%s · StayDesk' },
+  description: 'Manage bookings, guests, expenses and your own direct-booking website in one place.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

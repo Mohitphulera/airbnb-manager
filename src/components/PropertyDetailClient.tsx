@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
-import { format, isWithinInterval, startOfDay, differenceInDays } from 'date-fns'
+import { format, startOfDay, differenceInDays } from 'date-fns'
 import Link from 'next/link'
 import GuestBookingForm from './GuestBookingForm'
 import ShareProperty from './ShareProperty'
@@ -26,12 +26,13 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
   const amenities: string[] = property.amenities || []
   const bookings = property.pBookings || []
 
+  // A booking occupies the nights from its check-in day up to (not including) its
+  // check-out day, so the check-out day stays free for the next guest's arrival.
   const disabledDates = (date: Date) => {
-    if (startOfDay(date) < startOfDay(new Date())) return true
-    for (const b of bookings) {
-      if (isWithinInterval(date, { start: new Date(b.checkIn), end: new Date(b.checkOut) })) return true
-    }
-    return false
+    const day = startOfDay(date)
+    if (day < startOfDay(new Date())) return true
+    return bookings.some((b: { checkIn: string; checkOut: string }) =>
+      day >= startOfDay(new Date(b.checkIn)) && day < startOfDay(new Date(b.checkOut)))
   }
 
   const nights = selectedRange.from && selectedRange.to
@@ -307,12 +308,24 @@ export default function PropertyDetailClient({ property, avgRating, reviewCount 
                 <p className="cinema-calendar-label">Select your dates</p>
 
                 <style dangerouslySetInnerHTML={{__html: `
-                  .rdp { --rdp-cell-size: 34px; --rdp-accent-color: #c9a84c; font-size: 0.75rem; margin: 0; width: 100%; }
-                  .rdp-month { width: 100%; }
-                  .rdp-table { width: 100%; }
-                  .rdp-day_selected { background-color: #c9a84c !important; color: #0a0a0f !important; }
-                  .rdp-day_disabled { opacity: 0.2; text-decoration: line-through; }
-                  .rdp-day_range_start, .rdp-day_range_end { background: #c9a84c !important; color: #0a0a0f !important; border-radius: 50% !important; }
+                  /* react-day-picker v9 class names and variables */
+                  .cinema-calendar-wrap .rdp-root {
+                    --rdp-accent-color: #c9a84c; --rdp-accent-background-color: rgba(201,168,76,0.14);
+                    --rdp-day-width: 36px; --rdp-day-height: 36px;
+                    --rdp-day_button-width: 34px; --rdp-day_button-height: 34px;
+                    --rdp-nav_button-width: 1.75rem; --rdp-nav_button-height: 1.75rem; --rdp-nav-height: 2.25rem;
+                    --rdp-range_middle-background-color: rgba(201,168,76,0.14);
+                    font-size: 0.8125rem; margin: 0 auto; max-width: 100%;
+                  }
+                  .cinema-calendar-wrap .rdp-month_caption { font-size: 0.875rem; }
+                  /* Undo the global admin table styles (min-width, cell padding, borders) */
+                  .cinema-calendar-wrap table.rdp-month_grid { min-width: 0; width: auto; }
+                  .cinema-calendar-wrap .rdp-month_grid th, .cinema-calendar-wrap .rdp-month_grid td { padding: 0; border: 0; text-align: center; }
+                  .cinema-calendar-wrap .rdp-selected .rdp-day_button,
+                  .cinema-calendar-wrap .rdp-range_start .rdp-day_button,
+                  .cinema-calendar-wrap .rdp-range_end .rdp-day_button { background: #c9a84c; color: #0a0a0f; border-color: #c9a84c; }
+                  .cinema-calendar-wrap .rdp-range_middle .rdp-day_button { background: transparent; color: inherit; border-color: transparent; }
+                  .cinema-calendar-wrap .rdp-disabled { opacity: 0.3; text-decoration: line-through; }
                 `}} />
 
                 <div style={{ display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>

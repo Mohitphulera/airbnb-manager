@@ -27,7 +27,7 @@ export default async function CalendarPage() {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Overview of bookings across {properties.length} properties</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <a href="/api/calendar-export" download="cozybnb-bookings.ics" className="btn btn-secondary" style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          <a href="/api/calendar-export" download="bookings.ics" className="btn btn-secondary" style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '16px' }}>download</span>
             Export .ics
           </a>

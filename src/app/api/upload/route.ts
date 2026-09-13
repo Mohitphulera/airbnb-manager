@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
+import { getSessionUser } from '@/lib/session'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB per file
 const MAX_FILES_PER_REQUEST = 5 // max files in a single request (client sends 1 at a time)
@@ -26,6 +27,10 @@ function uploadToCloudinary(buffer: Buffer): Promise<string> {
 }
 
 export async function POST(request: Request) {
+  // Only signed-in hosts may upload to our Cloudinary account
+  const user = await getSessionUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   if (!process.env.CLOUDINARY_API_SECRET) {
     console.error('Missing CLOUDINARY_API_SECRET')
     return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
@@ -38,9 +43,11 @@ export async function POST(request: Request) {
   })
 
   const formData = await request.formData()
-  const files = formData.getAll('files') as File[]
+  // Accept both 'files' (multi-upload forms) and 'file' (logo / receipt inputs)
+  const files = [...formData.getAll('files'), ...formData.getAll('file')]
+    .filter((f): f is File => typeof f !== 'string')
 
-  if (!files || files.length === 0) {
+  if (files.length === 0) {
     return NextResponse.json({ error: 'No files provided' }, { status: 400 })
   }
 
@@ -50,6 +57,10 @@ export async function POST(request: Request) {
 
   // Validate file sizes
   for (const file of files) {
+    // HEIC files from iPhones sometimes arrive with an empty type, so allow that too
+    if (file.type && !file.type.startsWith('image/') && file.type !== 'application/pdf') {
+      return NextResponse.json({ error: `"${file.name}" is not an image` }, { status: 400 })
+    }
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         { error: `File "${file.name}" exceeds 10MB limit (${(file.size / 1024 / 1024).toFixed(1)}MB)` },

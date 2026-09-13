@@ -17,6 +17,23 @@ export async function getAvailableSaleProperties() {
   })
 }
 
+// Public marketplace: unsold listings from all hosts. Only public fields, and the
+// host's business number is used when a listing has no contact of its own.
+export async function getPublicSaleProperties() {
+  const rows = await prisma.saleProperty.findMany({
+    where: { status: { not: 'SOLD' } },
+    orderBy: { createdAt: 'desc' },
+    take: 200,
+    include: { user: { select: { businessName: true, slug: true, whatsappNumber: true } } },
+  })
+  return rows.map(({ user, userId: _userId, ...p }) => ({
+    ...p,
+    whatsappNumber: p.whatsappNumber || user.whatsappNumber,
+    hostName: user.businessName,
+    hostSlug: user.slug,
+  }))
+}
+
 export async function addSaleProperty(formData: FormData) {
   const user = await requireUser()
   const title = formData.get('title') as string

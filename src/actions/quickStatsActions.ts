@@ -21,7 +21,7 @@ export async function getQuickStats(): Promise<QuickStats> {
 
   const [monthBookings, pendingRequests, todayCheckIns, todayCheckOuts, totalProperties] = await Promise.all([
     prisma.booking.findMany({
-      where: { property: { userId: user.id }, checkInDate: { gte: monthStart } },
+      where: { property: { userId: user.id }, checkInDate: { gte: monthStart, lt: new Date(now.getFullYear(), now.getMonth() + 1, 1) } },
       select: { totalAmount: true },
     }),
     prisma.bookingRequest.count({ where: { property: { userId: user.id }, status: 'PENDING' } }),

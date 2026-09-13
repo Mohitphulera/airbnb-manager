@@ -1,4 +1,5 @@
-import NextAuth, { CredentialsSignin } from 'next-auth'
+import NextAuth from 'next-auth'
+import { getAuthSecret } from '@/lib/authSecret'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
@@ -66,7 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: '/login',
   },
   session: { strategy: 'jwt' },
-  secret: process.env.AUTH_SECRET ?? 'fallback-dev-secret-change-in-prod',
+  secret: getAuthSecret(),
   trustHost: true,
   debug: process.env.NODE_ENV === 'development',
 })

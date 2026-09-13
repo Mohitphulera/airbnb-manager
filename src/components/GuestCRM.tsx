@@ -9,14 +9,14 @@ const TIERS: Record<string,{color:string,bg:string}> = {
 }
 const TAG_OPTIONS = ['VIP','Repeat','Family','Corporate','Long Stay','Influencer','Referral']
 const TEMPLATES = [
-  { name:'Discount Offer', msg:'Hi {name}! We miss you at Cozy B&B 🏡 Enjoy {discount}% off your next stay. Book directly with us!' },
-  { name:'Birthday', msg:'Happy Birthday {name}! 🎂 Celebrate with a special stay — enjoy 15% off at Cozy B&B!' },
+  { name:'Discount Offer', msg:'Hi {name}! We miss you at {business} 🏡 Enjoy {discount}% off your next stay. Book directly with us!' },
+  { name:'Birthday', msg:'Happy Birthday {name}! 🎂 Celebrate with a special stay — enjoy 15% off at {business}!' },
   { name:'Repeat Guest', msg:'Welcome back {name}! As a valued {tier} guest, enjoy an exclusive {discount}% discount on your next booking.' },
-  { name:'Festive', msg:'Hi {name}! 🎉 Festive season special — get {discount}% off stays this month at Cozy B&B!' },
+  { name:'Festive', msg:'Hi {name}! 🎉 Festive season special — get {discount}% off stays this month at {business}!' },
   { name:'Custom', msg:'' },
 ]
 
-export default function GuestCRM({ guests: initial, stats }: { guests: any[], stats: any }) {
+export default function GuestCRM({ guests: initial, stats, businessName }: { guests: any[], stats: any, businessName: string }) {
   const [guests, setGuests] = useState(initial)
   const [search, setSearch] = useState('')
   const [tierFilter, setTierFilter] = useState('ALL')
@@ -39,7 +39,8 @@ export default function GuestCRM({ guests: initial, stats }: { guests: any[], st
 
   const toggleSelect = (id: string) => {
     const s = new Set(selected)
-    s.has(id) ? s.delete(id) : s.add(id)
+    if (s.has(id)) s.delete(id)
+    else s.add(id)
     setSelected(s)
   }
   const selectAll = () => setSelected(filtered.length === selected.size ? new Set() : new Set(filtered.map(g=>g.id)))
@@ -47,7 +48,7 @@ export default function GuestCRM({ guests: initial, stats }: { guests: any[], st
   const openWhatsApp = (phone: string, name: string, tier: string) => {
     const tpl = TEMPLATES[msgTemplate]
     const msg = (msgTemplate === TEMPLATES.length-1 ? customMsg : tpl.msg)
-      .replace(/{name}/g, name).replace(/{discount}/g, discount).replace(/{tier}/g, tier)
+      .replace(/{name}/g, name).replace(/{discount}/g, discount).replace(/{tier}/g, tier).replace(/{business}/g, businessName)
     window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -175,7 +176,7 @@ export default function GuestCRM({ guests: initial, stats }: { guests: any[], st
                 </tr>
               )
             })}
-            {filtered.length === 0 && <tr><td colSpan={8} style={{ padding:'2rem', textAlign:'center', color:'#9ca3af' }}>No guests found. Add guests manually or they'll be auto-created from bookings.</td></tr>}
+            {filtered.length === 0 && <tr><td colSpan={8} style={{ padding:'2rem', textAlign:'center', color:'#9ca3af' }}>No guests found. Add guests manually or they&apos;ll be auto-created from bookings.</td></tr>}
           </tbody>
         </table>
       </div>
@@ -260,7 +261,7 @@ export default function GuestCRM({ guests: initial, stats }: { guests: any[], st
             )}
             <div style={{ background:'#f8fafc', borderRadius:'8px', padding:'0.875rem', fontSize:'0.75rem', color:'#374151', marginBottom:'1rem', lineHeight:1.7 }}>
               <strong>Preview:</strong><br/>
-              {(msgTemplate===TEMPLATES.length-1?customMsg:TEMPLATES[msgTemplate].msg).replace(/{name}/g,'Guest Name').replace(/{discount}/g,discount).replace(/{tier}/g,'GOLD')}
+              {(msgTemplate===TEMPLATES.length-1?customMsg:TEMPLATES[msgTemplate].msg).replace(/{name}/g,'Guest Name').replace(/{discount}/g,discount).replace(/{tier}/g,'GOLD').replace(/{business}/g,businessName)}
             </div>
             <div style={{ display:'flex', gap:'0.5rem' }}>
               <button onClick={()=>{sendBulk();setShowMsg(false)}} style={{ ...S.btn, background:'#16a34a', color:'#fff', flex:1 }}>Send to {selected.size} Guest{selected.size>1?'s':''}</button>

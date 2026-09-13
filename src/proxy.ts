@@ -1,9 +1,10 @@
+import { getAuthSecret } from '@/lib/authSecret'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
 export async function proxy(request: NextRequest) {
-  const secret = process.env.AUTH_SECRET ?? 'fallback-dev-secret-change-in-prod'
+  const secret = getAuthSecret()
   const path = request.nextUrl.pathname
 
   // IMPORTANT: On Vercel (HTTPS), NextAuth v5 sets __Secure-authjs.session-token

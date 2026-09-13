@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { getSessionUser } from '@/lib/session'
 import * as xlsx from 'xlsx'
 
 export async function GET() {
+  const user = await getSessionUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const bookings = await prisma.booking.findMany({
+      where: { property: { userId: user.id } },
       include: { property: true },
       orderBy: { createdAt: 'desc' }
     });
@@ -33,7 +38,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Disposition': `attachment; filename="airbnb-business-data.xlsx"`
+        'Content-Disposition': `attachment; filename="${user.slug || 'bookings'}-bookings.xlsx"`
       }
     });
   } catch (error) {
