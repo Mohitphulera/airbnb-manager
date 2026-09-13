@@ -11,19 +11,12 @@ export default async function PropertiesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>My Listings</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Rental listings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{properties.length} properties in your portfolio</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: '0.25rem' }}>
-            {['All Listings', `Active (${properties.filter((p: any) => p.type === 'OWNED').length})`, `Partners (${properties.filter((p: any) => p.type === 'COMMISSION').length})`].map((label, i) => (
-              <span key={label} style={{
-                padding: '0.375rem 0.875rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600,
-                cursor: 'pointer', color: i === 0 ? 'var(--primary)' : '#94A3B8',
-                borderBottom: i === 0 ? '2px solid var(--primary)' : '2px solid transparent',
-              }}>{label}</span>
-            ))}
-          </div>
+          <span className="badge badge-gray">{properties.filter(p => p.type === 'OWNED').length} owned</span>
+          <span className="badge badge-gray">{properties.filter(p => p.type === 'COMMISSION').length} partner</span>
         </div>
       </div>
 

@@ -6,6 +6,12 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+// Generated once on the server so the client hydrates with the same values
+function newInvoiceNumber() {
+  const now = new Date()
+  return { number: `INV-${now.getTime().toString(36).toUpperCase()}`, date: now.toISOString().split('T')[0] }
+}
+
 export default async function BillsPage({ searchParams }: { searchParams: Promise<{ bookingId?: string }> }) {
   const [bookings, params, sessionUser] = await Promise.all([
     getBookings(),
@@ -19,6 +25,7 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
   })
 
   const initialBookingId = params.bookingId ?? null
+  const invoice = newInvoiceNumber()
 
   return (
     <div>
@@ -43,6 +50,8 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
       <BillGenerator
         bookings={JSON.parse(JSON.stringify(bookings))}
         initialBookingId={initialBookingId}
+        initialInvoiceNo={invoice.number}
+        initialInvoiceDate={invoice.date}
         logoUrl={user?.logoUrl ?? ''}
         businessName={user?.businessName}
       />

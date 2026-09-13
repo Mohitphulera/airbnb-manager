@@ -183,7 +183,12 @@ export default function PropertyForm() {
   const handleSubmit = async (formData: FormData) => {
     setSubmitting(true)
     try {
-      await addProperty(formData)
+      const result = await addProperty(formData)
+      if ('error' in result) {
+        showToast(result.error ?? 'Failed to add property', 'error')
+        setSubmitting(false)
+        return
+      }
       showToast('Property added successfully!', 'success')
       formRef.current?.reset()
       setType('OWNED')

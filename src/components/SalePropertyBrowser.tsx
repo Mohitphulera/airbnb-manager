@@ -296,7 +296,7 @@ export default function SalePropertyBrowser({ properties }: { properties: any[] 
                 onChange={e => setCustomRent(e.target.value)}
               />
               {roiProperty.monthlyRentalEstimate && !customRent && (
-                <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Using seller's estimate. Enter your own for custom calculation.</p>
+                <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Using seller&apos;s estimate. Enter your own for custom calculation.</p>
               )}
             </div>
 

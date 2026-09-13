@@ -187,10 +187,10 @@ export default function SignupPage() {
               <input
                 id="signup-password"
                 type={showPass ? 'text' : 'password'}
-                placeholder="At least 6 characters"
+                placeholder="At least 8 characters"
                 value={formData.password}
                 onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
-                required minLength={6} autoComplete="new-password"
+                required minLength={8} autoComplete="new-password"
                 className="auth-input"
               />
               <button type="button" className="auth-eye-btn" onClick={() => setShowPass(v => !v)} aria-label="Toggle password">

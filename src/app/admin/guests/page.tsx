@@ -1,10 +1,11 @@
 import { getAllGuests, getGuestStats } from '@/actions/guestActions'
 import GuestCRM from '@/components/GuestCRM'
+import { requireUser } from '@/lib/session'
 
 export const dynamic = 'force-dynamic'
 
 export default async function GuestsPage() {
-  const [guests, stats] = await Promise.all([getAllGuests(), getGuestStats()])
+  const [guests, stats, user] = await Promise.all([getAllGuests(), getGuestStats(), requireUser()])
   const serialized = guests.map(g => ({
     ...g,
     lastCheckIn: g.lastCheckIn?.toISOString() || null,
@@ -26,7 +27,7 @@ export default async function GuestsPage() {
           </p>
         </div>
       </div>
-      <GuestCRM guests={serialized} stats={stats} />
+      <GuestCRM guests={serialized} stats={stats} businessName={user.businessName} />
     </div>
   )
 }

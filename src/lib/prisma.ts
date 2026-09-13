@@ -1,17 +1,21 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaNeonHttp } from '@prisma/adapter-neon'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 /**
- * PrismaNeonHttp uses Neon's HTTP API — no WebSockets, no persistent TCP,
- * works perfectly in Vercel serverless (Node.js) and edge functions.
+ * Production (Neon): PrismaNeonHttp uses Neon's HTTP API — no WebSockets, no
+ * persistent TCP, works in Vercel serverless and edge functions.
  *
- * Constructor signature: PrismaNeonHttp(connectionString: string, options: HTTPQueryOptions)
+ * Local development (any non-Neon Postgres URL): use the standard pg driver,
+ * since the Neon HTTP adapter can only talk to Neon endpoints.
  */
 const prismaClientSingleton = () => {
-  const adapter = new PrismaNeonHttp(process.env.DATABASE_URL!, {
-    arrayMode: false,
-    fullResults: false,
-  })
+  const url = process.env.DATABASE_URL
+  if (!url) throw new Error('DATABASE_URL is not set')
+
+  const adapter = url.includes('neon.tech')
+    ? new PrismaNeonHttp(url, { arrayMode: false, fullResults: false })
+    : new PrismaPg({ connectionString: url })
   return new PrismaClient({ adapter })
 }
 

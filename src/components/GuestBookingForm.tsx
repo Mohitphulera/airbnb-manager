@@ -24,12 +24,15 @@ export default function GuestBookingForm({ property, checkIn, checkOut, nights, 
     formData.set('propertyId', property.id)
     formData.set('checkIn', checkIn.toISOString())
     formData.set('checkOut', checkOut.toISOString())
-    formData.set('totalAmount', String(totalPrice))
 
     try {
-      await submitBookingRequest(formData)
-      setSuccess(true)
-      showToast('Booking request sent! The host will confirm shortly.', 'success')
+      const result = await submitBookingRequest(formData)
+      if ('error' in result) {
+        showToast(result.error ?? 'Failed to submit request', 'error')
+      } else {
+        setSuccess(true)
+        showToast('Booking request sent! The host will confirm shortly.', 'success')
+      }
     } catch {
       showToast('Failed to submit request', 'error')
     }
@@ -56,7 +59,7 @@ export default function GuestBookingForm({ property, checkIn, checkOut, nights, 
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, margin: 0 }}>Complete Your Booking</h3>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}></button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }} aria-label="Close">×</button>
       </div>
 
       {/* Summary */}

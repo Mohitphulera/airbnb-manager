@@ -71,7 +71,7 @@ export default function BookingForm({ properties }: { properties: any[] }) {
 
       <div className="form-group">
         <label className="form-label">Staff Notes / Key Handover (optional)</label>
-        <textarea name="notes" className="form-input" placeholder="e.g. Key with security, WiFi: CozyGuest123, early check-in requested..." rows={2} style={{ resize: 'vertical' }} />
+        <textarea name="notes" className="form-input" placeholder="e.g. Key with security, early check-in requested..." rows={2} style={{ resize: 'vertical' }} />
       </div>
 
       <button type="submit" className={`btn btn-primary ${submitting ? 'btn-loading' : ''}`} style={{ width: '100%' }} disabled={submitting}>

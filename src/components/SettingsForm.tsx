@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateProfileAction } from '@/actions/authActions'
 
@@ -13,37 +13,50 @@ export default function SettingsForm({ user }: Props) {
   const [loading, setLoading] = useState(false)
   const [logoUrl, setLogoUrl] = useState(user.logoUrl ?? '')
   const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+  // Read the origin after hydration so server and client render the same text
+  const origin = useSyncExternalStore(() => () => {}, () => window.location.origin, () => '')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
     const fd = new FormData(e.currentTarget)
-    await updateProfileAction(user.id, {
+    const result = await updateProfileAction({
       businessName: fd.get('businessName') as string,
       whatsappNumber: fd.get('whatsappNumber') as string,
       logoUrl: fd.get('logoUrl') as string,
     })
-    setSaved(true)
     setLoading(false)
-    setTimeout(() => { setSaved(false); router.refresh() }, 2000)
+    if ('error' in result) {
+      setError(result.error ?? 'Could not save settings')
+      return
+    }
+    setSaved(true)
+    router.refresh()
+    setTimeout(() => setSaved(false), 2500)
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
+    setError('')
     try {
       const fd = new FormData()
       fd.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       const data = await res.json()
-      if (data?.urls?.[0]) {
+      if (res.ok && data?.urls?.[0]) {
         setLogoUrl(data.urls[0])
+      } else {
+        setError(data?.error ?? 'Logo upload failed')
       }
-    } catch (err) {
-      console.error('Upload failed', err)
+    } catch {
+      setError('Logo upload failed — check your connection')
     } finally {
       setUploading(false)
       // Reset so the same file can be re-selected
@@ -56,6 +69,11 @@ export default function SettingsForm({ user }: Props) {
       {saved && (
         <div style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.875rem' }}>
           ✓ Settings saved successfully
+        </div>
+      )}
+      {error && (
+        <div role="alert" style={{ background: 'rgba(239,68,68,0.08)', color: '#dc2626', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.875rem' }}>
+          {error}
         </div>
       )}
 
@@ -213,7 +231,7 @@ export default function SettingsForm({ user }: Props) {
           <span className="material-symbols-outlined" style={{ fontSize: '20px', color: 'var(--primary)' }}>link</span>
           <div>
             <div style={{ fontSize: '0.9375rem', fontWeight: 600 }}>
-              {typeof window !== 'undefined' ? window.location.origin : ''}/{user.slug}
+              {origin}/{user.slug}
             </div>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '0.125rem' }}>Share this link with your guests</div>
           </div>
@@ -221,9 +239,13 @@ export default function SettingsForm({ user }: Props) {
             type="button"
             className="btn btn-outline"
             style={{ marginLeft: 'auto', fontSize: '0.75rem' }}
-            onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/${user.slug}`)}
+            onClick={() => {
+              navigator.clipboard?.writeText(`${origin}/${user.slug}`)
+              setCopied(true)
+              setTimeout(() => setCopied(false), 1500)
+            }}
           >
-            Copy
+            {copied ? 'Copied' : 'Copy'}
           </button>
         </div>
       </div>

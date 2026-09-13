@@ -17,7 +17,7 @@ interface Booking {
   commissionOwed: number | null
   cleaningStatus: string
   notes: string | null
-  property: { name: string; type: string }
+  property: { id: string; name: string; type: string }
 }
 
 export default function BookingTable({ bookings }: { bookings: Booking[] }) {
@@ -40,9 +40,13 @@ export default function BookingTable({ bookings }: { bookings: Booking[] }) {
   const handleSave = async (id: string) => {
     setSaving(true)
     try {
-      await updateBooking(id, editData)
-      showToast('Booking updated', 'success')
-      setEditingId(null)
+      const result = await updateBooking(id, editData)
+      if ('error' in result) {
+        showToast(result.error ?? 'Failed to update', 'error')
+      } else {
+        showToast('Booking updated', 'success')
+        setEditingId(null)
+      }
     } catch {
       showToast('Failed to update', 'error')
     }
@@ -146,7 +150,7 @@ export default function BookingTable({ bookings }: { bookings: Booking[] }) {
                 <td><CleaningStatusToggle bookingId={b.id} currentStatus={b.cleaningStatus} /></td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-                    <WhatsAppMenu name={b.customerName} phone={b.customerPhone} property={b.property.name} checkIn={b.checkInDate} checkOut={b.checkOutDate} />
+                    <WhatsAppMenu bookingId={b.id} propertyId={b.property.id} name={b.customerName} phone={b.customerPhone} property={b.property.name} checkIn={b.checkInDate} checkOut={b.checkOutDate} />
                     <Link
                       href={`/admin/bills?bookingId=${b.id}`}
                       className="btn btn-outline"
@@ -173,17 +177,20 @@ export default function BookingTable({ bookings }: { bookings: Booking[] }) {
   )
 }
 
-function WhatsAppMenu({ name, phone, property, checkIn, checkOut }: { name: string; phone: string | null; property: string; checkIn: string; checkOut: string }) {
+function WhatsAppMenu({ bookingId, propertyId, name, phone, property, checkIn, checkOut }: { bookingId: string; propertyId: string; name: string; phone: string | null; property: string; checkIn: string; checkOut: string }) {
   const [open, setOpen] = useState(false)
   if (!phone) return null
+
+  // Links are built on click, so window is always available here
+  const origin = () => window.location.origin
 
   const ci = new Date(checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
   const co = new Date(checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
   const msgs = [
-    { label: 'Check-in Info', icon: 'login', msg: `Hi ${name}! Welcome to ${property} 🏡\n\nCheck-in: ${ci} (after 2 PM)\nAddress: [Property Address]\nWiFi: [Network] / [Password]\nLockbox Code: [Code]\n\nReach out if you need anything!` },
-    { label: 'Checkout Reminder', icon: 'logout', msg: `Hi ${name}, hope you're enjoying ${property}! 😊\n\nJust a reminder — checkout is on ${co} before 11 AM.\nPlease leave the keys on the table.\n\nThank you for staying with us!` },
-    { label: 'Review Request', icon: 'star', msg: `Hi ${name}! Thank you for staying at ${property} 🙏\n\nWe'd love your feedback! Could you leave us a quick review?\n\nYour review helps other travelers and means a lot to us. Thank you!` },
-    { label: 'Thank You + Offer', icon: 'redeem', msg: `Hi ${name}! Thank you for choosing ${property} ❤️\n\nAs a valued guest, enjoy 10% off your next stay with us!\nJust mention "RETURNING GUEST" when you book directly.\n\nHope to see you again soon! — Cozy B&B` },
+    { label: 'Check-in Info', icon: 'login', msg: () => `Hi ${name}! Welcome to ${property} 🏡\n\nCheck-in: ${ci} (after 2 PM)\n\nWiFi, house rules and local tips are all here:\n${origin()}/property/${propertyId}/welcome?b=${bookingId}\n\nReach out if you need anything!` },
+    { label: 'Checkout Reminder', icon: 'logout', msg: () => `Hi ${name}, hope you're enjoying ${property}! 😊\n\nJust a reminder — checkout is on ${co} before 11 AM.\nPlease leave the keys on the table.\n\nThank you for staying with us!` },
+    { label: 'Review Request', icon: 'star', msg: () => `Hi ${name}! Thank you for staying at ${property} 🙏\n\nWe'd love your feedback — it takes 30 seconds:\n${origin()}/feedback/${propertyId}?b=${bookingId}\n\nThank you!` },
+    { label: 'Thank You + Offer', icon: 'redeem', msg: () => `Hi ${name}! Thank you for choosing ${property} ❤️\n\nAs a valued guest, enjoy 10% off your next stay with us!\nJust mention "RETURNING GUEST" when you book directly.\n\nHope to see you again soon!` },
   ]
   const send = (msg: string) => { window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank'); setOpen(false) }
 
@@ -198,7 +205,7 @@ function WhatsAppMenu({ name, phone, property, checkIn, checkOut }: { name: stri
           <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '4px', background: '#fff', borderRadius: '10px', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', border: '1px solid #e5e7eb', zIndex: 20, width: '200px', overflow: 'hidden' }}>
             <div style={{ padding: '0.5rem 0.75rem', fontSize: '0.5625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', borderBottom: '1px solid #f1f5f9' }}>WhatsApp Message</div>
             {msgs.map((m, i) => (
-              <button key={i} onClick={() => send(m.msg)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', padding: '0.5rem 0.75rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, color: '#374151', textAlign: 'left', transition: 'background 0.15s' }} onMouseEnter={e => (e.currentTarget.style.background = '#f0fdf4')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
+              <button key={i} onClick={() => send(m.msg())} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', padding: '0.5rem 0.75rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, color: '#374151', textAlign: 'left', transition: 'background 0.15s' }} onMouseEnter={e => (e.currentTarget.style.background = '#f0fdf4')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
                 <span className="material-icons-outlined" style={{ fontSize: '16px', color: '#16a34a' }}>{m.icon}</span>
                 {m.label}
               </button>

@@ -41,26 +41,41 @@ const makeEmpty = (): BillData => ({
 interface BillGeneratorProps {
   bookings?: BookingItem[]
   initialBookingId?: string | null
+  initialInvoiceNo: string
+  initialInvoiceDate: string
   logoUrl?: string
   businessName?: string
 }
 
-export default function BillGenerator({ bookings = [], initialBookingId, logoUrl = '', businessName }: BillGeneratorProps) {
-  const [bill, setBill] = useState<BillData>(makeEmpty())
+// Pre-fill a bill from a booking. The nightly rate comes from what the guest was
+// actually charged, so later price changes on the listing don't alter old bills.
+function billFromBooking(prev: BillData, booking: BookingItem): BillData {
+  const nights = Math.max(1, differenceInDays(new Date(booking.checkOutDate), new Date(booking.checkInDate)))
+  return {
+    ...prev,
+    guestName: booking.customerName,
+    guestPhone: booking.customerPhone ?? '',
+    propertyName: booking.property.name,
+    propertyLocation: booking.property.location,
+    checkIn: booking.checkInDate.split('T')[0],
+    checkOut: booking.checkOutDate.split('T')[0],
+    pricePerNight: Math.round(booking.totalAmount / nights),
+  }
+}
+
+export default function BillGenerator({ bookings = [], initialBookingId, initialInvoiceNo, initialInvoiceDate, logoUrl = '', businessName }: BillGeneratorProps) {
+  const initialBooking = initialBookingId ? bookings.find(b => b.id === initialBookingId) ?? null : null
+  // Invoice number/date come from the server so SSR and hydration render identical markup
+  const [bill, setBill] = useState<BillData>(() => {
+    const empty = { ...makeEmpty(), invoiceNo: initialInvoiceNo, invoiceDate: initialInvoiceDate }
+    return initialBooking ? billFromBooking(empty, initialBooking) : empty
+  })
   const [preview, setPreview] = useState(false)
-  const [linkedBooking, setLinkedBooking] = useState<BookingItem | null>(null)
+  const [linkedBooking, setLinkedBooking] = useState<BookingItem | null>(initialBooking)
   const [bookingSearch, setBookingSearch] = useState('')
   const [showBookingPicker, setShowBookingPicker] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
-
-  // Auto-load booking from URL param on mount
-  useEffect(() => {
-    if (initialBookingId && bookings.length > 0) {
-      const found = bookings.find(b => b.id === initialBookingId)
-      if (found) loadFromBooking(found)
-    }
-  }, [initialBookingId, bookings]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Close picker when clicking outside
   useEffect(() => {
@@ -74,16 +89,7 @@ export default function BillGenerator({ bookings = [], initialBookingId, logoUrl
   }, [])
 
   const loadFromBooking = (booking: BookingItem) => {
-    setBill(prev => ({
-      ...prev,
-      guestName: booking.customerName,
-      guestPhone: booking.customerPhone ?? '',
-      propertyName: booking.property.name,
-      propertyLocation: booking.property.location,
-      checkIn: booking.checkInDate.split('T')[0],
-      checkOut: booking.checkOutDate.split('T')[0],
-      pricePerNight: booking.property.pricePerNight,
-    }))
+    setBill(prev => billFromBooking(prev, booking))
     setLinkedBooking(booking)
     setShowBookingPicker(false)
     setBookingSearch('')
@@ -121,7 +127,7 @@ export default function BillGenerator({ bookings = [], initialBookingId, logoUrl
       if (!content) return
       const w = window.open('', '_blank', 'width=800,height=1000')
       if (!w) return
-      const brandName = businessName || 'Cozy B&B'
+      const brandName = businessName || 'Your Business'
       const watermarkHtml = logoUrl
         ? `<div class="inv-watermark"><img src="${logoUrl}" alt="" /></div>`
         : ''
@@ -583,7 +589,7 @@ ${content.innerHTML}
           <div className="inv-content">
           <div className="inv-header">
             <div>
-              <div className="inv-brand">{businessName || 'Cozy B&B'}<small>Premium Hospitality</small></div>
+              <div className="inv-brand">{businessName || 'Your Business'}<small>Premium Hospitality</small></div>
             </div>
             <div className="inv-meta">
               <strong>INVOICE</strong><br />
@@ -672,7 +678,7 @@ ${content.innerHTML}
           </div>
 
           <div className="inv-footer">
-            Thank you for choosing <strong>{businessName || 'Cozy B&B'}</strong>. We hope you enjoy your stay!<br />
+            Thank you for choosing <strong>{businessName || 'Your Business'}</strong>. We hope you enjoy your stay!<br />
             For queries, reach us on WhatsApp or email.
           </div>
           </div>

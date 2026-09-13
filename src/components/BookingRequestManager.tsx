@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { confirmBookingRequest, updateBookingRequestStatus } from '@/actions/bookingRequestActions'
 import { useRouter } from 'next/navigation'
+import { showToast } from '@/components/Toast'
 
 type Request = {
   id: string
@@ -29,9 +30,13 @@ export default function BookingRequestManager({ requests }: { requests: Request[
   const handleConfirm = async (id: string) => {
     setProcessing(id)
     try {
-      await confirmBookingRequest(id)
+      const result = await confirmBookingRequest(id)
+      if ('error' in result) showToast(result.error ?? 'Failed to confirm', 'error')
+      else showToast('Booking confirmed and added to your calendar', 'success')
       router.refresh()
-    } catch {}
+    } catch {
+      showToast('Failed to confirm request', 'error')
+    }
     setProcessing(null)
   }
 
@@ -39,8 +44,11 @@ export default function BookingRequestManager({ requests }: { requests: Request[
     setProcessing(id)
     try {
       await updateBookingRequestStatus(id, 'REJECTED')
+      showToast('Request rejected', 'success')
       router.refresh()
-    } catch {}
+    } catch {
+      showToast('Failed to reject request', 'error')
+    }
     setProcessing(null)
   }
 

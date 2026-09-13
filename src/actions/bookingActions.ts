@@ -4,6 +4,10 @@ import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { requireUser } from '@/lib/session'
 import { addGuestFromBooking } from './guestActions'
+import { commissionFor, findOverlappingBooking, nightsBetween, validateStayDates } from '@/lib/bookings'
+
+const BOOKING_SOURCES = ['AIRBNB', 'DIRECT', 'OTHER']
+const CLEANING_STATUSES = ['PENDING', 'IN_PROGRESS', 'DONE']
 
 export async function getBookings() {
   const user = await requireUser()
@@ -16,54 +20,46 @@ export async function getBookings() {
 
 export async function addBooking(formData: FormData) {
   const user = await requireUser()
-  const propertyId = formData.get('propertyId') as string
-  const customerName = formData.get('customerName') as string
-  const customerPhone = formData.get('customerPhone') as string
-  const checkInDate = new Date(formData.get('checkInDate') as string)
-  const checkOutDate = new Date(formData.get('checkOutDate') as string)
-  const source = formData.get('source') as string
-  const notes = formData.get('notes') as string
+  const propertyId = String(formData.get('propertyId') ?? '')
+  const customerName = String(formData.get('customerName') ?? '').trim()
+  const customerPhone = String(formData.get('customerPhone') ?? '').trim()
+  const checkInDate = new Date(String(formData.get('checkInDate')))
+  const checkOutDate = new Date(String(formData.get('checkOutDate')))
+  const source = String(formData.get('source') ?? 'DIRECT')
+  const notes = String(formData.get('notes') ?? '').trim()
+
+  if (!customerName) return { error: 'Guest name is required' }
+  if (!BOOKING_SOURCES.includes(source)) return { error: 'Invalid booking source' }
+  const dateError = validateStayDates(checkInDate, checkOutDate)
+  if (dateError) return { error: dateError }
 
   // Ensure property belongs to user
   const property = await prisma.property.findFirst({ where: { id: propertyId, userId: user.id } })
   if (!property) return { error: 'Property not found' }
 
-  // Double-booking check
-  const existingBookings = await prisma.booking.findMany({
-    where: {
-      propertyId,
-      OR: [{ checkInDate: { lt: checkOutDate }, checkOutDate: { gt: checkInDate } }],
-    },
-  })
-  if (existingBookings.length > 0) {
-    return { error: 'Overlap detected: Property is already booked during these dates.' }
+  const clash = await findOverlappingBooking(propertyId, checkInDate, checkOutDate)
+  if (clash) {
+    return { error: `Overlap detected: ${property.name} is already booked by ${clash.customerName} during these dates.` }
   }
 
-  const diffTime = Math.abs(checkOutDate.getTime() - checkInDate.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  const totalAmount = diffDays * property.pricePerNight
-
-  let commissionOwed = null
-  if (property.type === 'COMMISSION' && property.commissionRate) {
-    commissionOwed = (totalAmount * property.commissionRate) / 100
-  }
+  const totalAmount = nightsBetween(checkInDate, checkOutDate) * property.pricePerNight
+  const commissionOwed = commissionFor(totalAmount, property)
 
   await prisma.booking.create({
-    data: { propertyId, customerName, customerPhone, checkInDate, checkOutDate, totalAmount, source, commissionOwed, notes: notes || null },
+    data: { propertyId, customerName, customerPhone: customerPhone || null, checkInDate, checkOutDate, totalAmount, source, commissionOwed, notes: notes || null },
   })
 
   try {
     await addGuestFromBooking({ customerName, customerPhone, checkInDate, checkOutDate, totalAmount, propertyName: property.name })
   } catch { /* guest sync is best-effort */ }
 
-  revalidatePath('/admin/bookings')
-  revalidatePath('/admin')
-  revalidatePath('/admin/guests')
+  revalidatePath('/admin', 'layout')
   return { success: true }
 }
 
 export async function updateCleaningStatus(id: string, cleaningStatus: string) {
   const user = await requireUser()
+  if (!CLEANING_STATUSES.includes(cleaningStatus)) throw new Error('Invalid cleaning status')
   await prisma.booking.updateMany({ where: { id, property: { userId: user.id } }, data: { cleaningStatus } })
   revalidatePath('/admin')
   revalidatePath('/admin/bookings')
@@ -83,23 +79,43 @@ export async function deleteBooking(id: string) {
   revalidatePath('/admin')
 }
 
-export async function updateBooking(id: string, data: Record<string, any>) {
+export async function updateBooking(id: string, data: Record<string, unknown>) {
   const user = await requireUser()
-  const booking = await prisma.booking.findFirst({ where: { id, property: { userId: user.id } } })
-  if (!booking) throw new Error('Not found')
+  const booking = await prisma.booking.findFirst({ where: { id, property: { userId: user.id } }, include: { property: true } })
+  if (!booking) return { error: 'Not found' }
 
-  const updateData: Record<string, any> = {}
-  if (data.customerName !== undefined) updateData.customerName = data.customerName
-  if (data.customerPhone !== undefined) updateData.customerPhone = data.customerPhone
-  if (data.source !== undefined) updateData.source = data.source
-  if (data.totalAmount !== undefined) updateData.totalAmount = parseFloat(data.totalAmount)
-  if (data.notes !== undefined) updateData.notes = data.notes || null
-  if (data.checkInDate !== undefined) updateData.checkInDate = new Date(data.checkInDate)
-  if (data.checkOutDate !== undefined) updateData.checkOutDate = new Date(data.checkOutDate)
+  const updateData: Record<string, unknown> = {}
+  if (data.customerName !== undefined) updateData.customerName = String(data.customerName).trim()
+  if (data.customerPhone !== undefined) updateData.customerPhone = String(data.customerPhone).trim() || null
+  if (data.source !== undefined) {
+    if (!BOOKING_SOURCES.includes(String(data.source))) return { error: 'Invalid booking source' }
+    updateData.source = data.source
+  }
+  if (data.notes !== undefined) updateData.notes = String(data.notes) || null
+
+  const checkIn = data.checkInDate !== undefined ? new Date(String(data.checkInDate)) : booking.checkInDate
+  const checkOut = data.checkOutDate !== undefined ? new Date(String(data.checkOutDate)) : booking.checkOutDate
+  if (data.checkInDate !== undefined || data.checkOutDate !== undefined) {
+    const dateError = validateStayDates(checkIn, checkOut)
+    if (dateError) return { error: dateError }
+    if (await findOverlappingBooking(booking.propertyId, checkIn, checkOut, id)) {
+      return { error: 'These dates overlap another booking' }
+    }
+    updateData.checkInDate = checkIn
+    updateData.checkOutDate = checkOut
+  }
+
+  if (data.totalAmount !== undefined) {
+    const totalAmount = parseFloat(String(data.totalAmount))
+    if (!Number.isFinite(totalAmount) || totalAmount < 0) return { error: 'Invalid amount' }
+    updateData.totalAmount = totalAmount
+    // Keep the partner's commission in sync with the new amount
+    updateData.commissionOwed = commissionFor(totalAmount, booking.property)
+  }
 
   await prisma.booking.update({ where: { id }, data: updateData })
-  revalidatePath('/admin/bookings')
-  revalidatePath('/admin')
+  revalidatePath('/admin', 'layout')
+  return { success: true }
 }
 
 // ===== ANALYTICS HELPERS =====
@@ -157,16 +173,25 @@ export async function getDashboardData() {
     const commission = propBookings.reduce((s, b) => s + (b.commissionOwed || 0), 0)
     const expenses = propExpenses.reduce((s, e) => s + e.amount, 0)
     const profit = revenue - commission - expenses
-    const totalNights = propBookings.reduce((s, b) => s + Math.ceil((new Date(b.checkOutDate).getTime() - new Date(b.checkInDate).getTime()) / (1000 * 60 * 60 * 24)), 0)
+    const totalNights = propBookings.reduce((s, b) => s + nightsBetween(new Date(b.checkInDate), new Date(b.checkOutDate)), 0)
     const ninetyDaysAgo = new Date(today); ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
-    const recentBookings = propBookings.filter(b => new Date(b.checkInDate) >= ninetyDaysAgo)
-    const bookedNightsLast90 = recentBookings.reduce((s, b) => {
+    // Include stays that started before the window but overlap it; clip to [90 days ago, today]
+    const bookedNightsLast90 = propBookings.reduce((s, b) => {
       const ci = new Date(b.checkInDate) < ninetyDaysAgo ? ninetyDaysAgo : new Date(b.checkInDate)
       const co = new Date(b.checkOutDate) > today ? today : new Date(b.checkOutDate)
       return s + Math.max(0, Math.ceil((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24)))
     }, 0)
-    const occupancyRate = Math.round((bookedNightsLast90 / 90) * 100)
-    const revPAR = Math.round(revenue / Math.max(90, 1))
+    const occupancyRate = Math.min(100, Math.round((bookedNightsLast90 / 90) * 100))
+    // RevPAR = revenue earned from nights in the last 90 days / 90 available nights
+    const revenueLast90 = propBookings.reduce((s, b) => {
+      const nights = nightsBetween(new Date(b.checkInDate), new Date(b.checkOutDate))
+      if (nights === 0) return s
+      const ci = new Date(b.checkInDate) < ninetyDaysAgo ? ninetyDaysAgo : new Date(b.checkInDate)
+      const co = new Date(b.checkOutDate) > today ? today : new Date(b.checkOutDate)
+      const inWindow = Math.max(0, Math.ceil((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24)))
+      return s + (b.totalAmount / nights) * inWindow
+    }, 0)
+    const revPAR = Math.round(revenueLast90 / 90)
     return { id: prop.id, name: prop.name, type: prop.type, pricePerNight: prop.pricePerNight, revenue, commission, expenses, profit, totalNights, occupancyRate, revPAR, bookingCount: propBookings.length }
   })
 
@@ -190,7 +215,7 @@ export async function getDashboardData() {
   const pricingSuggestions = allProperties.map(prop => {
     const propBookings = allBookings.filter(b => b.propertyId === prop.id)
     const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    const recentBookings = propBookings.filter(b => new Date(b.checkInDate) >= thirtyDaysAgo)
+    const recentBookings = propBookings.filter(b => new Date(b.checkOutDate) > thirtyDaysAgo)
     const bookedNights30 = recentBookings.reduce((s, b) => {
       const ci = new Date(b.checkInDate) < thirtyDaysAgo ? thirtyDaysAgo : new Date(b.checkInDate)
       const co = new Date(b.checkOutDate) > new Date() ? new Date() : new Date(b.checkOutDate)
@@ -231,6 +256,11 @@ export async function getDashboardData() {
     upcomingCheckIns: upcomingCheckIns.map(serialize),
     cleaningNeeded: cleaningNeeded.map(serialize),
     emptyNights, propertyPnL, monthlyTrend, revenueBySource, pricingSuggestions, expenseByCategory, insights,
-    totals: { revenue: totalRevenue, expenses: totalExpensesAmt, commission: totalCommission, profit: totalRevenue - totalCommission - totalExpensesAmt, properties: allProperties.length, bookings: allBookings.length }
+    totals: {
+      revenue: totalRevenue, expenses: totalExpensesAmt, commission: totalCommission,
+      profit: totalRevenue - totalCommission - totalExpensesAmt,
+      properties: allProperties.length, bookings: allBookings.length,
+      nights: propertyPnL.reduce((s, p) => s + p.totalNights, 0),
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { getAvailableSaleProperties } from '@/actions/salePropertyActions'
+import { getPublicSaleProperties } from '@/actions/salePropertyActions'
 import Link from 'next/link'
 import SalePropertyBrowser from '@/components/SalePropertyBrowser'
 import MobileNav from '@/components/MobileNav'
@@ -7,7 +7,7 @@ import ScrollReveal from '@/components/ScrollReveal'
 export const dynamic = 'force-dynamic'
 
 export default async function PropertiesForSalePage() {
-  const properties = await getAvailableSaleProperties()
+  const properties = await getPublicSaleProperties()
 
   const serialized = properties.map(p => {
     let images: string[] = []
@@ -23,16 +23,18 @@ export default async function PropertiesForSalePage() {
       <nav className="cinema-nav st-nav">
         <div className="st-nav-inner">
           <Link href="/" className="st-nav-brand">
-            <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" />
-            <span className="st-nav-name">Cozy B&B</span>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#fff' }}>apartment</span>
+            </div>
+            <span className="st-nav-name">StayDesk</span>
           </Link>
           <div className="st-nav-links">
-            <Link href="/" className="st-nav-link">Airbnb Listings</Link>
+            <Link href="/" className="st-nav-link">Home</Link>
             <Link href="/properties-for-sale" className="st-nav-link st-nav-link-active">Properties for Sale</Link>
-            <Link href="/login" className="st-nav-link">Admin Login</Link>
+            <Link href="/login" className="st-nav-link">Host Login</Link>
           </div>
           <div className="st-nav-actions">
-            <a href="https://wa.me/" target="_blank" className="st-btn-outline">WhatsApp Us</a>
+            <Link href="/signup" className="st-btn-outline">List Your Property</Link>
           </div>
           <MobileNav activePage="investments" />
         </div>
@@ -71,11 +73,10 @@ export default async function PropertiesForSalePage() {
           <div className="st-footer-top">
             <div className="st-footer-brand">
               <div className="st-nav-brand">
-                <img src="/logo-cozybnb.jpg" alt="Cozy B&B" className="st-nav-logo" style={{ filter: 'brightness(0.8)' }} />
-                <span className="st-nav-name">Cozy B&B</span>
+                <span className="st-nav-name">StayDesk</span>
               </div>
               <p className="st-footer-tagline">
-                Defining the future of luxury hospitality through meticulous curation and architectural excellence.
+                Property management and direct bookings for independent hosts.
               </p>
             </div>
             <div className="st-footer-cols">
@@ -85,15 +86,10 @@ export default async function PropertiesForSalePage() {
                 <Link href="/properties-for-sale">Investments</Link>
                 <Link href="/login">Host Portal</Link>
               </div>
-              <div className="st-footer-col">
-                <span className="st-footer-heading">Legal</span>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-              </div>
             </div>
           </div>
           <div className="st-footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Cozy B&B. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} StayDesk. All rights reserved.</p>
           </div>
         </div>
       </footer>

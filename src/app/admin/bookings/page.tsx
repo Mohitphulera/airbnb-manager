@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getBookings } from '@/actions/bookingActions'
 import { getProperties } from '@/actions/propertyActions'
 import { getBookingRequests } from '@/actions/bookingRequestActions'
@@ -24,17 +25,18 @@ export default async function BookingsPage() {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{bookings.length} bookings recorded</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <a href="/admin/bills" className="btn btn-secondary" style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#7c3aed', borderColor: '#ede9fe' }}>
+          <Link href="/admin/bills" className="btn btn-secondary" style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '16px' }}>receipt_long</span>
-            Quick Bill
-          </a>
+            New invoice
+          </Link>
           <a href="/api/export-expenses" className="btn btn-secondary" download style={{ fontSize: '0.8125rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '16px' }}>download</span>
-            Export CSV
+            Report (CSV)
           </a>
-          <a href="/api/export" className="btn btn-secondary" download="airbnb-data.xlsx" style={{ fontSize: '0.8125rem' }}>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- file download from an API route, not page navigation */}
+          <a href="/api/export" className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '16px' }}>table_chart</span>
-            Export Excel
+            Bookings (Excel)
           </a>
         </div>
       </div>
@@ -61,7 +63,7 @@ export default async function BookingsPage() {
       )}
 
       <div className="admin-grid">
-        <div className="admin-sidebar-card">
+        <div className="admin-sidebar-card" id="new-booking" style={{ scrollMarginTop: '5rem' }}>
           <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span className="material-icons-outlined" style={{ fontSize: '18px', color: 'var(--primary)' }}>add_circle</span>
             New Booking
